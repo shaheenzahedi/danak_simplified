@@ -1,0 +1,24 @@
+entity Tablet{
+    name String
+}
+entity TabletUser{
+    firstName String
+    lastName String
+}
+entity UserActivity{
+    listName String
+    total Long
+    completed Long
+}
+relationship OneToMany {
+	TabletUser to UserActivity{activity}
+   	Tablet to TabletUser{tablet}
+}
+
+
+// Use Data Transfer Objects (DTO)
+dto * with mapstruct
+
+// Set service options to all except few
+service all with serviceImpl
+

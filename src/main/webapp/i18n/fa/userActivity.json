@@ -1,0 +1,27 @@
+{
+  "danakApp": {
+    "userActivity": {
+      "home": {
+        "title": "User Activities",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new User Activity",
+        "createOrEditLabel": "Create or edit a User Activity",
+        "notFound": "No User Activities found"
+      },
+      "created": "A new User Activity is created with identifier {{ param }}",
+      "updated": "A User Activity is updated with identifier {{ param }}",
+      "deleted": "A User Activity is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete User Activity {{ id }}?"
+      },
+      "detail": {
+        "title": "User Activity"
+      },
+      "id": "ID",
+      "listName": "List Name",
+      "total": "Total",
+      "completed": "Completed",
+      "activity": "Activity"
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "generator-jhipster": {
+    "applicationType": "monolith",
+    "authenticationType": "jwt",
+    "baseName": "danak",
+    "blueprints": [
+      {
+        "name": "generator-jhipster-kotlin",
+        "version": "1.15.0"
+      }
+    ],
+    "buildTool": "maven",
+    "cacheProvider": "no",
+    "clientFramework": "react",
+    "clientPackageManager": "npm",
+    "clientTheme": "none",
+    "clientThemeVariant": "",
+    "creationTimestamp": 1673945012377,
+    "databaseType": "sql",
+    "devDatabaseType": "h2Memory",
+    "devServerPort": 9060,
+    "dtoSuffix": "DTO",
+    "enableGradleEnterprise": false,
+    "enableHibernateCache": false,
+    "enableSwaggerCodegen": false,
+    "enableTranslation": true,
+    "entities": ["Tablet", "TabletUser", "UserActivity"],
+    "entitySuffix": "",
+    "jhiPrefix": "jhi",
+    "jhipsterVersion": "7.8.1",
+    "jwtSecretKey": "ZmM0MGM4MDM4ZDM3YzJiYWJmNWNlNjc3MWRhMDZlOTUyMzBlMWRmNTRjYWZmZDgxN2MwNTg3NWRkZDhlMjQxZjIwNDM5N2JlMGY4OTEwZTMzMTQxZDdlYTNiMGRiY2YzNzAzZmU2NzAwZWUwODkyMWJkMzliNjk3MzZiMjI2NTU=",
+    "languages": ["en", "fa"],
+    "lastLiquibaseTimestamp": 1673945367000,
+    "messageBroker": false,
+    "nativeLanguage": "en",
+    "otherModules": [
+      {
+        "name": "generator-jhipster-kotlin",
+        "version": "1.15.0"
+      }
+    ],
+    "packageName": "org.aydm.danak",
+    "pages": [],
+    "prodDatabaseType": "mysql",
+    "reactive": false,
+    "searchEngine": false,
+    "serverPort": "8080",
+    "serverSideOptions": [],
+    "serviceDiscoveryType": "no",
+    "skipCheckLengthOfIdentifier": false,
+    "skipFakeData": false,
+    "skipUserManagement": false,
+    "testFrameworks": [],
+    "websocket": false,
+    "withAdminUi": true
+  }
+}

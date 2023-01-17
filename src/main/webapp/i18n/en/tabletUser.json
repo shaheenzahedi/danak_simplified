@@ -1,0 +1,27 @@
+{
+  "danakApp": {
+    "tabletUser": {
+      "home": {
+        "title": "Tablet Users",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Tablet User",
+        "createOrEditLabel": "Create or edit a Tablet User",
+        "notFound": "No Tablet Users found"
+      },
+      "created": "A new Tablet User is created with identifier {{ param }}",
+      "updated": "A Tablet User is updated with identifier {{ param }}",
+      "deleted": "A Tablet User is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Tablet User {{ id }}?"
+      },
+      "detail": {
+        "title": "Tablet User"
+      },
+      "id": "ID",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "userActivity": "User Activity",
+      "tablet": "Tablet"
+    }
+  }
+}
