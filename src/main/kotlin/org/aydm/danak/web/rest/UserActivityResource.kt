@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.web.danak.service.dto.SubmitDTO
 import tech.jhipster.web.util.HeaderUtil
 import tech.jhipster.web.util.ResponseUtil
 import java.net.URI
@@ -33,6 +34,18 @@ class UserActivityResource(
 
     @Value("\${jhipster.clientApp.name}")
     private var applicationName: String? = null
+
+    @PostMapping("submit-activity")
+    fun submitActivity(@RequestBody submitDTO: SubmitDTO): ResponseEntity<Void> {
+        userActivityService.submit(submitDTO)
+        return ResponseEntity.ok().build()
+    }
+
+    @GetMapping("all-activities")
+    fun getAllActivity(): ResponseEntity<List<SubmitDTO>> {
+        val allActivity = userActivityService.getAllActivity()
+        return ResponseEntity.ok().body(allActivity)
+    }
 
     /**
      * `POST  /user-activities` : Create a new userActivity.

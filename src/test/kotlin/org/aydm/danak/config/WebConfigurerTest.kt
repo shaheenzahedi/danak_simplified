@@ -64,7 +64,8 @@ class WebConfigurerTest {
     fun shouldStartUpProdServletContext() {
         env.setActiveProfiles(JHipsterConstants.SPRING_PROFILE_PRODUCTION)
 
-        assertThatCode { webConfigurer.onStartup(servletContext)
+        assertThatCode {
+            webConfigurer.onStartup(servletContext)
         }.doesNotThrowAnyException()
         verify(servletContext, never())
             .addServlet(ArgumentMatchers.eq("H2Console"), any(WebServlet::class.java))
@@ -75,7 +76,8 @@ class WebConfigurerTest {
     fun shouldStartUpDevServletContext() {
         env.setActiveProfiles(JHipsterConstants.SPRING_PROFILE_DEVELOPMENT)
 
-        assertThatCode { webConfigurer.onStartup(servletContext)
+        assertThatCode {
+            webConfigurer.onStartup(servletContext)
         }.doesNotThrowAnyException()
         verify(servletContext)
             .addServlet(ArgumentMatchers.eq("H2Console"), any(WebServlet::class.java))

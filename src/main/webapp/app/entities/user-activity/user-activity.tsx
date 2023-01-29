@@ -60,7 +60,7 @@ export const UserActivity = (props: RouteComponentProps<{ url: string }>) => {
                   <Translate contentKey="danakApp.userActivity.completed">Completed</Translate>
                 </th>
                 <th>
-                  <Translate contentKey="danakApp.userActivity.activity">Activity</Translate>
+                  <Translate contentKey="danakApp.userActivity.activity">User</Translate>
                 </th>
                 <th />
               </tr>

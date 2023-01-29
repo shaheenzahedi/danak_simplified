@@ -52,4 +52,5 @@ interface TabletUserService {
      * @param id the id of the entity.
      */
     fun delete(id: Long)
+    fun createSave(tabletUserDTO: TabletUserDTO): TabletUserDTO
 }

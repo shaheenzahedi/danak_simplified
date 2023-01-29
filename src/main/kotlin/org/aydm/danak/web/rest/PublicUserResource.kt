@@ -17,7 +17,8 @@ import java.util.*
 class PublicUserResource(
     private val userService: UserService
 ) {
-    companion object { private val ALLOWED_ORDERED_PROPERTIES = arrayOf("id", "login", "firstName", "lastName", "email", "activated", "langKey")
+    companion object {
+        private val ALLOWED_ORDERED_PROPERTIES = arrayOf("id", "login", "firstName", "lastName", "email", "activated", "langKey")
     }
 
     private val log = LoggerFactory.getLogger(javaClass)

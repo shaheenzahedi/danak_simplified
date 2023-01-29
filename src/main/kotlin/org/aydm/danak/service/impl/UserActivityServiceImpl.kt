@@ -3,11 +3,15 @@ package org.aydm.danak.service.impl
 import org.aydm.danak.domain.UserActivity
 import org.aydm.danak.repository.UserActivityRepository
 import org.aydm.danak.service.UserActivityService
+import org.aydm.danak.service.dto.TabletUserDTO
 import org.aydm.danak.service.dto.UserActivityDTO
 import org.aydm.danak.service.mapper.UserActivityMapper
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.web.danak.service.dto.SubmitActivityDTO
+import org.web.danak.service.dto.SubmitDTO
+import org.web.danak.service.dto.SubmitUserDTO
 import java.util.Optional
 
 /**
@@ -18,6 +22,8 @@ import java.util.Optional
 class UserActivityServiceImpl(
     private val userActivityRepository: UserActivityRepository,
     private val userActivityMapper: UserActivityMapper,
+    private val tabletServiceImpl: TabletServiceImpl,
+    private val tabletUserServiceImpl: TabletUserServiceImpl
 ) : UserActivityService {
 
     private val log = LoggerFactory.getLogger(javaClass)
@@ -66,5 +72,56 @@ class UserActivityServiceImpl(
         log.debug("Request to delete UserActivity : $id")
 
         userActivityRepository.deleteById(id)
+    }
+
+    @Transactional
+    override fun submit(submitDTO: SubmitDTO): Boolean {
+        val tablet = tabletServiceImpl.createSave(submitDTO.tablet)
+        submitDTO.users.map { user ->
+            val tabletUser = tabletUserServiceImpl.createSave(
+                TabletUserDTO(
+                    firstName = user.firstName,
+                    lastName = user.lastName,
+                    tablet = tablet
+                )
+            )
+            user.activity.forEach { activity ->
+                save(
+                    UserActivityDTO(
+                        listName = activity.listName,
+                        total = activity.total,
+                        completed = activity.completed,
+                        activity = tabletUser
+                    )
+                )
+            }
+        }
+        return true
+    }
+
+    override fun getAllActivity(): List<SubmitDTO> {
+        val tablets = tabletServiceImpl.findAll()
+        val tabletUsers = tabletUserServiceImpl.findAll()
+        val userActivities = userActivityRepository.findAll()
+        return tablets.map { tablet ->
+            SubmitDTO(
+                tablet = tablet.name!!,
+                users = tabletUsers.filter { it.tablet?.name == tablet.name }
+                    .map { tabletUser ->
+                        SubmitUserDTO(
+                            firstName = tabletUser.firstName!!,
+                            lastName = tabletUser.lastName!!,
+                            activity = userActivities.filter { it.activity?.tablet?.name == tabletUser.tablet?.name }
+                                .map { userActivity ->
+                                    SubmitActivityDTO(
+                                        listName = userActivity.listName,
+                                        total = userActivity.total,
+                                        completed = userActivity.total
+                                    )
+                                }
+                        )
+                    }
+            )
+        }
     }
 }

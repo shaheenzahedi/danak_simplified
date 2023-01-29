@@ -1,5 +1,6 @@
 package org.aydm.danak.service.impl
 
+import liquibase.pro.packaged.it
 import org.aydm.danak.domain.Tablet
 import org.aydm.danak.repository.TabletRepository
 import org.aydm.danak.service.TabletService
@@ -66,5 +67,12 @@ class TabletServiceImpl(
         log.debug("Request to delete Tablet : $id")
 
         tabletRepository.deleteById(id)
+    }
+
+    @Transactional
+    override fun createSave(tabletName: String): TabletDTO {
+        val tablet = tabletRepository.findByName(tabletName).orElse(null)
+        if (tablet != null) return tabletMapper.toDto(tablet)
+        return save(TabletDTO(name = tabletName))
     }
 }

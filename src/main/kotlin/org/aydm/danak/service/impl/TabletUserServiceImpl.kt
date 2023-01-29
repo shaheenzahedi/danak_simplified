@@ -67,4 +67,11 @@ class TabletUserServiceImpl(
 
         tabletUserRepository.deleteById(id)
     }
+
+    override fun createSave(tabletUserDTO: TabletUserDTO): TabletUserDTO {
+        val tabletUser =
+            tabletUserRepository.findByNameAndFamily(tabletUserDTO.firstName, tabletUserDTO.lastName).orElse(null)
+        if (tabletUser != null) return tabletUserMapper.toDto(tabletUser)
+        return save(tabletUserDTO)
+    }
 }

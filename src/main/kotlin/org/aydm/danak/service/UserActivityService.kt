@@ -1,5 +1,7 @@
 package org.aydm.danak.service
 import org.aydm.danak.service.dto.UserActivityDTO
+import org.springframework.transaction.annotation.Transactional
+import org.web.danak.service.dto.SubmitDTO
 import java.util.Optional
 
 /**
@@ -52,4 +54,8 @@ interface UserActivityService {
      * @param id the id of the entity.
      */
     fun delete(id: Long)
+
+    @Transactional
+    fun submit(submitDTO: SubmitDTO): Boolean
+    fun getAllActivity(): List<SubmitDTO>
 }

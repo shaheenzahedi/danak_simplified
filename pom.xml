@@ -308,7 +308,6 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
@@ -358,7 +357,7 @@
         <testSourceDirectory>src/test/kotlin</testSourceDirectory>
 
         <plugins>
-            
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
@@ -447,7 +446,7 @@
                                     <artifactId>jaxb-runtime</artifactId>
                                     <version>${jaxb-runtime.version}</version>
                                 </annotationProcessorPath>
-                                
+
                             </annotationProcessorPaths>
                         </configuration>
                     </execution>
