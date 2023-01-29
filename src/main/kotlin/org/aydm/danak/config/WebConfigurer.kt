@@ -17,7 +17,6 @@ import tech.jhipster.config.JHipsterProperties
 import tech.jhipster.config.h2.H2ConfigurationHelper
 import java.io.File
 import java.net.URLDecoder.decode
-import java.nio.charset.StandardCharsets
 import java.nio.file.Paths
 import javax.servlet.ServletContext
 import javax.servlet.ServletException
@@ -68,7 +67,7 @@ class WebConfigurer(
      * Resolve path prefix to static resources.
      */
     private fun resolvePathPrefix(): String {
-        val fullExecutablePath = decode(this.javaClass.getResource("").path, StandardCharsets.UTF_8)
+        val fullExecutablePath = decode(this.javaClass.getResource("").path, "UTF-8")
         val rootPath = Paths.get(".").toUri().normalize().path
         val extractedPath = fullExecutablePath.replace(rootPath, "")
         val extractionEndIndex = extractedPath.indexOf("target/")

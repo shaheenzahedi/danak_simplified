@@ -106,12 +106,12 @@ class UserActivityServiceImpl(
         return tablets.map { tablet ->
             SubmitDTO(
                 tablet = tablet.name!!,
-                users = tabletUsers.filter { it.tablet?.name == tablet.name }
+                users = tabletUsers.filter { it.tablet?.id == tablet.id }
                     .map { tabletUser ->
                         SubmitUserDTO(
                             firstName = tabletUser.firstName!!,
                             lastName = tabletUser.lastName!!,
-                            activity = userActivities.filter { it.activity?.tablet?.name == tabletUser.tablet?.name }
+                            activity = userActivities.filter { it.activity?.tablet?.id == tabletUser.tablet?.id }
                                 .map { userActivity ->
                                     SubmitActivityDTO(
                                         listName = userActivity.listName,
