@@ -73,6 +73,7 @@ class SecurityConfiguration(
             .authorizeRequests()
             .antMatchers("/api/authenticate").permitAll()
             .antMatchers("/api/submit-activity").permitAll()
+            .antMatchers("/api/all-activities").permitAll()
             .antMatchers("/api/register").permitAll()
             .antMatchers("/api/activate").permitAll()
             .antMatchers("/api/account/reset-password/init").permitAll()
