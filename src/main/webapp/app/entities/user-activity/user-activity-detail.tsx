@@ -49,6 +49,12 @@ export const UserActivityDetail = (props: RouteComponentProps<{ id: string }>) =
           </dt>
           <dd>{userActivityEntity.completed}</dd>
           <dt>
+            <span id="uniqueName">
+              <Translate contentKey="danakApp.userActivity.uniqueName">Unique Name</Translate>
+            </span>
+          </dt>
+          <dd>{userActivityEntity.uniqueName}</dd>
+          <dt>
             <Translate contentKey="danakApp.userActivity.activity">Activity</Translate>
           </dt>
           <dd>{userActivityEntity.activity ? userActivityEntity.activity.id : ''}</dd>

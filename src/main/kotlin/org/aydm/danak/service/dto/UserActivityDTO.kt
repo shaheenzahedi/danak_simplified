@@ -12,6 +12,8 @@ data class UserActivityDTO(
 
     var listName: String? = null,
 
+    var uniqueName: String? = null,
+
     var total: Long? = null,
 
     var completed: Long? = null,

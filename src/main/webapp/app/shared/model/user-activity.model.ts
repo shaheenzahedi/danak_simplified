@@ -5,6 +5,7 @@ export interface IUserActivity {
   listName?: string | null;
   total?: number | null;
   completed?: number | null;
+  uniqueName?: string | null;
   activity?: ITabletUser | null;
 }
 

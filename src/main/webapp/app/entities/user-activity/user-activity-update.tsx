@@ -112,6 +112,13 @@ export const UserActivityUpdate = (props: RouteComponentProps<{ id: string }>) =
                 type="text"
               />
               <ValidatedField
+                label={translate('danakApp.userActivity.uniqueName')}
+                id="user-activity-uniqueName"
+                name="uniqueName"
+                data-cy="uniqueName"
+                type="text"
+              />
+              <ValidatedField
                 id="user-activity-activity"
                 name="activity"
                 data-cy="activity"

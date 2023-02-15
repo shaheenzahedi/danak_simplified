@@ -26,6 +26,9 @@ data class UserActivity(
     @Column(name = "completed")
     var completed: Long? = null,
 
+    @Column(name = "unique_name")
+    var uniqueName: String? = null,
+
     @ManyToOne
     @JsonIgnoreProperties(
         value = [
@@ -62,6 +65,7 @@ data class UserActivity(
             ", listName='" + listName + "'" +
             ", total=" + total +
             ", completed=" + completed +
+            ", uniqueName='" + uniqueName + "'" +
             "}"
     }
 

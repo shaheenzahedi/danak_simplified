@@ -2,6 +2,7 @@ package org.aydm.danak.web.rest
 
 import org.aydm.danak.repository.UserActivityRepository
 import org.aydm.danak.service.UserActivityService
+import org.aydm.danak.service.dto.OverallUserActivities
 import org.aydm.danak.service.dto.UserActivityDTO
 import org.aydm.danak.web.rest.errors.BadRequestAlertException
 import org.slf4j.LoggerFactory
@@ -41,9 +42,14 @@ class UserActivityResource(
         return ResponseEntity.ok().build()
     }
 
-    @GetMapping("all-activities")
-    fun getAllActivity(): ResponseEntity<List<SubmitDTO>> {
-        val allActivity = userActivityService.getAllActivity()
+    @GetMapping("all-activities-by-tablet")
+    fun getAllActivityByTablet(): ResponseEntity<List<SubmitDTO>> {
+        val allActivity = userActivityService.getAllActivityByTablet()
+        return ResponseEntity.ok().body(allActivity)
+    }
+    @GetMapping("all-activities-by-user")
+    fun getAllActivityByUser(): ResponseEntity<List<OverallUserActivities>> {
+        val allActivity = userActivityService.getAllActivityByUser()
         return ResponseEntity.ok().body(allActivity)
     }
 

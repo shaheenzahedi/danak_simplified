@@ -60,7 +60,10 @@ export const UserActivity = (props: RouteComponentProps<{ url: string }>) => {
                   <Translate contentKey="danakApp.userActivity.completed">Completed</Translate>
                 </th>
                 <th>
-                  <Translate contentKey="danakApp.userActivity.activity">User</Translate>
+                  <Translate contentKey="danakApp.userActivity.uniqueName">Unique Name</Translate>
+                </th>
+                <th>
+                  <Translate contentKey="danakApp.userActivity.activity">Activity</Translate>
                 </th>
                 <th />
               </tr>
@@ -76,6 +79,7 @@ export const UserActivity = (props: RouteComponentProps<{ url: string }>) => {
                   <td>{userActivity.listName}</td>
                   <td>{userActivity.total}</td>
                   <td>{userActivity.completed}</td>
+                  <td>{userActivity.uniqueName}</td>
                   <td>
                     {userActivity.activity ? <Link to={`/tablet-user/${userActivity.activity.id}`}>{userActivity.activity.id}</Link> : ''}
                   </td>

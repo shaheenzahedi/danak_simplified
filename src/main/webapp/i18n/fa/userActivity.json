@@ -21,6 +21,7 @@
       "listName": "List Name",
       "total": "Total",
       "completed": "Completed",
+      "uniqueName": "Unique Name",
       "activity": "Activity"
     }
   }

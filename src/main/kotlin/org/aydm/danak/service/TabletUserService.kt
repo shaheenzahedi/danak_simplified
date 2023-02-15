@@ -37,6 +37,7 @@ interface TabletUserService {
      * @return the list of entities.
      */
     fun findAll(): MutableList<TabletUserDTO>
+    fun findAllByFirstLastNameImplicit(): MutableList<TabletUserDTO>
 
     /**
      * Get the "id" tabletUser.
@@ -52,5 +53,6 @@ interface TabletUserService {
      * @param id the id of the entity.
      */
     fun delete(id: Long)
+
     fun createSave(tabletUserDTO: TabletUserDTO): TabletUserDTO
 }

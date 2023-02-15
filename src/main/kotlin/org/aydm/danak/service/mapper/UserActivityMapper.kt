@@ -22,5 +22,4 @@ interface UserActivityMapper :
     @Mappings(
         Mapping(target = "id", source = "id")
     )
-    fun toDtoTabletUserId(tabletUser: TabletUser): TabletUserDTO
-}
+    fun toDtoTabletUserId(tabletUser: TabletUser): TabletUserDTO }

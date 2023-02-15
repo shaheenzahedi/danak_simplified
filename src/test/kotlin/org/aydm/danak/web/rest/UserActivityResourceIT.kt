@@ -80,6 +80,7 @@ class UserActivityResourceIT {
         assertThat(testUserActivity.listName).isEqualTo(DEFAULT_LIST_NAME)
         assertThat(testUserActivity.total).isEqualTo(DEFAULT_TOTAL)
         assertThat(testUserActivity.completed).isEqualTo(DEFAULT_COMPLETED)
+        assertThat(testUserActivity.uniqueName).isEqualTo(DEFAULT_UNIQUE_NAME)
     }
 
     @Test
@@ -119,6 +120,7 @@ class UserActivityResourceIT {
             .andExpect(jsonPath("$.[*].listName").value(hasItem(DEFAULT_LIST_NAME)))
             .andExpect(jsonPath("$.[*].total").value(hasItem(DEFAULT_TOTAL?.toInt())))
             .andExpect(jsonPath("$.[*].completed").value(hasItem(DEFAULT_COMPLETED?.toInt())))
+            .andExpect(jsonPath("$.[*].uniqueName").value(hasItem(DEFAULT_UNIQUE_NAME)))
     }
 
     @Test
@@ -139,6 +141,7 @@ class UserActivityResourceIT {
             .andExpect(jsonPath("$.listName").value(DEFAULT_LIST_NAME))
             .andExpect(jsonPath("$.total").value(DEFAULT_TOTAL?.toInt()))
             .andExpect(jsonPath("$.completed").value(DEFAULT_COMPLETED?.toInt()))
+            .andExpect(jsonPath("$.uniqueName").value(DEFAULT_UNIQUE_NAME))
     }
     @Test
     @Transactional
@@ -163,6 +166,7 @@ class UserActivityResourceIT {
         updatedUserActivity.listName = UPDATED_LIST_NAME
         updatedUserActivity.total = UPDATED_TOTAL
         updatedUserActivity.completed = UPDATED_COMPLETED
+        updatedUserActivity.uniqueName = UPDATED_UNIQUE_NAME
         val userActivityDTO = userActivityMapper.toDto(updatedUserActivity)
 
         restUserActivityMockMvc.perform(
@@ -178,6 +182,7 @@ class UserActivityResourceIT {
         assertThat(testUserActivity.listName).isEqualTo(UPDATED_LIST_NAME)
         assertThat(testUserActivity.total).isEqualTo(UPDATED_TOTAL)
         assertThat(testUserActivity.completed).isEqualTo(UPDATED_COMPLETED)
+        assertThat(testUserActivity.uniqueName).isEqualTo(UPDATED_UNIQUE_NAME)
     }
 
     @Test
@@ -260,6 +265,7 @@ class UserActivityResourceIT {
             id = userActivity.id
 
             completed = UPDATED_COMPLETED
+            uniqueName = UPDATED_UNIQUE_NAME
         }
 
         restUserActivityMockMvc.perform(
@@ -276,6 +282,7 @@ class UserActivityResourceIT {
         assertThat(testUserActivity.listName).isEqualTo(DEFAULT_LIST_NAME)
         assertThat(testUserActivity.total).isEqualTo(DEFAULT_TOTAL)
         assertThat(testUserActivity.completed).isEqualTo(UPDATED_COMPLETED)
+        assertThat(testUserActivity.uniqueName).isEqualTo(UPDATED_UNIQUE_NAME)
     }
 
     @Test
@@ -293,6 +300,7 @@ class UserActivityResourceIT {
             listName = UPDATED_LIST_NAME
             total = UPDATED_TOTAL
             completed = UPDATED_COMPLETED
+            uniqueName = UPDATED_UNIQUE_NAME
         }
 
         restUserActivityMockMvc.perform(
@@ -309,6 +317,7 @@ class UserActivityResourceIT {
         assertThat(testUserActivity.listName).isEqualTo(UPDATED_LIST_NAME)
         assertThat(testUserActivity.total).isEqualTo(UPDATED_TOTAL)
         assertThat(testUserActivity.completed).isEqualTo(UPDATED_COMPLETED)
+        assertThat(testUserActivity.uniqueName).isEqualTo(UPDATED_UNIQUE_NAME)
     }
 
     @Throws(Exception::class)
@@ -409,6 +418,9 @@ class UserActivityResourceIT {
         private const val DEFAULT_COMPLETED: Long = 1L
         private const val UPDATED_COMPLETED: Long = 2L
 
+        private const val DEFAULT_UNIQUE_NAME = "AAAAAAAAAA"
+        private const val UPDATED_UNIQUE_NAME = "BBBBBBBBBB"
+
         private val ENTITY_API_URL: String = "/api/user-activities"
         private val ENTITY_API_URL_ID: String = ENTITY_API_URL + "/{id}"
 
@@ -428,7 +440,9 @@ class UserActivityResourceIT {
 
                 total = DEFAULT_TOTAL,
 
-                completed = DEFAULT_COMPLETED
+                completed = DEFAULT_COMPLETED,
+
+                uniqueName = DEFAULT_UNIQUE_NAME
 
             )
 
@@ -448,7 +462,9 @@ class UserActivityResourceIT {
 
                 total = UPDATED_TOTAL,
 
-                completed = UPDATED_COMPLETED
+                completed = UPDATED_COMPLETED,
+
+                uniqueName = UPDATED_UNIQUE_NAME
 
             )
 
