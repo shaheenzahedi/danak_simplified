@@ -7,13 +7,13 @@ services:
       - _JAVA_OPTIONS=-Xmx512m -Xms256m
       - SPRING_PROFILES_ACTIVE=prod,api-docs
       - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
-      - SPRING_DATASOURCE_URL=jdbc:mysql://danak-mysql:3306/danak?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true
-      - SPRING_LIQUIBASE_URL=jdbc:mysql://danak-mysql:3306/danak?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_URL=jdbc:mysql://danak-mysql:3306/danak?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist>
+      - SPRING_LIQUIBASE_URL=jdbc:mysql://danak-mysql:3306/danak?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=>
       - JHIPSTER_SLEEP=30 # gives time for other services to boot before the application
     # If you want to expose these ports outside your dev PC,
     # remove the "127.0.0.1:" prefix
     ports:
-      - 127.0.0.1:8080:8080
+      - 8080:8080
   danak-mysql:
     image: mysql:8.0.28
     restart: always
@@ -25,8 +25,13 @@ services:
       MYSQL_PASSWORD: 'admin'
       # Password for root access
       MYSQL_ROOT_PASSWORD: 'WFS5dJX9dLcahs'
+    command: mysqld --sql_mode="" --character-set-server=utf8 --collation-server=utf8_slovenian_ci --init-connect='SET NAMES UTF8;' --innodb-flush-log-at-trx-commit=0
     ports:
       # <Port exposed> : < MySQL Port running inside container>
       - '3306:3306'
     volumes:
       - my-db:/var/lib/mysql
+# Names our volume
+volumes:
+  my-db:
+
