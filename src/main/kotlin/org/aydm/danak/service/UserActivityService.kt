@@ -1,4 +1,5 @@
 package org.aydm.danak.service
+import org.aydm.danak.service.dto.AggregatedUserActivity
 import org.aydm.danak.service.dto.OverallUserActivities
 import org.aydm.danak.service.dto.UserActivityDTO
 import org.springframework.transaction.annotation.Transactional
@@ -60,5 +61,5 @@ interface UserActivityService {
     fun submit(submitDTO: SubmitDTO): Boolean
     fun getAllActivityByTablet(): List<SubmitDTO>
     fun getAllActivityByUser(): List<OverallUserActivities>
-    fun findAllDistinctActivityIdSummary(): Any
+    fun findAllDistinctActivityIdSummary(): List<AggregatedUserActivity>?
 }

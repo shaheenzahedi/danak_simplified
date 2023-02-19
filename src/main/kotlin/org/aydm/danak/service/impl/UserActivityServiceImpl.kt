@@ -130,7 +130,7 @@ class UserActivityServiceImpl(
         val userActivities = findAllDistinctActivityIdSummary()
         return tabletUsers.map { tabletUser ->
             val activityDTOs =
-                userActivities.filter { userActivityDTO -> userActivityDTO.tabletUserId == tabletUser.id }
+                userActivities?.filter { userActivityDTO -> userActivityDTO.tabletUserId == tabletUser.id }
             OverallUserActivities(
                 firstName = tabletUser.firstName,
                 lastName = tabletUser.lastName,
@@ -139,14 +139,14 @@ class UserActivityServiceImpl(
         }
     }
 
-    override fun findAllDistinctActivityIdSummary(): List<AggregatedUserActivity> {
+    override fun findAllDistinctActivityIdSummary(): List<AggregatedUserActivity>? {
         return userActivityRepository.findAllDistinctActivityIdSummary()
             ?.map {
                 AggregatedUserActivity(
-                    tabletUserId = it[0] as Long?,
-                    listName = it[1].toString(),
-                    totals = it[2] as Long?,
-                    completes = it[3] as Long?
+                    tabletUserId = it.activity?.id,
+                    listName = it.listName,
+                    totals = it.total,
+                    completes = it.completed
                 )
             }
     }

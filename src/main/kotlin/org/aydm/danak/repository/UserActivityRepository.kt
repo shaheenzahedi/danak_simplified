@@ -11,6 +11,6 @@ import org.springframework.stereotype.Repository
 @Suppress("unused")
 @Repository
 interface UserActivityRepository : JpaRepository<UserActivity, Long> {
-    @Query("SELECT ua.activity.id ,ua.uniqueName,SUM(ua.total),SUM(ua.completed) FROM UserActivity ua group by ua.uniqueName,ua.activity.id order by ua.uniqueName")
-    fun findAllDistinctActivityIdSummary():List<ArrayList<*>>
+    @Query("SELECT ua FROM UserActivity ua WHERE ua.id IN (SELECT MAX(ua2.id) FROM UserActivity ua2 GROUP BY ua2.uniqueName,ua2.activity.id)")
+    fun findAllDistinctActivityIdSummary():List<UserActivity>?
 }
