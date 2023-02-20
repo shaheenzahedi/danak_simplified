@@ -7,6 +7,7 @@ data class OverallUserActivities(
 )
 data class AggregatedUserActivity(
     val tabletUserId:Long?,
+    val displayListName:String?,
     val listName:String?,
     val totals:Long?,
     val completes:Long?

@@ -144,7 +144,8 @@ class UserActivityServiceImpl(
             ?.map {
                 AggregatedUserActivity(
                     tabletUserId = it.activity?.id,
-                    listName = it.listName,
+                    displayListName = it.listName,
+                    listName = it.uniqueName,
                     totals = it.total,
                     completes = it.completed
                 )
