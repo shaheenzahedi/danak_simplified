@@ -3,8 +3,10 @@ services:
   jenkins:
     image: jenkins/jenkins:lts-jdk11
     ports:
-      - 49001:8081
+      - 8081:8080
       - 50000:50000
+    environment:
+      - _JAVA_OPTIONS=-Xmx512m -Xms256m
     # uncomment for docker in docker
     privileged: true
     user: root
