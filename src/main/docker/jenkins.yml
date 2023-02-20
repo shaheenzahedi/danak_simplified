@@ -7,6 +7,8 @@ services:
       - 50000:50000
     # uncomment for docker in docker
     privileged: true
+    user: root
+    container_name: jenkins
     volumes:
 #     enable persistent volume (warning: make sure that the local jenkins_home folder is created)
     - ~/volumes/jenkins_home:/var/jenkins_home
