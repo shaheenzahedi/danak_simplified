@@ -1,9 +1,6 @@
 #!/usr/bin/env groovy
 
 node {
-    triggers {
-        githubPush()
-    }
     stage('checkout') {
         checkout scm
     }
