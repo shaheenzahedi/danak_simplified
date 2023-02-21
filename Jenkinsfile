@@ -31,4 +31,14 @@ node {
         // https://github.com/GoogleContainerTools/jib/tree/master/jib-maven-plugin#authentication-methods
         sh "./mvnw package -Pprod verify jib:dockerBuild -DskipTests=true"
     }
+    stage('container down') {
+        // A pre-requisite to this step is to setup authentication to the docker registry
+        // https://github.com/GoogleContainerTools/jib/tree/master/jib-maven-plugin#authentication-methods
+        sh "docker compose -f ./src/main/docker/app.yml down"
+    }
+    stage('container up') {
+        // A pre-requisite to this step is to setup authentication to the docker registry
+        // https://github.com/GoogleContainerTools/jib/tree/master/jib-maven-plugin#authentication-methods
+        sh "docker compose -f ./src/main/docker/app.yml up -d"
+    }
 }
