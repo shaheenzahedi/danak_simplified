@@ -1,6 +1,5 @@
 package org.aydm.danak.service.impl
 
-import liquibase.pro.packaged.it
 import org.aydm.danak.domain.Tablet
 import org.aydm.danak.repository.TabletRepository
 import org.aydm.danak.service.TabletService
@@ -54,6 +53,11 @@ class TabletServiceImpl(
         log.debug("Request to get all Tablets")
         return tabletRepository.findAll()
             .mapTo(mutableListOf(), tabletMapper::toDto)
+    }
+    @Transactional(readOnly = true)
+    override fun findAllRegistered(): List<Long>? {
+        log.debug("Request to get all Tablets")
+        return tabletRepository.findAllRegistered()
     }
 
     @Transactional(readOnly = true)

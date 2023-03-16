@@ -19,6 +19,9 @@
       },
       "id": "ID",
       "name": "Name",
+      "androidId": "Android Id",
+      "macId": "Mac Id",
+      "model": "Model",
       "tabletUser": "Tablet User"
     }
   }

@@ -1,14 +1,18 @@
-entity Tablet{
+entity Tablet {
     name String
+    androidId String
+    macId String
+    model String
 }
-entity TabletUser{
+entity TabletUser {
     firstName String
     lastName String
 }
-entity UserActivity{
+entity UserActivity {
     listName String
     total Long
     completed Long
+    uniqueName String
 }
 relationship OneToMany {
 	TabletUser to UserActivity{activity}

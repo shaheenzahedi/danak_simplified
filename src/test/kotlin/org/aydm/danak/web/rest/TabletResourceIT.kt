@@ -78,6 +78,9 @@ class TabletResourceIT {
         val testTablet = tabletList[tabletList.size - 1]
 
         assertThat(testTablet.name).isEqualTo(DEFAULT_NAME)
+        assertThat(testTablet.androidId).isEqualTo(DEFAULT_ANDROID_ID)
+        assertThat(testTablet.macId).isEqualTo(DEFAULT_MAC_ID)
+        assertThat(testTablet.model).isEqualTo(DEFAULT_MODEL)
     }
 
     @Test
@@ -115,6 +118,9 @@ class TabletResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(tablet.id?.toInt())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
+            .andExpect(jsonPath("$.[*].androidId").value(hasItem(DEFAULT_ANDROID_ID)))
+            .andExpect(jsonPath("$.[*].macId").value(hasItem(DEFAULT_MAC_ID)))
+            .andExpect(jsonPath("$.[*].model").value(hasItem(DEFAULT_MODEL)))
     }
 
     @Test
@@ -133,6 +139,9 @@ class TabletResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(tablet.id?.toInt()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
+            .andExpect(jsonPath("$.androidId").value(DEFAULT_ANDROID_ID))
+            .andExpect(jsonPath("$.macId").value(DEFAULT_MAC_ID))
+            .andExpect(jsonPath("$.model").value(DEFAULT_MODEL))
     }
     @Test
     @Transactional
@@ -155,6 +164,9 @@ class TabletResourceIT {
         // Disconnect from session so that the updates on updatedTablet are not directly saved in db
         em.detach(updatedTablet)
         updatedTablet.name = UPDATED_NAME
+        updatedTablet.androidId = UPDATED_ANDROID_ID
+        updatedTablet.macId = UPDATED_MAC_ID
+        updatedTablet.model = UPDATED_MODEL
         val tabletDTO = tabletMapper.toDto(updatedTablet)
 
         restTabletMockMvc.perform(
@@ -168,6 +180,9 @@ class TabletResourceIT {
         assertThat(tabletList).hasSize(databaseSizeBeforeUpdate)
         val testTablet = tabletList[tabletList.size - 1]
         assertThat(testTablet.name).isEqualTo(UPDATED_NAME)
+        assertThat(testTablet.androidId).isEqualTo(UPDATED_ANDROID_ID)
+        assertThat(testTablet.macId).isEqualTo(UPDATED_MAC_ID)
+        assertThat(testTablet.model).isEqualTo(UPDATED_MODEL)
     }
 
     @Test
@@ -250,6 +265,9 @@ class TabletResourceIT {
             id = tablet.id
 
             name = UPDATED_NAME
+            androidId = UPDATED_ANDROID_ID
+            macId = UPDATED_MAC_ID
+            model = UPDATED_MODEL
         }
 
         restTabletMockMvc.perform(
@@ -264,6 +282,9 @@ class TabletResourceIT {
         assertThat(tabletList).hasSize(databaseSizeBeforeUpdate)
         val testTablet = tabletList.last()
         assertThat(testTablet.name).isEqualTo(UPDATED_NAME)
+        assertThat(testTablet.androidId).isEqualTo(UPDATED_ANDROID_ID)
+        assertThat(testTablet.macId).isEqualTo(UPDATED_MAC_ID)
+        assertThat(testTablet.model).isEqualTo(UPDATED_MODEL)
     }
 
     @Test
@@ -279,6 +300,9 @@ class TabletResourceIT {
             id = tablet.id
 
             name = UPDATED_NAME
+            androidId = UPDATED_ANDROID_ID
+            macId = UPDATED_MAC_ID
+            model = UPDATED_MODEL
         }
 
         restTabletMockMvc.perform(
@@ -293,6 +317,9 @@ class TabletResourceIT {
         assertThat(tabletList).hasSize(databaseSizeBeforeUpdate)
         val testTablet = tabletList.last()
         assertThat(testTablet.name).isEqualTo(UPDATED_NAME)
+        assertThat(testTablet.androidId).isEqualTo(UPDATED_ANDROID_ID)
+        assertThat(testTablet.macId).isEqualTo(UPDATED_MAC_ID)
+        assertThat(testTablet.model).isEqualTo(UPDATED_MODEL)
     }
 
     @Throws(Exception::class)
@@ -387,6 +414,15 @@ class TabletResourceIT {
         private const val DEFAULT_NAME = "AAAAAAAAAA"
         private const val UPDATED_NAME = "BBBBBBBBBB"
 
+        private const val DEFAULT_ANDROID_ID = "AAAAAAAAAA"
+        private const val UPDATED_ANDROID_ID = "BBBBBBBBBB"
+
+        private const val DEFAULT_MAC_ID = "AAAAAAAAAA"
+        private const val UPDATED_MAC_ID = "BBBBBBBBBB"
+
+        private const val DEFAULT_MODEL = "AAAAAAAAAA"
+        private const val UPDATED_MODEL = "BBBBBBBBBB"
+
         private val ENTITY_API_URL: String = "/api/tablets"
         private val ENTITY_API_URL_ID: String = ENTITY_API_URL + "/{id}"
 
@@ -402,7 +438,13 @@ class TabletResourceIT {
         @JvmStatic
         fun createEntity(em: EntityManager): Tablet {
             val tablet = Tablet(
-                name = DEFAULT_NAME
+                name = DEFAULT_NAME,
+
+                androidId = DEFAULT_ANDROID_ID,
+
+                macId = DEFAULT_MAC_ID,
+
+                model = DEFAULT_MODEL
 
             )
 
@@ -418,7 +460,13 @@ class TabletResourceIT {
         @JvmStatic
         fun createUpdatedEntity(em: EntityManager): Tablet {
             val tablet = Tablet(
-                name = UPDATED_NAME
+                name = UPDATED_NAME,
+
+                androidId = UPDATED_ANDROID_ID,
+
+                macId = UPDATED_MAC_ID,
+
+                model = UPDATED_MODEL
 
             )
 

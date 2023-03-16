@@ -74,6 +74,8 @@ class SecurityConfiguration(
             .antMatchers("/api/authenticate").permitAll()
             .antMatchers("/api/submit-activity").permitAll()
             .antMatchers("/api/all-activities-by-user").permitAll()
+            .antMatchers("/api/all-activities-by-tablet").permitAll()
+            .antMatchers("/api/tablets").permitAll()
             .antMatchers("/api/register").permitAll()
             .antMatchers("/api/activate").permitAll()
             .antMatchers("/api/account/reset-password/init").permitAll()

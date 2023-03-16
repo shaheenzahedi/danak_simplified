@@ -12,5 +12,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface UserActivityRepository : JpaRepository<UserActivity, Long> {
     @Query("SELECT ua FROM UserActivity ua WHERE ua.id IN (SELECT MAX(ua2.id) FROM UserActivity ua2 GROUP BY ua2.uniqueName,ua2.activity.id)")
-    fun findAllDistinctActivityIdSummary():List<UserActivity>?
+    fun findAllDistinctActivityIdSummary(): List<UserActivity>?
 }

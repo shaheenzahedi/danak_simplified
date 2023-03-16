@@ -55,6 +55,13 @@ class TabletUserServiceImpl(
             .mapTo(mutableListOf(), tabletUserMapper::toDto)
     }
 
+    @Transactional(readOnly = true)
+    override fun findOne(id: Long): Optional<TabletUserDTO> {
+        log.debug("Request to get TabletUser : $id")
+        return tabletUserRepository.findById(id)
+            .map(tabletUserMapper::toDto)
+    }
+
     override fun findAllByFirstLastNameImplicit(): MutableList<TabletUserDTO> {
         return tabletUserRepository.findAllByFirstLastNameImplicit()
             .mapTo(mutableListOf(), tabletUserMapper::toDto)
@@ -65,12 +72,6 @@ class TabletUserServiceImpl(
             tabletUserRepository.findByNameAndFamily(tabletUserDTO.firstName, tabletUserDTO.lastName).orElse(null)
         if (tabletUser != null) return tabletUserMapper.toDto(tabletUser)
         return save(tabletUserDTO)
-    }
-    @Transactional(readOnly = true)
-    override fun findOne(id: Long): Optional<TabletUserDTO> {
-        log.debug("Request to get TabletUser : $id")
-        return tabletUserRepository.findById(id)
-            .map(tabletUserMapper::toDto)
     }
 
     override fun delete(id: Long) {

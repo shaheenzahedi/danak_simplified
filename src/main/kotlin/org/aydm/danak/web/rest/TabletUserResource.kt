@@ -15,6 +15,7 @@ import java.net.URISyntaxException
 import java.util.Objects
 
 private const val ENTITY_NAME = "tabletUser"
+
 /**
  * REST controller for managing [org.aydm.danak.domain.TabletUser].
  */
@@ -138,7 +139,8 @@ class TabletUserResource(
 
      * @return the [ResponseEntity] with status `200 (OK)` and the list of tabletUsers in body.
      */
-    @GetMapping("/tablet-users") fun getAllTabletUsers(): MutableList<TabletUserDTO> {
+    @GetMapping("/tablet-users")
+    fun getAllTabletUsers(): MutableList<TabletUserDTO> {
 
         log.debug("REST request to get all TabletUsers")
 
@@ -157,6 +159,7 @@ class TabletUserResource(
         val tabletUserDTO = tabletUserService.findOne(id)
         return ResponseUtil.wrapOrNotFound(tabletUserDTO)
     }
+
     /**
      *  `DELETE  /tablet-users/:id` : delete the "id" tabletUser.
      *

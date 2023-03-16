@@ -126,7 +126,9 @@ class UserActivityServiceImpl(
     }
 
     override fun getAllActivityByUser(): List<OverallUserActivities> {
+        val tablets = tabletServiceImpl.findAllRegistered()
         val tabletUsers = tabletUserServiceImpl.findAllByFirstLastNameImplicit()
+            .filter { tablets?.contains(it.tablet?.id) ?: false }
         val userActivities = findAllDistinctActivityIdSummary()
         return tabletUsers.map { tabletUser ->
             val activityDTOs =

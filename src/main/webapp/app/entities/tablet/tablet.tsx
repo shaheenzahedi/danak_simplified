@@ -53,6 +53,15 @@ export const Tablet = (props: RouteComponentProps<{ url: string }>) => {
                 <th>
                   <Translate contentKey="danakApp.tablet.name">Name</Translate>
                 </th>
+                <th>
+                  <Translate contentKey="danakApp.tablet.androidId">Android Id</Translate>
+                </th>
+                <th>
+                  <Translate contentKey="danakApp.tablet.macId">Mac Id</Translate>
+                </th>
+                <th>
+                  <Translate contentKey="danakApp.tablet.model">Model</Translate>
+                </th>
                 <th />
               </tr>
             </thead>
@@ -65,6 +74,9 @@ export const Tablet = (props: RouteComponentProps<{ url: string }>) => {
                     </Button>
                   </td>
                   <td>{tablet.name}</td>
+                  <td>{tablet.androidId}</td>
+                  <td>{tablet.macId}</td>
+                  <td>{tablet.model}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`/tablet/${tablet.id}`} color="info" size="sm" data-cy="entityDetailsButton">

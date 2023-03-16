@@ -53,4 +53,5 @@ interface TabletService {
      */
     fun delete(id: Long)
     fun createSave(tabletName: String): TabletDTO
+    fun findAllRegistered(): List<Long>?
 }

@@ -2,9 +2,9 @@ package org.aydm.danak.service
 import org.aydm.danak.service.dto.AggregatedUserActivity
 import org.aydm.danak.service.dto.OverallUserActivities
 import org.aydm.danak.service.dto.UserActivityDTO
-import org.springframework.transaction.annotation.Transactional
 import org.web.danak.service.dto.SubmitDTO
 import java.util.Optional
+import javax.transaction.Transactional
 
 /**
  * Service Interface for managing [org.aydm.danak.domain.UserActivity].

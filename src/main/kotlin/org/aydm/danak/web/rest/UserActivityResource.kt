@@ -157,7 +157,8 @@ class UserActivityResource(
 
      * @return the [ResponseEntity] with status `200 (OK)` and the list of userActivities in body.
      */
-    @GetMapping("/user-activities") fun getAllUserActivities(): MutableList<UserActivityDTO> {
+    @GetMapping("/user-activities")
+    fun getAllUserActivities(): MutableList<UserActivityDTO> {
 
         log.debug("REST request to get all UserActivities")
 

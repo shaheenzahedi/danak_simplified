@@ -84,6 +84,15 @@ export const TabletUpdate = (props: RouteComponentProps<{ id: string }>) => {
                 />
               ) : null}
               <ValidatedField label={translate('danakApp.tablet.name')} id="tablet-name" name="name" data-cy="name" type="text" />
+              <ValidatedField
+                label={translate('danakApp.tablet.androidId')}
+                id="tablet-androidId"
+                name="androidId"
+                data-cy="androidId"
+                type="text"
+              />
+              <ValidatedField label={translate('danakApp.tablet.macId')} id="tablet-macId" name="macId" data-cy="macId" type="text" />
+              <ValidatedField label={translate('danakApp.tablet.model')} id="tablet-model" name="model" data-cy="model" type="text" />
               <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/tablet" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;

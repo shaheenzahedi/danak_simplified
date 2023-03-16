@@ -48,11 +48,13 @@ data class TabletUser(
         userActivity.activity = this
         return this
     }
+
     fun removeUserActivity(userActivity: UserActivity): TabletUser {
         this.userActivities?.remove(userActivity)
         userActivity.activity = null
         return this
     }
+
     fun tablet(tablet: Tablet?): TabletUser {
         this.tablet = tablet
         return this

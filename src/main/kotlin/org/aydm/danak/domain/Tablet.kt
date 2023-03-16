@@ -20,6 +20,15 @@ data class Tablet(
     @Column(name = "name")
     var name: String? = null,
 
+    @Column(name = "android_id")
+    var androidId: String? = null,
+
+    @Column(name = "mac_id")
+    var macId: String? = null,
+
+    @Column(name = "model")
+    var model: String? = null,
+
     @OneToMany(mappedBy = "tablet")
     @JsonIgnoreProperties(
         value = [
@@ -60,6 +69,9 @@ data class Tablet(
         return "Tablet{" +
             "id=" + id +
             ", name='" + name + "'" +
+            ", androidId='" + androidId + "'" +
+            ", macId='" + macId + "'" +
+            ", model='" + model + "'" +
             "}"
     }
 

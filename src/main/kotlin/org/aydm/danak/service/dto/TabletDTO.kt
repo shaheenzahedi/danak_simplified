@@ -10,7 +10,13 @@ data class TabletDTO(
 
     var id: Long? = null,
 
-    var name: String? = null
+    var name: String? = null,
+
+    var androidId: String? = null,
+
+    var macId: String? = null,
+
+    var model: String? = null
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
