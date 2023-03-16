@@ -13,6 +13,7 @@ import java.util.*
 @Repository
 interface TabletRepository : JpaRepository<Tablet, Long> {
     fun findByName(tabletName: String): Optional<Tablet>
-    @Query("select t.id from Tablet t where t.androidId is not null")
+//    @Query("select t.id from Tablet t where t.androidId is not null")
+    @Query("select t.id from Tablet t")
     fun findAllRegistered(): List<Long>?
 }
