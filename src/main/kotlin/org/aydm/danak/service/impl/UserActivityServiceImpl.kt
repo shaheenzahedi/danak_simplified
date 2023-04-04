@@ -136,6 +136,7 @@ class UserActivityServiceImpl(
             OverallUserActivities(
                 firstName = tabletUser.firstName,
                 lastName = tabletUser.lastName,
+                tabletName = tabletUser.tablet?.name,
                 userActivities = activityDTOs
             )
         }
