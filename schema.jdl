@@ -14,9 +14,28 @@ entity UserActivity {
     completed Long
     uniqueName String
 }
+entity File{
+	name String
+    checksum String
+    path String
+}
+entity FileBelongings{
+
+}
+entity Version{
+	version Integer
+}
+entity FilePlacement{
+
+}
+
 relationship OneToMany {
 	TabletUser to UserActivity{activity}
    	Tablet to TabletUser{tablet}
+    File to FileBelongings{file}
+    Version to FileBelongings{version}
+    File to FilePlacement{placement}
+    Version to FilePlacement{version}
 }
 
 

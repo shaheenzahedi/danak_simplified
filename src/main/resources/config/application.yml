@@ -218,8 +218,10 @@ asset:
   source-path: ${asset.base-path}/source/
   versions-path: ${asset.base-path}/versions/
   lists-path: ${asset.base-path}/lists/
+  diffs-path: ${asset.base-path}/diffs/
   scripts:
     path: ${asset.base-path}/scripts
     copy: ${asset.scripts.path}/copy.sh
     generate-csv: ${asset.scripts.path}/gen_csv.sh
     cleanup: ${asset.scripts.path}/cleanup.sh
+    generate-diff: ${asset.scripts.path}/gen_diff.sh

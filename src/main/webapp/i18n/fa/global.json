@@ -10,6 +10,10 @@
         "tablet": "Tablet",
         "tabletUser": "Tablet User",
         "userActivity": "User Activity",
+        "file": "File",
+        "fileBelongings": "File Belongings",
+        "version": "Version",
+        "filePlacement": "File Placement",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "account": {
