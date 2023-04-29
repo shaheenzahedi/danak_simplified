@@ -213,3 +213,13 @@ jhipster:
 # ===================================================================
 
 # application:
+asset:
+  base-path: '/media/shaheen/Store/sava/sample'
+  source-path: ${asset.base-path}/source/
+  versions-path: ${asset.base-path}/versions/
+  lists-path: ${asset.base-path}/lists/
+  scripts:
+    path: ${asset.base-path}/scripts
+    copy: ${asset.scripts.path}/copy.sh
+    generate-csv: ${asset.scripts.path}/gen_csv.sh
+    cleanup: ${asset.scripts.path}/cleanup.sh
