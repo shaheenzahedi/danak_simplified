@@ -14,15 +14,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -37,7 +35,7 @@ public interface AssetFacade {
 
     DownloadResponse download(int version) throws IOException;
 }
-
+@Transactional
 @Service
 class AssetFacadeImpl implements AssetFacade {
     FileService fileService;
@@ -223,13 +221,18 @@ class AssetFacadeImpl implements AssetFacade {
         Optional<Integer> lastVersion = getTheLastVersion();
         if (lastVersion.isEmpty())
             throw new BadRequestAlertException("update is pointless when there is no asset on the server", "asset", "");
-        long fromVersionId = versionService.findIdByVersion(fromVersion);
-        long toVersionId = versionService.findIdByVersion(toVersion);
+        List<VersionDTO> allVersions = versionService.findAll();
+        Map<Long,Integer> versionIdToVersion = new HashMap<>();
+        for (VersionDTO v : allVersions) {
+            versionIdToVersion.put(v.getId(),v.getVersion());
+        }
+        long fromVersionId = allVersions.stream().filter(it->it.getVersion()==fromVersion).findFirst().orElseThrow().getId();
+        long toVersionId = allVersions.stream().filter(it->it.getVersion()==toVersion).findFirst().orElseThrow().getId();
         List<FileDTO> deletes = fileService.findAllUpdates(fromVersionId, toVersionId);
         List<FileDTO> updates = fileService.findAllUpdates(toVersionId, fromVersionId);
         UpdateResponse result = new UpdateResponse(
-            updates.stream().map(it->new FileResponse(it.getChecksum(),it.getFtpPath())).collect(Collectors.toList()),
-            deletes.stream().map(it->new FileResponse(it.getChecksum(),it.getFtpPath())).collect(Collectors.toList())
+            updates.stream().map(it->new FileResponse(it.getChecksum(),it.getFtpPath(versionIdToVersion.get(it.getPlacement().getId())))).collect(Collectors.toList()),
+            deletes.stream().map(it->new FileResponse(it.getChecksum(),it.getFtpPath(versionIdToVersion.get(it.getPlacement().getId())))).collect(Collectors.toList())
         );
         saveCache(pathname, result);
         return result;
@@ -259,9 +262,14 @@ class AssetFacadeImpl implements AssetFacade {
         Optional<Integer> lastVersion = getTheLastVersion();
         if (lastVersion.isEmpty())
             throw new BadRequestAlertException("download is pointless when there is no asset on the server", "asset", "");
-        long versionId = versionService.findIdByVersion(version);
+        List<VersionDTO> allVersions = versionService.findAll();
+        Map<Long,Integer> versionIdToVersion = new HashMap<>();
+        for (VersionDTO v : allVersions) {
+            versionIdToVersion.put(v.getId(),v.getVersion());
+        }
+        Long versionId = allVersions.stream().filter(it->it.getVersion()==version).findFirst().orElseThrow().getId();
         List<FileDTO> files = fileService.findAllBelongsToVersion(versionId);
-        DownloadResponse result = new DownloadResponse(files.stream().map(it->new FileResponse(it.getChecksum(),it.getFtpPath())).collect(Collectors.toList()));
+        DownloadResponse result = new DownloadResponse(files.stream().map(it->new FileResponse(it.getChecksum(),it.getFtpPath(versionIdToVersion.get(it.getPlacement().getId())))).collect(Collectors.toList()));
         saveCache(pathname, result);
         return result;
     }

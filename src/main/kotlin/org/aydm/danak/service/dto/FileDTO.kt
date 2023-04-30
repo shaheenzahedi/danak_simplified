@@ -1,9 +1,6 @@
 package org.aydm.danak.service.dto
 
-import com.fasterxml.jackson.annotation.JsonGetter
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.annotation.JsonValue
 import java.util.Objects
 import java.io.Serializable
 
@@ -21,8 +18,9 @@ data class FileDTO(
     var placement: VersionDTO? = null
 ) : Serializable {
 
-    val ftpPath: String
-        get() = "${placement?.id}/${if (path?.startsWith(".") == true) "" else "$path/"}${name}"
+    fun getFtpPath(version:Int):String{
+     return "${version}/${if (path?.startsWith(".") == true) "" else "$path/"}${name}"
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
