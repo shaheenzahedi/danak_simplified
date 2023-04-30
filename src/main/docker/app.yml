@@ -12,6 +12,8 @@ services:
       - JHIPSTER_SLEEP=30 # gives time for other services to boot before the application
     # If you want to expose these ports outside your dev PC,
     # remove the "127.0.0.1:" prefix
+    volumes:
+      - /opt/asset:/opt/asset
     ports:
       - 8080:8080
   danak-mysql:
@@ -34,4 +36,5 @@ services:
 # Names our volume
 volumes:
   my-db:
+  /opt/asset:
 
