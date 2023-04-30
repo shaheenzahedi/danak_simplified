@@ -214,7 +214,7 @@ jhipster:
 
 # application:
 asset:
-  base-path: '/media/shaheen/Store/sava/sample'
+  base-path: '/opt/asset'
   source-path: ${asset.base-path}/source/
   versions-path: ${asset.base-path}/versions/
   lists-path: ${asset.base-path}/lists/
