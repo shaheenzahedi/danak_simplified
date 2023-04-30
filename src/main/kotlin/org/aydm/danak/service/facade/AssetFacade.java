@@ -124,13 +124,13 @@ class AssetFacadeImpl implements AssetFacade {
             .thenRun(() -> {
                 if (oldVersion.isPresent()) {
                     try {
-                        final List<FileDTO> allFiles = fileService.findAllLastVersion(oldVersion.orElseThrow()).stream()
+                        final List<FileDTO> versionToBeUpdateFiles = fileService.findAllLastVersion(oldVersion.orElseThrow()).stream()
                             .peek(fileDTO -> fileDTO.setPlacement(versionDTO)).collect(Collectors.toList());
                         final String diffAddress = diffsPath + oldVersion.orElseThrow() + '_' + version + "_diff.txt";
                         File file = new File(diffAddress);
                         if (!file.exists()) {
                             log.info("version{{}} - there is no diff so we just update the database", version);
-                            fileService.saveAll(allFiles);
+                            fileService.saveAll(versionToBeUpdateFiles);
                             return;
                         }
                         final BufferedReader diffBR = new BufferedReader(new FileReader(file, Charset.defaultCharset()));
@@ -139,16 +139,20 @@ class AssetFacadeImpl implements AssetFacade {
                         final List<FileAddress> addresses = new ArrayList<>();
                         while ((line = diffBR.readLine()) != null) {
                             if (line.startsWith("<")) {
+                                //exists in old version but not in new version,
+                                // we will remove these for the list of updated files
                                 addresses.add(FileAddress.Companion.fromDiffLine(0, line));
                             } else if (line.startsWith(">")) {
+                                //exists in new version but not in old version
                                 FileAddress newAddress = FileAddress.Companion.fromDiffLine(0, line);
-                                allFiles.add(new FileDTO(
+                                versionToBeUpdateFiles.add(new FileDTO(
                                     null, newAddress.getName(), newAddress.getChecksum(), newAddress.getPath(), versionDTO
                                 ));
                             }
                         }
+                        //remove files that was available in old version and not in new version
                         final List<FileDTO> notUpdatedFiles = new ArrayList<>();
-                        for (FileDTO fileDTO : allFiles) {
+                        for (FileDTO fileDTO : versionToBeUpdateFiles) {
                             for (FileAddress fileAddress : addresses) {
                                 if (Objects.equals(fileDTO.getChecksum(), fileAddress.getChecksum()) &&
                                     Objects.equals(fileDTO.getName(), fileAddress.getName()) &&
@@ -157,8 +161,13 @@ class AssetFacadeImpl implements AssetFacade {
                                 }
                             }
                         }
-                        allFiles.removeAll(notUpdatedFiles);
-                        fileService.saveAll(allFiles);
+                        versionToBeUpdateFiles.removeAll(notUpdatedFiles);
+                        List<FileDTO> allFiles = fileService.saveAll(versionToBeUpdateFiles);
+                        fileBelongingsService.saveAll(allFiles.stream().map(it->new FileBelongingsDTO(
+                            null,
+                            it,
+                            versionDTO
+                        )).collect(Collectors.toList()));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
