@@ -25,18 +25,15 @@ entity FileBelongings{
 entity Version{
 	version Integer
 }
-entity FilePlacement{
-
-}
 
 relationship OneToMany {
 	TabletUser to UserActivity{activity}
    	Tablet to TabletUser{tablet}
     File to FileBelongings{file}
     Version to FileBelongings{version}
-    File to FilePlacement{placement}
-    Version to FilePlacement{version}
+    Version to File{placement}
 }
+
 
 
 // Use Data Transfer Objects (DTO)

@@ -1,0 +1,25 @@
+{
+  "danakApp": {
+    "fileBelongings": {
+      "home": {
+        "title": "File Belongings",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new File Belongings",
+        "createOrEditLabel": "Create or edit a File Belongings",
+        "notFound": "No File Belongings found"
+      },
+      "created": "A new File Belongings is created with identifier {{ param }}",
+      "updated": "A File Belongings is updated with identifier {{ param }}",
+      "deleted": "A File Belongings is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete File Belongings {{ id }}?"
+      },
+      "detail": {
+        "title": "File Belongings"
+      },
+      "id": "ID",
+      "file": "File",
+      "version": "Version"
+    }
+  }
+}

@@ -121,11 +121,11 @@ class UserResource(
     fun updateUser(@Valid @RequestBody userDTO: AdminUserDTO): ResponseEntity<AdminUserDTO> {
         log.debug("REST request to update User : $userDTO")
         var existingUser = userRepository.findOneByEmailIgnoreCase(userDTO.email)
-        if (existingUser.isPresent && existingUser.get().id != userDTO.id) {
+        if (existingUser.isPresent && existingUser.orElseThrow().id != userDTO.id) {
             throw EmailAlreadyUsedException()
         }
         existingUser = userRepository.findOneByLogin(userDTO.login!!.toLowerCase())
-        if (existingUser.isPresent && existingUser.get().id != userDTO.id) {
+        if (existingUser.isPresent && existingUser.orElseThrow().id != userDTO.id) {
             throw LoginAlreadyUsedException()
         }
         val updatedUser = userService.updateUser(userDTO)

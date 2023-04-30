@@ -130,7 +130,7 @@ class UserService(
             authorities = userDTO.authorities?.let { authorities ->
                 authorities.map { authorityRepository.findById(it) }
                     .filter { it.isPresent }
-                    .mapTo(mutableSetOf()) { it.get() }
+                    .mapTo(mutableSetOf()) { it.orElseThrow() }
             } ?: mutableSetOf()
         )
         userRepository.save(user)
@@ -147,7 +147,7 @@ class UserService(
     fun updateUser(userDTO: AdminUserDTO): Optional<AdminUserDTO> {
         return Optional.of(userRepository.findById(userDTO.id!!))
             .filter(Optional<User>::isPresent)
-            .map { it.get() }
+            .map { it.orElseThrow() }
             .map { user ->
                 user.apply {
                     login = userDTO.login?.let { it.toLowerCase() }
@@ -165,7 +165,7 @@ class UserService(
                     this.asSequence()
                         .map { authorityRepository.findById(it) }
                         .filter { it.isPresent }
-                        .mapTo(managedAuthorities) { it.get() }
+                        .mapTo(managedAuthorities) { it.orElseThrow() }
                 }
                 log.debug("Changed Information for User: $user")
                 user

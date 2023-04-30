@@ -303,8 +303,8 @@ class AccountResourceIT {
 
         val testUser = userRepository.findOneByEmailIgnoreCase("alice2@example.com")
         assertThat(testUser).isPresent
-        testUser.get().activated = true
-        userRepository.save(testUser.get())
+        testUser.orElseThrow().activated = true
+        userRepository.save(testUser.orElseThrow())
 
         // Second (already activated) user
         restAccountMockMvc.perform(
@@ -391,10 +391,10 @@ class AccountResourceIT {
 
         val testUser4 = userRepository.findOneByLogin("test-register-duplicate-email-3")
         assertThat(testUser4).isPresent
-        assertThat(testUser4.get().email).isEqualTo("test-register-duplicate-email@example.com")
+        assertThat(testUser4.orElseThrow().email).isEqualTo("test-register-duplicate-email@example.com")
 
-        testUser4.get().activated = true
-        userService.updateUser((AdminUserDTO(testUser4.get())))
+        testUser4.orElseThrow().activated = true
+        userService.updateUser((AdminUserDTO(testUser4.orElseThrow())))
 
         // Register 4th (already activated) user
         restAccountMockMvc.perform(
@@ -430,8 +430,8 @@ class AccountResourceIT {
 
         val userDup = userRepository.findOneWithAuthoritiesByLogin("badguy")
         assertThat(userDup).isPresent
-        assertThat(userDup.get().authorities).hasSize(1)
-        assertContains(userDup.get().authorities, authorityRepository.findById(USER).get())
+        assertThat(userDup.orElseThrow().authorities).hasSize(1)
+        assertContains(userDup.orElseThrow().authorities, authorityRepository.findById(USER).orElseThrow())
     }
 
     @Test

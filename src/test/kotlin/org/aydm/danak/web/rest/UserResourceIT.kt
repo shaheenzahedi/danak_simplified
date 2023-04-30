@@ -249,7 +249,7 @@ class UserResourceIT {
         val databaseSizeBeforeUpdate = userRepository.findAll().size
 
         // Update the user
-        val updatedUser = userRepository.findById(user.id!!).get()
+        val updatedUser = userRepository.findById(user.id!!).orElseThrow()
         assertNotNull(updatedUser)
 
         val managedUserVM = ManagedUserVM().apply {
@@ -296,7 +296,7 @@ class UserResourceIT {
         val databaseSizeBeforeUpdate = userRepository.findAll().size
 
         // Update the user
-        val updatedUser = userRepository.findById(user.id!!).get()
+        val updatedUser = userRepository.findById(user.id!!).orElseThrow()
         assertNotNull(updatedUser)
 
         val managedUserVM = ManagedUserVM().apply {
@@ -355,7 +355,7 @@ class UserResourceIT {
         userRepository.saveAndFlush(anotherUser)
 
         // Update the user
-        val updatedUser = userRepository.findById(user.id!!).get()
+        val updatedUser = userRepository.findById(user.id!!).orElseThrow()
         assertNotNull(updatedUser)
 
         val managedUserVM = ManagedUserVM().apply {
@@ -403,7 +403,7 @@ class UserResourceIT {
         userRepository.saveAndFlush(anotherUser)
 
         // Update the user
-        val updatedUser = userRepository.findById(user.id!!).get()
+        val updatedUser = userRepository.findById(user.id!!).orElseThrow()
         assertNotNull(updatedUser)
 
         val managedUserVM = ManagedUserVM().apply {

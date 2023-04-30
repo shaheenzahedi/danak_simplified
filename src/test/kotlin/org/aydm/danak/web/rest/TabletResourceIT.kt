@@ -160,7 +160,7 @@ class TabletResourceIT {
         val databaseSizeBeforeUpdate = tabletRepository.findAll().size
 
         // Update the tablet
-        val updatedTablet = tabletRepository.findById(tablet.id).get()
+        val updatedTablet = tabletRepository.findById(tablet.id).orElseThrow()
         // Disconnect from session so that the updates on updatedTablet are not directly saved in db
         em.detach(updatedTablet)
         updatedTablet.name = UPDATED_NAME

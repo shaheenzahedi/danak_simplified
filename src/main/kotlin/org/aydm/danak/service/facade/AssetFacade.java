@@ -1,19 +1,26 @@
 package org.aydm.danak.service.facade;
 
 
+import org.aydm.danak.service.FileBelongingsService;
+import org.aydm.danak.service.FileService;
+import org.aydm.danak.service.VersionService;
+import org.aydm.danak.service.dto.FileBelongingsDTO;
+import org.aydm.danak.service.dto.FileDTO;
+import org.aydm.danak.service.dto.VersionDTO;
 import org.aydm.danak.web.rest.errors.BadRequestAlertException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -32,6 +39,16 @@ public interface AssetFacade {
 
 @Service
 class AssetFacadeImpl implements AssetFacade {
+    FileService fileService;
+    FileBelongingsService fileBelongingsService;
+    VersionService versionService;
+
+    public AssetFacadeImpl(FileService fileService, FileBelongingsService fileBelongingsService, VersionService versionService) {
+        this.fileService = fileService;
+        this.fileBelongingsService = fileBelongingsService;
+        this.versionService = versionService;
+    }
+
     private final Logger log = LoggerFactory.getLogger(AssetFacadeImpl.class);
 
     @Value("${asset.source-path}")
@@ -53,6 +70,9 @@ class AssetFacadeImpl implements AssetFacade {
 
     @Override
     public void versionAsset(int version) throws IOException {
+        final VersionDTO versionDTO = versionService.save(new VersionDTO(
+            null, version
+        ));
         String newVersionPath = versionsPath + version;
         String newVersionCSVPath = listsPath + version;
         List<CommandData> commands = new ArrayList<>();
@@ -72,7 +92,7 @@ class AssetFacadeImpl implements AssetFacade {
         );
         Optional<Integer> oldVersion = getTheLastVersion();
         if (oldVersion.isPresent()) {
-            Integer oldVersionSafe = oldVersion.get();
+            Integer oldVersionSafe = oldVersion.orElseThrow();
             String oldVersionPath = versionsPath + oldVersionSafe;
             String oldVersionCSVPath = listsPath + oldVersionSafe;
             if (!new File(oldVersionCSVPath).exists()) {
@@ -91,65 +111,98 @@ class AssetFacadeImpl implements AssetFacade {
                     failed -> log.error("version{{}} - cleanup stage failed: {}", version, failed)
                 )
             );
+            commands.add(
+                new CommandData(
+                    generateDiffScript + ' ' + listsPath + ' ' + diffsPath,
+                    success -> log.info("version{{}} - generate diffs stage success: {}", version, success),
+                    failed -> log.error("version{{}} - generate diffs stage failed: {}", version, failed)
+                )
+            );
         }
-        commands.add(
-            new CommandData(
-                generateDiffScript + ' ' + listsPath + ' ' + diffsPath,
-                success -> log.info("version{{}} - generate diffs stage success: {}", version, success),
-                failed -> log.error("version{{}} - generate diffs stage failed: {}", version, failed)
-            )
-        );
+
         new CommandRunner().runCommands(commands)
-            .thenRun(() -> log.info("version{{}} - All commands finished!", version));
+            .thenRun(() -> {
+                if (oldVersion.isPresent()) {
+                    try {
+                        final List<FileDTO> allFiles = fileService.findAllLastVersion(oldVersion.orElseThrow()).stream()
+                            .peek(fileDTO -> fileDTO.setPlacement(versionDTO)).collect(Collectors.toList());
+                        final String diffAddress = diffsPath + oldVersion.orElseThrow() + '_' + version + "_diff.txt";
+                        File file = new File(diffAddress);
+                        if (!file.exists()) {
+                            log.info("version{{}} - there is no diff so we just update the database", version);
+                            fileService.saveAll(allFiles);
+                            return;
+                        }
+                        final BufferedReader diffBR = new BufferedReader(new FileReader(file, Charset.defaultCharset()));
+                        final String header = diffBR.readLine();
+                        String line;
+                        final List<FileAddress> addresses = new ArrayList<>();
+                        while ((line = diffBR.readLine()) != null) {
+                            if (line.startsWith("<")) {
+                                addresses.add(FileAddress.Companion.fromDiffLine(0, line));
+                            } else if (line.startsWith(">")) {
+                                FileAddress newAddress = FileAddress.Companion.fromDiffLine(0, line);
+                                allFiles.add(new FileDTO(
+                                    null, newAddress.getName(), newAddress.getChecksum(), newAddress.getPath(), versionDTO
+                                ));
+                            }
+                        }
+                        final List<FileDTO> notUpdatedFiles = new ArrayList<>();
+                        for (FileDTO fileDTO : allFiles) {
+                            for (FileAddress fileAddress : addresses) {
+                                if (Objects.equals(fileDTO.getChecksum(), fileAddress.getChecksum()) &&
+                                    Objects.equals(fileDTO.getName(), fileAddress.getName()) &&
+                                    Objects.equals(fileDTO.getPath(), fileAddress.getPath())) {
+                                    notUpdatedFiles.add(fileDTO);
+                                }
+                            }
+                        }
+                        allFiles.removeAll(notUpdatedFiles);
+                        fileService.saveAll(allFiles);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    initializeSaveDB(versionDTO, newVersionCSVPath);
+                }
+                log.info("version{{}} - All commands finished!", version);
+            });
     }
+
+    private void initializeSaveDB(VersionDTO version, String csvPath) {
+        try {
+            final List<FileDTO> files = new ArrayList<>();
+            final BufferedReader versionBufferedReader = new BufferedReader(new FileReader(csvPath + '/' + "files.csv", Charset.defaultCharset()));
+            final String header = versionBufferedReader.readLine();
+            String line;
+            while ((line = versionBufferedReader.readLine()) != null) {
+                final FileAddress fileAddress = FileAddress.Companion.fromCSVLine(version.getVersion(), line);
+                files.add(new FileDTO(
+                    null,
+                    fileAddress.getName(),
+                    fileAddress.getChecksum(),
+                    fileAddress.getPath(),
+                    version
+                ));
+            }
+            fileBelongingsService.saveAll(fileService.saveAll(files).stream().map(fileDTO -> new FileBelongingsDTO(
+                null, fileDTO, version
+            )).collect(Collectors.toList()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     public UpdateResonse updateAssets(int fromVersion, int toVersion) throws IOException {
         Optional<Integer> lastVersion = getTheLastVersion();
         if (lastVersion.isEmpty())
             throw new BadRequestAlertException("update is pointless when there is no asset on the server", "asset", "");
-        if (toVersion == lastVersion.get()) {
+        if (toVersion == lastVersion.orElseThrow()) {
             return finalizeFiles(fromVersion, toVersion);
         }
         return null;
-//        try (BufferedReader br1 = new BufferedReader(new FileReader(file1));
-//             BufferedReader br2 = new BufferedReader(new FileReader(file2));
-//             BufferedReader brDiff = new BufferedReader(new FileReader(diffFile));
-//             BufferedWriter bw = new BufferedWriter(new FileWriter(file1, true))) {
-//
-//            // Skip the header line in file1 and file2
-//            String header1 = br1.readLine();
-//            String header2 = br2.readLine();
-//
-//            // Read the diff file and merge changes from file2 into file1
-//            String lineDiff;
-//            while ((lineDiff = brDiff.readLine()) != null) {
-//                if (lineDiff.startsWith(">")) {
-//                    // This line exists only in file2, so write it to file1 with a prefix indicating the source file
-//                    String line2 = br2.readLine();
-//                    bw.write("file2: " + line2);
-//                    bw.newLine();
-//                } else if (lineDiff.startsWith("<")) {
-//                    // This line exists only in file1, so skip it
-//                    br1.readLine();
-//                } else {
-//                    // This line exists in both files, so skip it in file2
-//                    br2.readLine();
-//                }
-//            }
-//
-//            // Merge the remaining lines from file2 into file1 with a prefix indicating the source file
-//            String line2;
-//            while ((line2 = br2.readLine()) != null) {
-//                bw.write("file2: " + line2);
-//                bw.newLine();
-//            }
-//
-//            System.out.println("Merged " + file2 + " into " + file1);
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
     }
 
     @Override
@@ -157,10 +210,10 @@ class AssetFacadeImpl implements AssetFacade {
         Optional<Integer> lastVersion = getTheLastVersion();
         if (lastVersion.isEmpty())
             throw new BadRequestAlertException("update is pointless when there is no asset on the server", "asset", "");
-        String lastFilePath = listsPath + lastVersion.get() + File.separator + "files.csv";
-        BufferedReader lastBufferedReader = new BufferedReader(new FileReader(lastFilePath));
+        String lastFilePath = listsPath + lastVersion.orElseThrow() + File.separator + "files.csv";
+        BufferedReader lastBufferedReader = new BufferedReader(new FileReader(lastFilePath, Charset.defaultCharset()));
         String lastHeader = lastBufferedReader.readLine();
-        if (version == lastVersion.get()) {
+        if (version == lastVersion.orElseThrow()) {
             List<FileAddress> result = new ArrayList<>();
             String line;
             while ((line = lastBufferedReader.readLine()) != null) {
@@ -168,8 +221,8 @@ class AssetFacadeImpl implements AssetFacade {
             }
             return result;
         }
-        String diffPath = diffsPath + version + '_' + lastVersion.get() + "_diff.txt";
-        BufferedReader diffBufferedReader = new BufferedReader(new FileReader(diffPath));
+        String diffPath = diffsPath + version + '_' + lastVersion.orElseThrow() + "_diff.txt";
+        BufferedReader diffBufferedReader = new BufferedReader(new FileReader(diffPath, Charset.defaultCharset()));
         String lineDiff;
         List<FileAddress> onlyInVersion = new ArrayList<>();
         while ((lineDiff = diffBufferedReader.readLine()) != null) {
@@ -178,12 +231,12 @@ class AssetFacadeImpl implements AssetFacade {
             }
         }
         String versionFilePath = listsPath + version + File.separator + "files.csv";
-        BufferedReader versionBufferedReader = new BufferedReader(new FileReader(versionFilePath));
+        BufferedReader versionBufferedReader = new BufferedReader(new FileReader(versionFilePath, Charset.defaultCharset()));
         String versionHeader = versionBufferedReader.readLine();
         List<FileAddress> result = new ArrayList<>();
         String versionLine;
         while ((versionLine = versionBufferedReader.readLine()) != null) {
-            FileAddress fileAddress = FileAddress.Companion.fromCSVLine(lastVersion.get(), versionLine);
+            FileAddress fileAddress = FileAddress.Companion.fromCSVLine(lastVersion.orElseThrow(), versionLine);
             for (FileAddress address : onlyInVersion) {
                 if (address.equals(fileAddress)) {
                     fileAddress.setVersion(version);
@@ -197,9 +250,9 @@ class AssetFacadeImpl implements AssetFacade {
         String fromFilePath = listsPath + fromVersion + File.separator + "files.csv";
         String lastFilePath = listsPath + lastVersion + File.separator + "files.csv";
         String diffPath = diffsPath + fromVersion + '_' + lastVersion + "_diff.txt";
-        BufferedReader br1 = new BufferedReader(new FileReader(lastFilePath));
-        BufferedReader br2 = new BufferedReader(new FileReader(fromFilePath));
-        BufferedReader brDiff = new BufferedReader(new FileReader(diffPath));
+        BufferedReader br1 = new BufferedReader(new FileReader(lastFilePath, Charset.defaultCharset()));
+        BufferedReader br2 = new BufferedReader(new FileReader(fromFilePath, Charset.defaultCharset()));
+        BufferedReader brDiff = new BufferedReader(new FileReader(diffPath, Charset.defaultCharset()));
 
         // Skip the header line in lastFilePath and fromFilePath
         String header1 = br1.readLine();

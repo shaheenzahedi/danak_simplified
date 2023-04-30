@@ -5,23 +5,23 @@ data class FileAddress(
     val name: String,
     val path: String,
     val checksum: String
-){
-    companion object{
-        fun fromCSVLine(version: Int,line:String):FileAddress{
+) {
+    companion object {
+        fun fromCSVLine(version: Int, line: String): FileAddress {
             val values = line.split(',')
             return FileAddress(
                 version = version,
                 name = values[0],
-                path=values[1],
+                path = values[1],
                 checksum = values[2]
             )
         }
-        fun fromDiffLine(version: Int,line:String):FileAddress{
+        fun fromDiffLine(version: Int, line: String): FileAddress {
             val values = line.substring(2).split(',')
             return FileAddress(
                 version = version,
                 name = values[0],
-                path=values[1],
+                path = values[1],
                 checksum = values[2]
             )
         }
@@ -47,5 +47,4 @@ data class FileAddress(
         result = 31 * result + checksum.hashCode()
         return result
     }
-
 }
