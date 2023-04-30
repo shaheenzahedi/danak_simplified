@@ -5,7 +5,7 @@ import org.aydm.danak.service.FileService
 import org.aydm.danak.service.dto.FileDTO
 import org.aydm.danak.service.facade.AssetFacade
 import org.aydm.danak.service.facade.FileAddress
-import org.aydm.danak.service.facade.UpdateResonse
+import org.aydm.danak.service.facade.UpdateResponse
 import org.aydm.danak.web.rest.errors.BadRequestAlertException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -107,7 +107,7 @@ class FileResource(
         return assetFacade.download(version);
     }
     @GetMapping("update-assets")
-    fun versionAsset(@RequestParam fromVersion:Int,@RequestParam toVersion:Int): UpdateResonse? {
+    fun versionAsset(@RequestParam fromVersion:Int,@RequestParam toVersion:Int): UpdateResponse? {
         return assetFacade.updateAssets(fromVersion, toVersion);
     }
     /**

@@ -73,4 +73,8 @@ versionMapper.partialUpdate(it, versionDTO)
 
         versionRepository.deleteById(id)
     }
+
+    override fun findIdByVersion(fromVersion: Int): Long {
+        return versionRepository.findByVersion(fromVersion).id!!
+    }
 }

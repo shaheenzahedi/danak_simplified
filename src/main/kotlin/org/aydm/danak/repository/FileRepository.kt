@@ -12,5 +12,15 @@ import org.springframework.stereotype.Repository
 @Suppress("unused")
 @Repository
 interface FileRepository : JpaRepository<File, Long> {
-    fun findAllByPlacementId(@Param("placementId") placementId: Long):MutableList<File>
+    fun findAllByPlacementId(@Param("placementId") placementId: Long): MutableList<File>
+
+    @Query("SELECT f FROM File f WHERE f.id in (SELECT b.file.id FROM FileBelongings b WHERE b.version.id = :version)")
+    fun findAllBelongsToVersion(@Param("version") version: Long): MutableList<File>
+
+    @Query(
+        "SELECT f FROM File f WHERE EXISTS " +
+            "(SELECT b.file.id FROM FileBelongings b WHERE b.file.id = f.id AND b.version.id = :v1) " +
+            "AND NOT EXISTS (SELECT b.file.id FROM FileBelongings b WHERE b.file.id = f.id AND b.version.id = :v2)"
+    )
+    fun findAllUpdates(@Param("v1") v1: Long, @Param("v2") v2: Long): MutableList<File>
 }

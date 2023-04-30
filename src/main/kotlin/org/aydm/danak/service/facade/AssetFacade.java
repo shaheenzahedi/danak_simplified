@@ -31,7 +31,7 @@ public interface AssetFacade {
 
     void versionAsset(int version) throws IOException;
 
-    UpdateResonse updateAssets(int fromVersion, int toVersion) throws IOException;
+    UpdateResponse updateAssets(int fromVersion, int toVersion) throws IOException;
 
 
     List<FileAddress> download(int version) throws IOException;
@@ -204,91 +204,61 @@ class AssetFacadeImpl implements AssetFacade {
 
 
     @Override
-    public UpdateResonse updateAssets(int fromVersion, int toVersion) throws IOException {
+    public UpdateResponse updateAssets(int fromVersion, int toVersion) throws IOException {
         Optional<Integer> lastVersion = getTheLastVersion();
         if (lastVersion.isEmpty())
             throw new BadRequestAlertException("update is pointless when there is no asset on the server", "asset", "");
-        if (toVersion == lastVersion.orElseThrow()) {
-            return finalizeFiles(fromVersion, toVersion);
-        }
-        return null;
+        long fromVersionId = versionService.findIdByVersion(fromVersion);
+        long toVersionId = versionService.findIdByVersion(toVersion);
+        List<FileDTO> deletes = fileService.findAllUpdates(fromVersionId,toVersionId);
+        List<FileDTO> updates = fileService.findAllUpdates(toVersionId,fromVersionId);
+        return new UpdateResponse(
+            updates,deletes
+        );
     }
 
     @Override
     public List<FileAddress> download(int version) throws IOException {
         Optional<Integer> lastVersion = getTheLastVersion();
         if (lastVersion.isEmpty())
-            throw new BadRequestAlertException("update is pointless when there is no asset on the server", "asset", "");
-        String lastFilePath = listsPath + lastVersion.orElseThrow() + File.separator + "files.csv";
-        BufferedReader lastBufferedReader = new BufferedReader(new FileReader(lastFilePath, Charset.defaultCharset()));
-        String lastHeader = lastBufferedReader.readLine();
-        if (version == lastVersion.orElseThrow()) {
-            List<FileAddress> result = new ArrayList<>();
-            String line;
-            while ((line = lastBufferedReader.readLine()) != null) {
-                result.add(FileAddress.Companion.fromCSVLine(version, line));
-            }
-            return result;
-        }
-        String diffPath = diffsPath + version + '_' + lastVersion.orElseThrow() + "_diff.txt";
-        BufferedReader diffBufferedReader = new BufferedReader(new FileReader(diffPath, Charset.defaultCharset()));
-        String lineDiff;
-        List<FileAddress> onlyInVersion = new ArrayList<>();
-        while ((lineDiff = diffBufferedReader.readLine()) != null) {
-            if (lineDiff.startsWith(">")) {
-                onlyInVersion.add(FileAddress.Companion.fromDiffLine(version, lineDiff));
-            }
-        }
-        String versionFilePath = listsPath + version + File.separator + "files.csv";
-        BufferedReader versionBufferedReader = new BufferedReader(new FileReader(versionFilePath, Charset.defaultCharset()));
-        String versionHeader = versionBufferedReader.readLine();
-        List<FileAddress> result = new ArrayList<>();
-        String versionLine;
-        while ((versionLine = versionBufferedReader.readLine()) != null) {
-            FileAddress fileAddress = FileAddress.Companion.fromCSVLine(lastVersion.orElseThrow(), versionLine);
-            for (FileAddress address : onlyInVersion) {
-                if (address.equals(fileAddress)) {
-                    fileAddress.setVersion(version);
-                }
-            }
-        }
-        return result;
+            throw new BadRequestAlertException("download is pointless when there is no asset on the server", "asset", "");
+        return null;
     }
 
-    private UpdateResonse finalizeFiles(int fromVersion, int lastVersion) throws IOException {
-        String fromFilePath = listsPath + fromVersion + File.separator + "files.csv";
-        String lastFilePath = listsPath + lastVersion + File.separator + "files.csv";
-        String diffPath = diffsPath + fromVersion + '_' + lastVersion + "_diff.txt";
-        BufferedReader br1 = new BufferedReader(new FileReader(lastFilePath, Charset.defaultCharset()));
-        BufferedReader br2 = new BufferedReader(new FileReader(fromFilePath, Charset.defaultCharset()));
-        BufferedReader brDiff = new BufferedReader(new FileReader(diffPath, Charset.defaultCharset()));
-
-        // Skip the header line in lastFilePath and fromFilePath
-        String header1 = br1.readLine();
-        String header2 = br2.readLine();
-        List<FileAddress> updates = new ArrayList<>();
-        List<FileAddress> deletes = new ArrayList<>();
-        // Read the diff file and merge changes from fromFilePath into lastFilePath
-        String lineDiff;
-        while ((lineDiff = brDiff.readLine()) != null) {
-            if (lineDiff.startsWith(">")) {
-                // This line exists only in fromFilePath, so return it with a prefix indicating the source file
-                String line = br2.readLine();
-                deletes.add(FileAddress.Companion.fromCSVLine(fromVersion, line));
-            } else if (lineDiff.startsWith("<")) {
-                // This line exists only in lastFilePath, so skip it
-                String line = br1.readLine();
-                updates.add(FileAddress.Companion.fromCSVLine(fromVersion, line));
-            } else {
-                // This line exists in both files, so skip it in fromFilePath
-                br2.readLine();
-            }
-        }
-        return new UpdateResonse(
-            updates,
-            deletes
-        );
-    }
+//    private UpdateResponse finalizeFiles(int fromVersion, int lastVersion) throws IOException {
+//        String fromFilePath = listsPath + fromVersion + File.separator + "files.csv";
+//        String lastFilePath = listsPath + lastVersion + File.separator + "files.csv";
+//        String diffPath = diffsPath + fromVersion + '_' + lastVersion + "_diff.txt";
+//        BufferedReader br1 = new BufferedReader(new FileReader(lastFilePath, Charset.defaultCharset()));
+//        BufferedReader br2 = new BufferedReader(new FileReader(fromFilePath, Charset.defaultCharset()));
+//        BufferedReader brDiff = new BufferedReader(new FileReader(diffPath, Charset.defaultCharset()));
+//
+//        // Skip the header line in lastFilePath and fromFilePath
+//        String header1 = br1.readLine();
+//        String header2 = br2.readLine();
+//        List<FileAddress> updates = new ArrayList<>();
+//        List<FileAddress> deletes = new ArrayList<>();
+//        // Read the diff file and merge changes from fromFilePath into lastFilePath
+//        String lineDiff;
+//        while ((lineDiff = brDiff.readLine()) != null) {
+//            if (lineDiff.startsWith(">")) {
+//                // This line exists only in fromFilePath, so return it with a prefix indicating the source file
+//                String line = br2.readLine();
+//                deletes.add(FileAddress.Companion.fromCSVLine(fromVersion, line));
+//            } else if (lineDiff.startsWith("<")) {
+//                // This line exists only in lastFilePath, so skip it
+//                String line = br1.readLine();
+//                updates.add(FileAddress.Companion.fromCSVLine(fromVersion, line));
+//            } else {
+//                // This line exists in both files, so skip it in fromFilePath
+//                br2.readLine();
+//            }
+//        }
+//        return new UpdateResponse(
+//            updates,
+//            deletes
+//        );
+//    }
 
     private Optional<Integer> getTheLastVersion() throws IOException {
         List<Integer> existedVersions = getAllExistedVersion();
