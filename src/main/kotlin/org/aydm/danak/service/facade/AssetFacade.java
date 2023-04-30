@@ -1,6 +1,7 @@
 package org.aydm.danak.service.facade;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.aydm.danak.service.FileBelongingsService;
 import org.aydm.danak.service.FileService;
 import org.aydm.danak.service.VersionService;
@@ -34,7 +35,7 @@ public interface AssetFacade {
     UpdateResponse updateAssets(int fromVersion, int toVersion) throws IOException;
 
 
-    List<FileAddress> download(int version) throws IOException;
+    DownloadResponse download(int version) throws IOException;
 }
 
 @Service
@@ -67,6 +68,10 @@ class AssetFacadeImpl implements AssetFacade {
     private String versionsPath;
     @Value("${asset.lists-path}")
     private String listsPath;
+    @Value("${asset.cache-path}")
+    private String cachePath;
+    @Value("${asset.scripts.remove-unnecessary}")
+    private String removeUnnecessaryScript;
 
     @Override
     public void versionAsset(int version) throws IOException {
@@ -76,6 +81,13 @@ class AssetFacadeImpl implements AssetFacade {
         String newVersionPath = versionsPath + version;
         String newVersionCSVPath = listsPath + version;
         List<CommandData> commands = new ArrayList<>();
+        commands.add(
+            new CommandData(
+                removeUnnecessaryScript + ' ' + listsPath + ' ' + cachePath + ' ' + diffsPath,
+                success -> log.info("version{{}} - removing unnecessary files stage success: {}", version, success),
+                failed -> log.error("version{{}} - removing unnecessary files stage failed: {}", version, failed)
+            )
+        );
         commands.add(
             new CommandData(
                 copyScript + ' ' + newVersionPath + ' ' + sourcePath,
@@ -163,7 +175,7 @@ class AssetFacadeImpl implements AssetFacade {
                         }
                         versionToBeUpdateFiles.removeAll(notUpdatedFiles);
                         List<FileDTO> allFiles = fileService.saveAll(versionToBeUpdateFiles);
-                        fileBelongingsService.saveAll(allFiles.stream().map(it->new FileBelongingsDTO(
+                        fileBelongingsService.saveAll(allFiles.stream().map(it -> new FileBelongingsDTO(
                             null,
                             it,
                             versionDTO
@@ -205,24 +217,53 @@ class AssetFacadeImpl implements AssetFacade {
 
     @Override
     public UpdateResponse updateAssets(int fromVersion, int toVersion) throws IOException {
+        String pathname = "U_" + fromVersion + "_" + toVersion + ".json";
+        Optional<UpdateResponse> cache = lookupCache(pathname, UpdateResponse.class);
+        if (cache.isPresent()) return cache.orElseThrow();
         Optional<Integer> lastVersion = getTheLastVersion();
         if (lastVersion.isEmpty())
             throw new BadRequestAlertException("update is pointless when there is no asset on the server", "asset", "");
         long fromVersionId = versionService.findIdByVersion(fromVersion);
         long toVersionId = versionService.findIdByVersion(toVersion);
-        List<FileDTO> deletes = fileService.findAllUpdates(fromVersionId,toVersionId);
-        List<FileDTO> updates = fileService.findAllUpdates(toVersionId,fromVersionId);
-        return new UpdateResponse(
-            updates,deletes
+        List<FileDTO> deletes = fileService.findAllUpdates(fromVersionId, toVersionId);
+        List<FileDTO> updates = fileService.findAllUpdates(toVersionId, fromVersionId);
+        UpdateResponse result = new UpdateResponse(
+            updates.stream().map(it->new FileResponse(it.getChecksum(),it.getFtpPath())).collect(Collectors.toList()),
+            deletes.stream().map(it->new FileResponse(it.getChecksum(),it.getFtpPath())).collect(Collectors.toList())
         );
+        saveCache(pathname, result);
+        return result;
+    }
+
+    private <T> void saveCache(String pathname, T result) throws IOException {
+        File file = new File(cachePath + pathname);
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.writeValue(file, result);
+    }
+
+
+    private <T> Optional<T> lookupCache(String pathname, Class<T> clazz) throws IOException {
+        File file = new File(cachePath + pathname);
+        if (!file.exists())
+            return Optional.empty();
+        ObjectMapper objectMapper = new ObjectMapper();
+        return Optional.ofNullable(objectMapper.readValue(file, clazz));
     }
 
     @Override
-    public List<FileAddress> download(int version) throws IOException {
+    public DownloadResponse download(int version) throws IOException {
+        String pathname = "D_" + version + ".json";
+        Optional<DownloadResponse> cache = lookupCache(pathname, DownloadResponse.class);
+        if (cache.isPresent()) return cache.orElseThrow();
+
         Optional<Integer> lastVersion = getTheLastVersion();
         if (lastVersion.isEmpty())
             throw new BadRequestAlertException("download is pointless when there is no asset on the server", "asset", "");
-        return null;
+        long versionId = versionService.findIdByVersion(version);
+        List<FileDTO> files = fileService.findAllBelongsToVersion(versionId);
+        DownloadResponse result = new DownloadResponse(files.stream().map(it->new FileResponse(it.getChecksum(),it.getFtpPath())).collect(Collectors.toList()));
+        saveCache(pathname, result);
+        return result;
     }
 
 //    private UpdateResponse finalizeFiles(int fromVersion, int lastVersion) throws IOException {

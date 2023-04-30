@@ -4,7 +4,7 @@ import org.aydm.danak.repository.FileRepository
 import org.aydm.danak.service.FileService
 import org.aydm.danak.service.dto.FileDTO
 import org.aydm.danak.service.facade.AssetFacade
-import org.aydm.danak.service.facade.FileAddress
+import org.aydm.danak.service.facade.DownloadResponse
 import org.aydm.danak.service.facade.UpdateResponse
 import org.aydm.danak.web.rest.errors.BadRequestAlertException
 import org.slf4j.LoggerFactory
@@ -103,7 +103,7 @@ class FileResource(
         assetFacade.versionAsset(version);
     }
     @GetMapping("download-assets")
-    fun downloadAssets(@RequestParam version: Int): List<FileAddress>? {
+    fun downloadAssets(@RequestParam version: Int): DownloadResponse? {
         return assetFacade.download(version);
     }
     @GetMapping("update-assets")
