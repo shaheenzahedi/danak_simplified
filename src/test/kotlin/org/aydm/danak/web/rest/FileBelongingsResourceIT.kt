@@ -127,7 +127,7 @@ class FileBelongingsResourceIT {
             .andExpect(status().isOk)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(fileBelongings.id?.toInt())))    }
-    
+
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -160,7 +160,7 @@ class FileBelongingsResourceIT {
         val databaseSizeBeforeUpdate = fileBelongingsRepository.findAll().size
 
         // Update the fileBelongings
-        val updatedFileBelongings = fileBelongingsRepository.findById(fileBelongings.id).get()
+        val updatedFileBelongings = fileBelongingsRepository.findById(fileBelongings.id).orElseThrow()
         // Disconnect from session so that the updates on updatedFileBelongings are not directly saved in db
         em.detach(updatedFileBelongings)
         val fileBelongingsDTO = fileBelongingsMapper.toDto(updatedFileBelongings)
@@ -240,14 +240,14 @@ class FileBelongingsResourceIT {
         assertThat(fileBelongingsList).hasSize(databaseSizeBeforeUpdate)
     }
 
-    
+
     @Test
     @Transactional
     @Throws(Exception::class)
     fun partialUpdateFileBelongingsWithPatch() {
         fileBelongingsRepository.saveAndFlush(fileBelongings)
-        
-        
+
+
 val databaseSizeBeforeUpdate = fileBelongingsRepository.findAll().size
 
 // Update the fileBelongings using partial update
@@ -273,8 +273,8 @@ val testFileBelongings = fileBelongingsList.last()
     @Throws(Exception::class)
     fun fullUpdateFileBelongingsWithPatch() {
         fileBelongingsRepository.saveAndFlush(fileBelongings)
-        
-        
+
+
 val databaseSizeBeforeUpdate = fileBelongingsRepository.findAll().size
 
 // Update the fileBelongings using partial update
