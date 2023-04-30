@@ -13,7 +13,16 @@ services:
     # If you want to expose these ports outside your dev PC,
     # remove the "127.0.0.1:" prefix
     volumes:
-      - /opt/asset:/opt/asset
+      - type: volume
+        source: asset
+        target: /opt/asset
+        volume:
+          driver: local
+          driver_opts:
+            type: none
+            o: bind
+            device: /opt/asset
+            mode: "rw"
     ports:
       - 8080:8080
   danak-mysql:
