@@ -77,8 +77,8 @@ fileMapper.partialUpdate(it, fileDTO)
         return fileMapper.toDto(fileRepository.saveAll(fileMapper.toEntity(files)))
     }
 
-    override fun findAllLastVersion(version: Int): MutableList<FileDTO> {
-        return fileMapper.toDto(fileRepository.findAllByPlacementId(version.toLong()))
+    override fun findAllLastVersion(versionId: Long): MutableList<FileDTO> {
+        return fileMapper.toDto(fileRepository.findAllByPlacementId(versionId))
     }
 
     override fun findAllBelongsToVersion(version: Long): MutableList<FileDTO> {

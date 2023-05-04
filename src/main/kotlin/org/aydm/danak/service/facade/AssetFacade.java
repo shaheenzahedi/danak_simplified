@@ -134,7 +134,7 @@ class AssetFacadeImpl implements AssetFacade {
             .thenRun(() -> {
                 if (oldVersion.isPresent()) {
                     try {
-                        final List<FileDTO> versionToBeUpdateFiles = fileService.findAllLastVersion(oldVersion.orElseThrow()).stream()
+                        final List<FileDTO> versionToBeUpdateFiles = fileService.findAllLastVersion(versionService.findIdByVersion(oldVersion.orElseThrow())).stream()
                             .peek(fileDTO -> fileDTO.setPlacement(versionDTO)).collect(Collectors.toList());
                         final String diffAddress = diffsPath + oldVersion.orElseThrow() + '_' + version + "_diff.txt";
                         File file = new File(diffAddress);
@@ -274,41 +274,6 @@ class AssetFacadeImpl implements AssetFacade {
         return result;
     }
 
-//    private UpdateResponse finalizeFiles(int fromVersion, int lastVersion) throws IOException {
-//        String fromFilePath = listsPath + fromVersion + File.separator + "files.csv";
-//        String lastFilePath = listsPath + lastVersion + File.separator + "files.csv";
-//        String diffPath = diffsPath + fromVersion + '_' + lastVersion + "_diff.txt";
-//        BufferedReader br1 = new BufferedReader(new FileReader(lastFilePath, Charset.defaultCharset()));
-//        BufferedReader br2 = new BufferedReader(new FileReader(fromFilePath, Charset.defaultCharset()));
-//        BufferedReader brDiff = new BufferedReader(new FileReader(diffPath, Charset.defaultCharset()));
-//
-//        // Skip the header line in lastFilePath and fromFilePath
-//        String header1 = br1.readLine();
-//        String header2 = br2.readLine();
-//        List<FileAddress> updates = new ArrayList<>();
-//        List<FileAddress> deletes = new ArrayList<>();
-//        // Read the diff file and merge changes from fromFilePath into lastFilePath
-//        String lineDiff;
-//        while ((lineDiff = brDiff.readLine()) != null) {
-//            if (lineDiff.startsWith(">")) {
-//                // This line exists only in fromFilePath, so return it with a prefix indicating the source file
-//                String line = br2.readLine();
-//                deletes.add(FileAddress.Companion.fromCSVLine(fromVersion, line));
-//            } else if (lineDiff.startsWith("<")) {
-//                // This line exists only in lastFilePath, so skip it
-//                String line = br1.readLine();
-//                updates.add(FileAddress.Companion.fromCSVLine(fromVersion, line));
-//            } else {
-//                // This line exists in both files, so skip it in fromFilePath
-//                br2.readLine();
-//            }
-//        }
-//        return new UpdateResponse(
-//            updates,
-//            deletes
-//        );
-//    }
-
     private Optional<Integer> getTheLastVersion() throws IOException {
         List<Integer> existedVersions = getAllExistedVersion();
         return existedVersions.isEmpty() ? Optional.empty() : Optional.ofNullable(existedVersions.get(existedVersions.size() - 1));
@@ -323,7 +288,6 @@ class AssetFacadeImpl implements AssetFacade {
             .map(Integer::valueOf)
             .collect(Collectors.toList());
     }
-
 }
 
 
