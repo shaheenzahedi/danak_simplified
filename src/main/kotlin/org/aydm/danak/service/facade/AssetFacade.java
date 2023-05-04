@@ -140,7 +140,13 @@ class AssetFacadeImpl implements AssetFacade {
                         File file = new File(diffAddress);
                         if (!file.exists()) {
                             log.info("version{{}} - there is no diff so we just update the database", version);
-                            fileService.saveAll(versionToBeUpdateFiles);
+                            List<FileDTO> allFiles = fileService.saveAll(versionToBeUpdateFiles);
+                            fileBelongingsService.saveAll(allFiles.stream().map(it -> new FileBelongingsDTO(
+                                null,
+                                it,
+                                versionDTO
+                            )).collect(Collectors.toList()));
+                            log.info("version{{}} - All commands finished!", version);
                             return;
                         }
                         final BufferedReader diffBR = new BufferedReader(new FileReader(file, Charset.defaultCharset()));
