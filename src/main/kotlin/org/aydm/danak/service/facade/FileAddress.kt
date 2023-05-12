@@ -4,7 +4,8 @@ data class FileAddress(
     var version: Int,
     val name: String,
     val path: String,
-    val checksum: String
+    val checksum: String,
+    val size: String,
 ) {
     companion object {
         fun fromCSVLine(version: Int, line: String): FileAddress {
@@ -13,7 +14,8 @@ data class FileAddress(
                 version = version,
                 name = values[0],
                 path = values[1],
-                checksum = values[2]
+                checksum = values[2],
+                size = values[3]
             )
         }
         fun fromDiffLine(version: Int, line: String): FileAddress {
@@ -22,7 +24,8 @@ data class FileAddress(
                 version = version,
                 name = values[0],
                 path = values[1],
-                checksum = values[2]
+                checksum = values[2],
+                size = values[3]
             )
         }
     }
@@ -36,6 +39,7 @@ data class FileAddress(
         if (checksum != other.checksum) return false
         if (name != other.name) return false
         if (path != other.path) return false
+        if (size != other.size) return false
 
         return true
     }
@@ -45,6 +49,7 @@ data class FileAddress(
         result = 31 * result + name.hashCode()
         result = 31 * result + path.hashCode()
         result = 31 * result + checksum.hashCode()
+        result = 31 * result + size.hashCode()
         return result
     }
 }

@@ -1,6 +1,5 @@
 package org.aydm.danak.service
 import org.aydm.danak.service.dto.FileBelongingsDTO
-
 import java.util.Optional
 
 /**
@@ -22,7 +21,7 @@ interface FileBelongingsService {
      * @param fileBelongingsDTO the entity to update.
      * @return the persisted entity.
      */
-     fun update(fileBelongingsDTO: FileBelongingsDTO): FileBelongingsDTO
+    fun update(fileBelongingsDTO: FileBelongingsDTO): FileBelongingsDTO
 
     /**
      * Partially updates a fileBelongings.
@@ -54,7 +53,4 @@ interface FileBelongingsService {
      */
     fun delete(id: Long)
     fun saveAll(fileBelongings: MutableList<FileBelongingsDTO>): MutableList<FileBelongingsDTO>
-
-
-
 }

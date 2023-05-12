@@ -1,17 +1,14 @@
 package org.aydm.danak.service.impl
 
-
-import org.aydm.danak.service.FileBelongingsService
 import org.aydm.danak.domain.FileBelongings
 import org.aydm.danak.repository.FileBelongingsRepository
+import org.aydm.danak.service.FileBelongingsService
 import org.aydm.danak.service.dto.FileBelongingsDTO
 import org.aydm.danak.service.mapper.FileBelongingsMapper
 import org.slf4j.LoggerFactory
-
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.Optional
-import java.util.stream.Collectors
 
 /**
  * Service Implementation for managing [FileBelongings].
@@ -19,8 +16,8 @@ import java.util.stream.Collectors
 @Service
 @Transactional
 class FileBelongingsServiceImpl(
-            private val fileBelongingsRepository: FileBelongingsRepository,
-        private val fileBelongingsMapper: FileBelongingsMapper,
+    private val fileBelongingsRepository: FileBelongingsRepository,
+    private val fileBelongingsMapper: FileBelongingsMapper,
 ) : FileBelongingsService {
 
     private val log = LoggerFactory.getLogger(javaClass)
@@ -32,25 +29,23 @@ class FileBelongingsServiceImpl(
         return fileBelongingsMapper.toDto(fileBelongings)
     }
 
-    override fun update(fileBelongingsDTO: FileBelongingsDTO): FileBelongingsDTO{
-            log.debug("Request to save FileBelongings : {}", fileBelongingsDTO);
-            var fileBelongings = fileBelongingsMapper.toEntity(fileBelongingsDTO)
+    override fun update(fileBelongingsDTO: FileBelongingsDTO): FileBelongingsDTO {
+        log.debug("Request to save FileBelongings : {}", fileBelongingsDTO)
+        var fileBelongings = fileBelongingsMapper.toEntity(fileBelongingsDTO)
         fileBelongings = fileBelongingsRepository.save(fileBelongings)
         return fileBelongingsMapper.toDto(fileBelongings)
-        }
+    }
 
     override fun partialUpdate(fileBelongingsDTO: FileBelongingsDTO): Optional<FileBelongingsDTO> {
         log.debug("Request to partially update FileBelongings : {}", fileBelongingsDTO)
 
-
-         return fileBelongingsRepository.findById(fileBelongingsDTO.id)
+        return fileBelongingsRepository.findById(fileBelongingsDTO.id)
             .map {
-fileBelongingsMapper.partialUpdate(it, fileBelongingsDTO)
-               it
+                fileBelongingsMapper.partialUpdate(it, fileBelongingsDTO)
+                it
             }
             .map { fileBelongingsRepository.save(it) }
-.map { fileBelongingsMapper.toDto(it) }
-
+            .map { fileBelongingsMapper.toDto(it) }
     }
 
     @Transactional(readOnly = true)
@@ -60,7 +55,6 @@ fileBelongingsMapper.partialUpdate(it, fileBelongingsDTO)
             .mapTo(mutableListOf(), fileBelongingsMapper::toDto)
     }
 
-
     @Transactional(readOnly = true)
     override fun findOne(id: Long): Optional<FileBelongingsDTO> {
         log.debug("Request to get FileBelongings : $id")
@@ -68,7 +62,7 @@ fileBelongingsMapper.partialUpdate(it, fileBelongingsDTO)
             .map(fileBelongingsMapper::toDto)
     }
 
-    override fun delete(id: Long): Unit {
+    override fun delete(id: Long) {
         log.debug("Request to delete FileBelongings : $id")
 
         fileBelongingsRepository.deleteById(id)

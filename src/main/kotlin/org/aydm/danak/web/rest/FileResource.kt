@@ -99,16 +99,16 @@ class FileResource(
             .body(result)
     }
     @GetMapping("version-assets")
-    fun versionAsset(@RequestParam version:Int) {
-        assetFacade.versionAsset(version);
+    fun versionAsset(@RequestParam version: Int) {
+        assetFacade.versionAsset(version)
     }
     @GetMapping("download-assets")
     fun downloadAssets(@RequestParam version: Int): DownloadResponse? {
-        return assetFacade.download(version);
+        return assetFacade.download(version)
     }
     @GetMapping("update-assets")
-    fun versionAsset(@RequestParam fromVersion:Int,@RequestParam toVersion:Int): UpdateResponse? {
-        return assetFacade.updateAssets(fromVersion, toVersion);
+    fun versionAsset(@RequestParam fromVersion: Int, @RequestParam toVersion: Int): UpdateResponse? {
+        return assetFacade.updateAssets(fromVersion, toVersion)
     }
     /**
      * {@code PATCH  /files/:id} : Partial updates given fields of an existing file, field will ignore if it is null

@@ -146,7 +146,6 @@ class AssetFacadeImpl implements AssetFacade {
                                 it,
                                 versionDTO
                             )).collect(Collectors.toList()));
-
                             log.info("version{{}} - All commands finished!", version);
                             return;
                         }

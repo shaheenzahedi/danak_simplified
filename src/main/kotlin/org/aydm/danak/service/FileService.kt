@@ -52,8 +52,8 @@ interface FileService {
      * @param id the id of the entity.
      */
     fun delete(id: Long)
-    fun saveAll(files: MutableList<FileDTO>):MutableList<FileDTO>
-    fun findAllLastVersion(version: Long):MutableList<FileDTO>
+    fun saveAll(files: MutableList<FileDTO>): MutableList<FileDTO>
+    fun findAllLastVersion(version: Long): MutableList<FileDTO>
     fun findAllBelongsToVersion(version: Long): MutableList<FileDTO>
     fun findAllUpdates(v1: Long, v2: Long): MutableList<FileDTO>
 }

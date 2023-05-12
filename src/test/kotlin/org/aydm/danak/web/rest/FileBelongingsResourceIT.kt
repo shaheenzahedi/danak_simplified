@@ -1,38 +1,28 @@
 package org.aydm.danak.web.rest
 
-
+import org.assertj.core.api.Assertions.assertThat
 import org.aydm.danak.IntegrationTest
 import org.aydm.danak.domain.FileBelongings
 import org.aydm.danak.repository.FileBelongingsRepository
-import org.aydm.danak.service.dto.FileBelongingsDTO
 import org.aydm.danak.service.mapper.FileBelongingsMapper
-
-import kotlin.test.assertNotNull
-
+import org.hamcrest.Matchers.hasItem
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.Mock
-import org.mockito.MockitoAnnotations
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver
 import org.springframework.http.MediaType
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.security.test.context.support.WithMockUser
-import org.springframework.transaction.annotation.Transactional
-import org.springframework.validation.Validator
-import javax.persistence.EntityManager
-import java.util.Random
-import java.util.concurrent.atomic.AtomicLong
-import java.util.stream.Stream
-
-import org.assertj.core.api.Assertions.assertThat
-import org.hamcrest.Matchers.hasItem
+import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
-
+import org.springframework.transaction.annotation.Transactional
+import org.springframework.validation.Validator
+import java.util.Random
+import java.util.concurrent.atomic.AtomicLong
+import javax.persistence.EntityManager
+import kotlin.test.assertNotNull
 
 /**
  * Integration tests for the [FileBelongingsResource] REST controller.
@@ -56,16 +46,13 @@ class FileBelongingsResourceIT {
     @Autowired
     private lateinit var validator: Validator
 
-
     @Autowired
     private lateinit var em: EntityManager
-
 
     @Autowired
     private lateinit var restFileBelongingsMockMvc: MockMvc
 
     private lateinit var fileBelongings: FileBelongings
-
 
     @BeforeEach
     fun initTest() {
@@ -89,7 +76,6 @@ class FileBelongingsResourceIT {
         val fileBelongingsList = fileBelongingsRepository.findAll()
         assertThat(fileBelongingsList).hasSize(databaseSizeBeforeCreate + 1)
         val testFileBelongings = fileBelongingsList[fileBelongingsList.size - 1]
-
     }
 
     @Test
@@ -114,7 +100,6 @@ class FileBelongingsResourceIT {
         assertThat(fileBelongingsList).hasSize(databaseSizeBeforeCreate)
     }
 
-
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -123,10 +108,11 @@ class FileBelongingsResourceIT {
         fileBelongingsRepository.saveAndFlush(fileBelongings)
 
         // Get all the fileBelongingsList
-        restFileBelongingsMockMvc.perform(get(ENTITY_API_URL+ "?sort=id,desc"))
+        restFileBelongingsMockMvc.perform(get(ENTITY_API_URL + "?sort=id,desc"))
             .andExpect(status().isOk)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(fileBelongings.id?.toInt())))    }
+            .andExpect(jsonPath("$.[*].id").value(hasItem(fileBelongings.id?.toInt())))
+    }
 
     @Test
     @Transactional
@@ -142,7 +128,8 @@ class FileBelongingsResourceIT {
         restFileBelongingsMockMvc.perform(get(ENTITY_API_URL_ID, fileBelongings.id))
             .andExpect(status().isOk)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.id").value(fileBelongings.id?.toInt()))    }
+            .andExpect(jsonPath("$.id").value(fileBelongings.id?.toInt()))
+    }
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -187,9 +174,11 @@ class FileBelongingsResourceIT {
         val fileBelongingsDTO = fileBelongingsMapper.toDto(fileBelongings)
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
-        restFileBelongingsMockMvc.perform(put(ENTITY_API_URL_ID, fileBelongingsDTO.id)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(convertObjectToJsonBytes(fileBelongingsDTO)))
+        restFileBelongingsMockMvc.perform(
+            put(ENTITY_API_URL_ID, fileBelongingsDTO.id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(convertObjectToJsonBytes(fileBelongingsDTO))
+        )
             .andExpect(status().isBadRequest)
 
         // Validate the FileBelongings in the database
@@ -230,9 +219,11 @@ class FileBelongingsResourceIT {
         val fileBelongingsDTO = fileBelongingsMapper.toDto(fileBelongings)
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
-        restFileBelongingsMockMvc.perform(put(ENTITY_API_URL)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(convertObjectToJsonBytes(fileBelongingsDTO)))
+        restFileBelongingsMockMvc.perform(
+            put(ENTITY_API_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(convertObjectToJsonBytes(fileBelongingsDTO))
+        )
             .andExpect(status().isMethodNotAllowed)
 
         // Validate the FileBelongings in the database
@@ -240,32 +231,30 @@ class FileBelongingsResourceIT {
         assertThat(fileBelongingsList).hasSize(databaseSizeBeforeUpdate)
     }
 
-
     @Test
     @Transactional
     @Throws(Exception::class)
     fun partialUpdateFileBelongingsWithPatch() {
         fileBelongingsRepository.saveAndFlush(fileBelongings)
 
-
-val databaseSizeBeforeUpdate = fileBelongingsRepository.findAll().size
+        val databaseSizeBeforeUpdate = fileBelongingsRepository.findAll().size
 
 // Update the fileBelongings using partial update
-val partialUpdatedFileBelongings = FileBelongings().apply {
-    id = fileBelongings.id
+        val partialUpdatedFileBelongings = FileBelongings().apply {
+            id = fileBelongings.id
+        }
 
-}
-
-
-restFileBelongingsMockMvc.perform(patch(ENTITY_API_URL_ID, partialUpdatedFileBelongings.id)
-.contentType("application/merge-patch+json")
-.content(convertObjectToJsonBytes(partialUpdatedFileBelongings)))
-.andExpect(status().isOk)
+        restFileBelongingsMockMvc.perform(
+            patch(ENTITY_API_URL_ID, partialUpdatedFileBelongings.id)
+                .contentType("application/merge-patch+json")
+                .content(convertObjectToJsonBytes(partialUpdatedFileBelongings))
+        )
+            .andExpect(status().isOk)
 
 // Validate the FileBelongings in the database
-val fileBelongingsList = fileBelongingsRepository.findAll()
-assertThat(fileBelongingsList).hasSize(databaseSizeBeforeUpdate)
-val testFileBelongings = fileBelongingsList.last()
+        val fileBelongingsList = fileBelongingsRepository.findAll()
+        assertThat(fileBelongingsList).hasSize(databaseSizeBeforeUpdate)
+        val testFileBelongings = fileBelongingsList.last()
     }
 
     @Test
@@ -274,25 +263,24 @@ val testFileBelongings = fileBelongingsList.last()
     fun fullUpdateFileBelongingsWithPatch() {
         fileBelongingsRepository.saveAndFlush(fileBelongings)
 
-
-val databaseSizeBeforeUpdate = fileBelongingsRepository.findAll().size
+        val databaseSizeBeforeUpdate = fileBelongingsRepository.findAll().size
 
 // Update the fileBelongings using partial update
-val partialUpdatedFileBelongings = FileBelongings().apply {
-    id = fileBelongings.id
+        val partialUpdatedFileBelongings = FileBelongings().apply {
+            id = fileBelongings.id
+        }
 
-}
-
-
-restFileBelongingsMockMvc.perform(patch(ENTITY_API_URL_ID, partialUpdatedFileBelongings.id)
-.contentType("application/merge-patch+json")
-.content(convertObjectToJsonBytes(partialUpdatedFileBelongings)))
-.andExpect(status().isOk)
+        restFileBelongingsMockMvc.perform(
+            patch(ENTITY_API_URL_ID, partialUpdatedFileBelongings.id)
+                .contentType("application/merge-patch+json")
+                .content(convertObjectToJsonBytes(partialUpdatedFileBelongings))
+        )
+            .andExpect(status().isOk)
 
 // Validate the FileBelongings in the database
-val fileBelongingsList = fileBelongingsRepository.findAll()
-assertThat(fileBelongingsList).hasSize(databaseSizeBeforeUpdate)
-val testFileBelongings = fileBelongingsList.last()
+        val fileBelongingsList = fileBelongingsRepository.findAll()
+        assertThat(fileBelongingsList).hasSize(databaseSizeBeforeUpdate)
+        val testFileBelongings = fileBelongingsList.last()
     }
 
     @Throws(Exception::class)
@@ -304,9 +292,11 @@ val testFileBelongings = fileBelongingsList.last()
         val fileBelongingsDTO = fileBelongingsMapper.toDto(fileBelongings)
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
-        restFileBelongingsMockMvc.perform(patch(ENTITY_API_URL_ID, fileBelongingsDTO.id)
-            .contentType("application/merge-patch+json")
-            .content(convertObjectToJsonBytes(fileBelongingsDTO)))
+        restFileBelongingsMockMvc.perform(
+            patch(ENTITY_API_URL_ID, fileBelongingsDTO.id)
+                .contentType("application/merge-patch+json")
+                .content(convertObjectToJsonBytes(fileBelongingsDTO))
+        )
             .andExpect(status().isBadRequest)
 
         // Validate the FileBelongings in the database
@@ -325,9 +315,11 @@ val testFileBelongings = fileBelongingsList.last()
         val fileBelongingsDTO = fileBelongingsMapper.toDto(fileBelongings)
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
-        restFileBelongingsMockMvc.perform(patch(ENTITY_API_URL_ID, count.incrementAndGet())
-            .contentType("application/merge-patch+json")
-            .content(convertObjectToJsonBytes(fileBelongingsDTO)))
+        restFileBelongingsMockMvc.perform(
+            patch(ENTITY_API_URL_ID, count.incrementAndGet())
+                .contentType("application/merge-patch+json")
+                .content(convertObjectToJsonBytes(fileBelongingsDTO))
+        )
             .andExpect(status().isBadRequest)
 
         // Validate the FileBelongings in the database
@@ -346,9 +338,11 @@ val testFileBelongings = fileBelongingsList.last()
         val fileBelongingsDTO = fileBelongingsMapper.toDto(fileBelongings)
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
-        restFileBelongingsMockMvc.perform(patch(ENTITY_API_URL)
-            .contentType("application/merge-patch+json")
-            .content(convertObjectToJsonBytes(fileBelongingsDTO)))
+        restFileBelongingsMockMvc.perform(
+            patch(ENTITY_API_URL)
+                .contentType("application/merge-patch+json")
+                .content(convertObjectToJsonBytes(fileBelongingsDTO))
+        )
             .andExpect(status().isMethodNotAllowed)
 
         // Validate the FileBelongings in the database
@@ -376,18 +370,13 @@ val testFileBelongings = fileBelongingsList.last()
         assertThat(fileBelongingsList).hasSize(databaseSizeBeforeDelete - 1)
     }
 
-
     companion object {
-
 
         private val ENTITY_API_URL: String = "/api/file-belongings"
         private val ENTITY_API_URL_ID: String = ENTITY_API_URL + "/{id}"
 
         private val random: Random = Random()
-        private val count: AtomicLong = AtomicLong(random.nextInt().toLong() + ( 2 * Integer.MAX_VALUE ))
-
-
-
+        private val count: AtomicLong = AtomicLong(random.nextInt().toLong() + (2 * Integer.MAX_VALUE))
 
         /**
          * Create an entity for this test.
@@ -398,7 +387,6 @@ val testFileBelongings = fileBelongingsList.last()
         @JvmStatic
         fun createEntity(em: EntityManager): FileBelongings {
             val fileBelongings = FileBelongings()
-
 
             return fileBelongings
         }
@@ -413,9 +401,7 @@ val testFileBelongings = fileBelongingsList.last()
         fun createUpdatedEntity(em: EntityManager): FileBelongings {
             val fileBelongings = FileBelongings()
 
-
             return fileBelongings
         }
-
     }
 }

@@ -1,11 +1,7 @@
 package org.aydm.danak.service.mapper
 
-
 import org.aydm.danak.domain.Version
 import org.aydm.danak.service.dto.VersionDTO
-
-    
-
 import org.mapstruct.*
 
 /**
@@ -13,10 +9,4 @@ import org.mapstruct.*
  */
 @Mapper(componentModel = "spring")
 interface VersionMapper :
-    EntityMapper<VersionDTO, Version> {
-
-
-
-      
-
-}
+    EntityMapper<VersionDTO, Version>

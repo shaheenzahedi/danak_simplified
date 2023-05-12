@@ -18,6 +18,7 @@ entity File{
 	name String
     checksum String
     path String
+    size String
 }
 entity FileBelongings{
 

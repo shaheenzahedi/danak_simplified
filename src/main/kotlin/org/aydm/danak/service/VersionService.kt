@@ -1,6 +1,5 @@
 package org.aydm.danak.service
 import org.aydm.danak.service.dto.VersionDTO
-
 import java.util.Optional
 
 /**
@@ -22,7 +21,7 @@ interface VersionService {
      * @param versionDTO the entity to update.
      * @return the persisted entity.
      */
-     fun update(versionDTO: VersionDTO): VersionDTO
+    fun update(versionDTO: VersionDTO): VersionDTO
 
     /**
      * Partially updates a version.
@@ -53,7 +52,5 @@ interface VersionService {
      * @param id the id of the entity.
      */
     fun delete(id: Long)
-    fun findIdByVersion(fromVersion: Int):Long
-
-
+    fun findIdByVersion(fromVersion: Int): Long
 }
