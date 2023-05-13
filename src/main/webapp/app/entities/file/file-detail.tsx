@@ -49,6 +49,12 @@ export const FileDetail = (props: RouteComponentProps<{ id: string }>) => {
           </dt>
           <dd>{fileEntity.path}</dd>
           <dt>
+            <span id="size">
+              <Translate contentKey="danakApp.file.size">Size</Translate>
+            </span>
+          </dt>
+          <dd>{fileEntity.size}</dd>
+          <dt>
             <Translate contentKey="danakApp.file.placement">Placement</Translate>
           </dt>
           <dd>{fileEntity.placement ? fileEntity.placement.id : ''}</dd>

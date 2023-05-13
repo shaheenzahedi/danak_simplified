@@ -6,6 +6,7 @@ export interface IFile {
   name?: string | null;
   checksum?: string | null;
   path?: string | null;
+  size?: string | null;
   fileBelongings?: IFileBelongings[] | null;
   placement?: IVersion | null;
 }

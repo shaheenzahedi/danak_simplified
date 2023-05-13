@@ -60,6 +60,9 @@ export const File = (props: RouteComponentProps<{ url: string }>) => {
                   <Translate contentKey="danakApp.file.path">Path</Translate>
                 </th>
                 <th>
+                  <Translate contentKey="danakApp.file.size">Size</Translate>
+                </th>
+                <th>
                   <Translate contentKey="danakApp.file.placement">Placement</Translate>
                 </th>
                 <th />
@@ -76,6 +79,7 @@ export const File = (props: RouteComponentProps<{ url: string }>) => {
                   <td>{file.name}</td>
                   <td>{file.checksum}</td>
                   <td>{file.path}</td>
+                  <td>{file.size}</td>
                   <td>{file.placement ? <Link to={`/version/${file.placement.id}`}>{file.placement.id}</Link> : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">

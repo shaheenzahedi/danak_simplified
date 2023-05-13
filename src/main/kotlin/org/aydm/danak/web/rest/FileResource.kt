@@ -153,7 +153,8 @@ class FileResource(
 
      * @return the [ResponseEntity] with status `200 (OK)` and the list of files in body.
      */
-    @GetMapping("/files") fun getAllFiles(): MutableList<FileDTO> {
+    @GetMapping("/files")
+    fun getAllFiles(): MutableList<FileDTO> {
 
         log.debug("REST request to get all Files")
 

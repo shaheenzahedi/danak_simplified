@@ -1,6 +1,5 @@
 package org.aydm.danak.service.dto
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import java.io.Serializable
 import java.util.Objects
 
@@ -9,11 +8,16 @@ import java.util.Objects
  */
 data class FileDTO(
 
-    @JsonIgnore
     var id: Long? = null,
+
     var name: String? = null,
+
     var checksum: String? = null,
+
     var path: String? = null,
+
+    var size: String? = null,
+
     var placement: VersionDTO? = null
 ) : Serializable {
 

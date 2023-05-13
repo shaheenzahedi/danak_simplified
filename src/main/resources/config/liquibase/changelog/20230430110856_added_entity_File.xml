@@ -23,6 +23,9 @@
             <column name="path" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
+            <column name="size" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
             <column name="placement_id" type="bigint">
                 <constraints nullable="true" />
             </column>
@@ -50,6 +53,7 @@
             <column name="name" type="string"/>
             <column name="checksum" type="string"/>
             <column name="path" type="string"/>
+            <column name="size" type="string"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>
     </changeSet>

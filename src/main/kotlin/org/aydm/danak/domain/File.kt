@@ -26,6 +26,9 @@ data class File(
     @Column(name = "path")
     var path: String? = null,
 
+    @Column(name = "size")
+    var size: String? = null,
+
     @OneToMany(mappedBy = "file")
     @JsonIgnoreProperties(
         value = [
@@ -82,6 +85,7 @@ data class File(
             ", name='" + name + "'" +
             ", checksum='" + checksum + "'" +
             ", path='" + path + "'" +
+            ", size='" + size + "'" +
             "}"
     }
 

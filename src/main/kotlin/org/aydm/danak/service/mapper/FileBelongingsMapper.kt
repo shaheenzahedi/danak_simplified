@@ -30,4 +30,5 @@ interface FileBelongingsMapper :
     @Mappings(
         Mapping(target = "id", source = "id")
     )
-    fun toDtoVersionId(version: Version): VersionDTO }
+    fun toDtoVersionId(version: Version): VersionDTO
+}

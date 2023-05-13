@@ -99,6 +99,7 @@ export const FileUpdate = (props: RouteComponentProps<{ id: string }>) => {
                 type="text"
               />
               <ValidatedField label={translate('danakApp.file.path')} id="file-path" name="path" data-cy="path" type="text" />
+              <ValidatedField label={translate('danakApp.file.size')} id="file-size" name="size" data-cy="size" type="text" />
               <ValidatedField
                 id="file-placement"
                 name="placement"

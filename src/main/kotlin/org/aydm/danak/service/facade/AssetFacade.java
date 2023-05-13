@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -162,7 +163,7 @@ class AssetFacadeImpl implements AssetFacade {
                                 //exists in new version but not in old version
                                 FileAddress newAddress = FileAddress.Companion.fromDiffLine(0, line);
                                 versionToBeUpdateFiles.add(new FileDTO(
-                                    null, newAddress.getName(), newAddress.getChecksum(), newAddress.getPath(), versionDTO
+                                    null, newAddress.getName(), newAddress.getChecksum(), newAddress.getPath(),newAddress.getSize(), versionDTO
                                 ));
                             }
                         }
@@ -207,6 +208,7 @@ class AssetFacadeImpl implements AssetFacade {
                     fileAddress.getName(),
                     fileAddress.getChecksum(),
                     fileAddress.getPath(),
+                    fileAddress.getSize(),
                     version
                 ));
             }
@@ -235,10 +237,24 @@ class AssetFacadeImpl implements AssetFacade {
         long fromVersionId = allVersions.stream().filter(it->it.getVersion()==fromVersion).findFirst().orElseThrow().getId();
         long toVersionId = allVersions.stream().filter(it->it.getVersion()==toVersion).findFirst().orElseThrow().getId();
         List<FileDTO> deletes = fileService.findAllUpdates(fromVersionId, toVersionId);
+        List<FileResponse> deleteFileResult = new ArrayList<>();
+        long deleteFileSize  = 0L;
+        for (FileDTO file:deletes){
+            deleteFileSize+=Long.parseLong(file.getSize());
+            deleteFileResult.add(new FileResponse(file.getChecksum(),file.getFtpPath(versionIdToVersion.get(file.getPlacement().getId()))));
+        }
         List<FileDTO> updates = fileService.findAllUpdates(toVersionId, fromVersionId);
+        List<FileResponse> updateFilesResult = new ArrayList<>();
+        long updateFileSize  = 0L;
+        for (FileDTO file:updates){
+            updateFileSize+=Long.parseLong(file.getSize());
+            updateFilesResult.add(new FileResponse(file.getChecksum(),file.getFtpPath(versionIdToVersion.get(file.getPlacement().getId()))));
+        }
         UpdateResponse result = new UpdateResponse(
-            updates.stream().map(it->new FileResponse(it.getChecksum(),it.getFtpPath(versionIdToVersion.get(it.getPlacement().getId())))).collect(Collectors.toList()),
-            deletes.stream().map(it->new FileResponse(it.getChecksum(),it.getFtpPath(versionIdToVersion.get(it.getPlacement().getId())))).collect(Collectors.toList())
+            updateFileSize,
+            updateFilesResult,
+            deleteFileSize,
+            deleteFileResult
         );
         saveCache(pathname, result);
         return result;
@@ -275,7 +291,16 @@ class AssetFacadeImpl implements AssetFacade {
         }
         Long versionId = allVersions.stream().filter(it->it.getVersion()==version).findFirst().orElseThrow().getId();
         List<FileDTO> files = fileService.findAllBelongsToVersion(versionId);
-        DownloadResponse result = new DownloadResponse(files.stream().map(it->new FileResponse(it.getChecksum(),it.getFtpPath(versionIdToVersion.get(it.getPlacement().getId())))).collect(Collectors.toList()));
+        List<FileResponse> fileResponses = new ArrayList<>();
+        long size = 0L;
+        for (FileDTO file:files){
+            size = size + Long.parseLong(file.getSize());
+            fileResponses.add(new FileResponse(file.getChecksum(),file.getFtpPath(versionIdToVersion.get(file.getPlacement().getId()))));
+        }
+        DownloadResponse result = new DownloadResponse(
+            size,
+            fileResponses
+        );
         saveCache(pathname, result);
         return result;
     }

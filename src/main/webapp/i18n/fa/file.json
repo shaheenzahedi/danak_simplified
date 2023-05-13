@@ -21,6 +21,7 @@
       "name": "Name",
       "checksum": "Checksum",
       "path": "Path",
+      "size": "Size",
       "fileBelongings": "File Belongings",
       "placement": "Placement"
     }

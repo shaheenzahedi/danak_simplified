@@ -21,7 +21,7 @@ interface EntityMapper<D, E> {
     fun toEntity(dtoList: MutableList<D>): MutableList<E>
 
     fun toDto(entityList: MutableList<E>): MutableList<D>
-        
+
     @Named("partialUpdate")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     fun partialUpdate(@MappingTarget entity: E, dto: D)

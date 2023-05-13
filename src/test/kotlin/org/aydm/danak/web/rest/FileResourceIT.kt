@@ -80,6 +80,7 @@ class FileResourceIT {
         assertThat(testFile.name).isEqualTo(DEFAULT_NAME)
         assertThat(testFile.checksum).isEqualTo(DEFAULT_CHECKSUM)
         assertThat(testFile.path).isEqualTo(DEFAULT_PATH)
+        assertThat(testFile.size).isEqualTo(DEFAULT_SIZE)
     }
 
     @Test
@@ -119,6 +120,7 @@ class FileResourceIT {
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
             .andExpect(jsonPath("$.[*].checksum").value(hasItem(DEFAULT_CHECKSUM)))
             .andExpect(jsonPath("$.[*].path").value(hasItem(DEFAULT_PATH)))
+            .andExpect(jsonPath("$.[*].size").value(hasItem(DEFAULT_SIZE)))
     }
 
     @Test
@@ -139,6 +141,7 @@ class FileResourceIT {
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
             .andExpect(jsonPath("$.checksum").value(DEFAULT_CHECKSUM))
             .andExpect(jsonPath("$.path").value(DEFAULT_PATH))
+            .andExpect(jsonPath("$.size").value(DEFAULT_SIZE))
     }
     @Test
     @Transactional
@@ -163,6 +166,7 @@ class FileResourceIT {
         updatedFile.name = UPDATED_NAME
         updatedFile.checksum = UPDATED_CHECKSUM
         updatedFile.path = UPDATED_PATH
+        updatedFile.size = UPDATED_SIZE
         val fileDTO = fileMapper.toDto(updatedFile)
 
         restFileMockMvc.perform(
@@ -178,6 +182,7 @@ class FileResourceIT {
         assertThat(testFile.name).isEqualTo(UPDATED_NAME)
         assertThat(testFile.checksum).isEqualTo(UPDATED_CHECKSUM)
         assertThat(testFile.path).isEqualTo(UPDATED_PATH)
+        assertThat(testFile.size).isEqualTo(UPDATED_SIZE)
     }
 
     @Test
@@ -260,6 +265,7 @@ class FileResourceIT {
             id = file.id
 
             path = UPDATED_PATH
+            size = UPDATED_SIZE
         }
 
         restFileMockMvc.perform(
@@ -276,6 +282,7 @@ class FileResourceIT {
         assertThat(testFile.name).isEqualTo(DEFAULT_NAME)
         assertThat(testFile.checksum).isEqualTo(DEFAULT_CHECKSUM)
         assertThat(testFile.path).isEqualTo(UPDATED_PATH)
+        assertThat(testFile.size).isEqualTo(UPDATED_SIZE)
     }
 
     @Test
@@ -293,6 +300,7 @@ class FileResourceIT {
             name = UPDATED_NAME
             checksum = UPDATED_CHECKSUM
             path = UPDATED_PATH
+            size = UPDATED_SIZE
         }
 
         restFileMockMvc.perform(
@@ -309,6 +317,7 @@ class FileResourceIT {
         assertThat(testFile.name).isEqualTo(UPDATED_NAME)
         assertThat(testFile.checksum).isEqualTo(UPDATED_CHECKSUM)
         assertThat(testFile.path).isEqualTo(UPDATED_PATH)
+        assertThat(testFile.size).isEqualTo(UPDATED_SIZE)
     }
 
     @Throws(Exception::class)
@@ -409,6 +418,9 @@ class FileResourceIT {
         private const val DEFAULT_PATH = "AAAAAAAAAA"
         private const val UPDATED_PATH = "BBBBBBBBBB"
 
+        private const val DEFAULT_SIZE = "AAAAAAAAAA"
+        private const val UPDATED_SIZE = "BBBBBBBBBB"
+
         private val ENTITY_API_URL: String = "/api/files"
         private val ENTITY_API_URL_ID: String = ENTITY_API_URL + "/{id}"
 
@@ -428,7 +440,9 @@ class FileResourceIT {
 
                 checksum = DEFAULT_CHECKSUM,
 
-                path = DEFAULT_PATH
+                path = DEFAULT_PATH,
+
+                size = DEFAULT_SIZE
 
             )
 
@@ -448,7 +462,9 @@ class FileResourceIT {
 
                 checksum = UPDATED_CHECKSUM,
 
-                path = UPDATED_PATH
+                path = UPDATED_PATH,
+
+                size = UPDATED_SIZE
 
             )
 
