@@ -2,14 +2,16 @@ package org.aydm.danak.web.rest
 
 import org.aydm.danak.repository.VersionRepository
 import org.aydm.danak.service.VersionService
-import org.aydm.danak.service.dto.VersionDTO
 import org.aydm.danak.web.rest.errors.BadRequestAlertException
+import org.aydm.danak.service.dto.VersionDTO
+
+import tech.jhipster.web.util.HeaderUtil
+import tech.jhipster.web.util.ResponseUtil
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import tech.jhipster.web.util.HeaderUtil
-import tech.jhipster.web.util.ResponseUtil
+
 import java.net.URI
 import java.net.URISyntaxException
 import java.util.Objects
@@ -21,8 +23,8 @@ private const val ENTITY_NAME = "version"
 @RestController
 @RequestMapping("/api")
 class VersionResource(
-    private val versionService: VersionService,
-    private val versionRepository: VersionRepository,
+        private val versionService: VersionService,
+        private val versionRepository: VersionRepository,
 ) {
 
     private val log = LoggerFactory.getLogger(javaClass)
@@ -51,7 +53,7 @@ class VersionResource(
             )
         }
         val result = versionService.save(versionDTO)
-        return ResponseEntity.created(URI("/api/versions/${result.id}"))
+            return ResponseEntity.created(URI("/api/versions/${result.id}"))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.id.toString()))
             .body(result)
     }
@@ -80,6 +82,7 @@ class VersionResource(
             throw BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid")
         }
 
+
         if (!versionRepository.existsById(id)) {
             throw BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound")
         }
@@ -89,28 +92,28 @@ class VersionResource(
             .headers(
                 HeaderUtil.createEntityUpdateAlert(
                     applicationName, true, ENTITY_NAME,
-                    versionDTO.id.toString()
+                     versionDTO.id.toString()
                 )
             )
             .body(result)
     }
 
     /**
-     * {@code PATCH  /versions/:id} : Partial updates given fields of an existing version, field will ignore if it is null
-     *
-     * @param id the id of the versionDTO to save.
-     * @param versionDTO the versionDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated versionDTO,
-     * or with status {@code 400 (Bad Request)} if the versionDTO is not valid,
-     * or with status {@code 404 (Not Found)} if the versionDTO is not found,
-     * or with status {@code 500 (Internal Server Error)} if the versionDTO couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
+    * {@code PATCH  /versions/:id} : Partial updates given fields of an existing version, field will ignore if it is null
+    *
+    * @param id the id of the versionDTO to save.
+    * @param versionDTO the versionDTO to update.
+    * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated versionDTO,
+    * or with status {@code 400 (Bad Request)} if the versionDTO is not valid,
+    * or with status {@code 404 (Not Found)} if the versionDTO is not found,
+    * or with status {@code 500 (Internal Server Error)} if the versionDTO couldn't be updated.
+    * @throws URISyntaxException if the Location URI syntax is incorrect.
+    */
     @PatchMapping(value = ["/versions/{id}"], consumes = ["application/json", "application/merge-patch+json"])
     @Throws(URISyntaxException::class)
     fun partialUpdateVersion(
         @PathVariable(value = "id", required = false) id: Long,
-        @RequestBody versionDTO: VersionDTO
+        @RequestBody versionDTO:VersionDTO
     ): ResponseEntity<VersionDTO> {
         log.debug("REST request to partial update Version partially : {}, {}", id, versionDTO)
         if (versionDTO.id == null) {
@@ -124,7 +127,9 @@ class VersionResource(
             throw BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound")
         }
 
-        val result = versionService.partialUpdate(versionDTO)
+
+
+            val result = versionService.partialUpdate(versionDTO)
 
         return ResponseUtil.wrapOrNotFound(
             result,
@@ -138,12 +143,15 @@ class VersionResource(
 
      * @return the [ResponseEntity] with status `200 (OK)` and the list of versions in body.
      */
-    @GetMapping("/versions") fun getAllVersions(): MutableList<VersionDTO> {
+    @GetMapping("/versions")    
+    fun getAllVersions(): MutableList<VersionDTO> {
+        
+        
 
-        log.debug("REST request to get all Versions")
-
-        return versionService.findAll()
-    }
+            log.debug("REST request to get all Versions")
+            
+            return versionService.findAll()
+                }
 
     /**
      * `GET  /versions/:id` : get the "id" version.

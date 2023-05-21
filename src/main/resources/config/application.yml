@@ -214,16 +214,20 @@ jhipster:
 
 # application:
 asset:
-  base-path: '/opt/asset'
-  source-path: ${asset.base-path}/source/
-  versions-path: ${asset.base-path}/versions/
-  lists-path: ${asset.base-path}/lists/
-  diffs-path: ${asset.base-path}/diffs/
-  cache-path: ${asset.base-path}/cache/
-  scripts:
-    path: ${asset.base-path}/scripts
-    copy: ${asset.scripts.path}/copy.sh
-    generate-csv: ${asset.scripts.path}/gen_csv.sh
-    cleanup: ${asset.scripts.path}/cleanup.sh
-    generate-diff: ${asset.scripts.path}/gen_diff.sh
-    remove-unnecessary: ${asset.scripts.path}/rem_unnecessary.sh
+  base: '/media/shaheen/Store/sava/sample/'
+  versions: ${asset.base}versions/
+  lists: ${asset.base}lists/
+  diffs: ${asset.base}diffs/
+  caches: ${asset.base}cache/
+  scripts: ${asset.base}scripts/
+  repo:
+    path: '/media/shaheen/Store/Projects/danak/'
+    gradle: ${asset.repo.path}src/app/build.gradle
+    content: ${asset.repo.path}src/app/src/main/content/
+  script:
+    copy: ${asset.scripts}copy.sh
+    generate-csv: ${asset.scripts}gen_csv.sh
+    cleanup: ${asset.scripts}cleanup.sh
+    generate-diff: ${asset.scripts}/gen_diff.sh
+    remove-unnecessary: ${asset.scripts}rem_unnecessary.sh
+    checkout: ${asset.scripts}checkout.sh

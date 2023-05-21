@@ -19,29 +19,31 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public interface AssetFacade {
 
-    void versionAsset(int version) throws IOException;
+    void initializeVersioning(String tag) throws IOException;
 
     UpdateResponse updateAssets(int fromVersion, int toVersion) throws IOException;
 
 
     DownloadResponse download(int version) throws IOException;
 }
+
 @Transactional
 @Service
 class AssetFacadeImpl implements AssetFacade {
-    FileService fileService;
-    FileBelongingsService fileBelongingsService;
-    VersionService versionService;
+    private final FileService fileService;
+    private final FileBelongingsService fileBelongingsService;
+    private final VersionService versionService;
 
     public AssetFacadeImpl(FileService fileService, FileBelongingsService fileBelongingsService, VersionService versionService) {
         this.fileService = fileService;
@@ -51,31 +53,103 @@ class AssetFacadeImpl implements AssetFacade {
 
     private final Logger log = LoggerFactory.getLogger(AssetFacadeImpl.class);
 
-    @Value("${asset.source-path}")
-    private String sourcePath;
-    @Value("${asset.diffs-path}")
+    //base
+    @Value("${asset.diffs}")
     private String diffsPath;
-    @Value("${asset.scripts.cleanup}")
-    private String cleanupScript;
-    @Value("${asset.scripts.copy}")
-    private String copyScript;
-    @Value("${asset.scripts.generate-csv}")
-    private String generateCSVScript;
-    @Value("${asset.scripts.generate-diff}")
-    private String generateDiffScript;
-    @Value("${asset.versions-path}")
+
+    @Value("${asset.versions}")
     private String versionsPath;
-    @Value("${asset.lists-path}")
+
+    @Value("${asset.lists}")
     private String listsPath;
-    @Value("${asset.cache-path}")
+
+    @Value("${asset.caches}")
     private String cachePath;
-    @Value("${asset.scripts.remove-unnecessary}")
+    //base
+
+    //repo
+    @Value("${asset.repo.content}")
+    private String contentPath;
+
+    @Value("${asset.repo.gradle}")
+    private String gradlePath;
+    //repo
+
+    //scripts
+    @Value("${asset.script.cleanup}")
+    private String cleanupScript;
+
+    @Value("${asset.script.copy}")
+    private String copyScript;
+
+    @Value("${asset.script.generate-csv}")
+    private String generateCSVScript;
+
+    @Value("${asset.script.generate-diff}")
+    private String generateDiffScript;
+
+    @Value("${asset.script.remove-unnecessary}")
     private String removeUnnecessaryScript;
 
+    @Value("${asset.script.checkout}")
+    private String checkout;
+    //scripts
+
+
     @Override
-    public void versionAsset(int version) throws IOException {
+    public void initializeVersioning(String tag) throws IOException {
+        List<CommandData> commands = new ArrayList<>();
+        commands.add(
+            new CommandData(
+                checkout + ' ' + contentPath + ' ' + tag,
+                success -> log.info("tag{{}} - git checkout to the tag stage success: {}", tag, success),
+                failed -> log.error("tag{{}} -  git checkout to the tag stage failed: {}", tag, failed)
+            )
+        );
+        new CommandRunner().runCommands(commands)
+            .thenRun(() -> {
+                try {
+                    int versionCode = getVersionCode(gradlePath);
+                    versionAsset(tag, versionCode);
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                }
+            });
+    }
+
+
+    public int getVersionCode(String buildGradlePath) throws IOException {
+        // Read the build.gradle file
+        File buildGradleFile = new File(buildGradlePath);
+        BufferedReader reader = new BufferedReader(new FileReader(buildGradleFile));
+        String line;
+        int versionCode = -1;
+
+        // Initialize the regex pattern for the version code
+        Pattern pattern = Pattern.compile("versionCode\\s+(\\d+)");
+
+        // Search for the version code in the build.gradle file
+        while ((line = reader.readLine()) != null) {
+            Matcher matcher = pattern.matcher(line);
+            if (matcher.find()) {
+                String versionCodeString = matcher.group(1);
+                versionCode = Integer.parseInt(versionCodeString);
+                break;
+            }
+        }
+        reader.close();
+
+        // Check if the version code was found
+        if (versionCode == -1) {
+            throw new RuntimeException("Version code not found in build.gradle file");
+        }
+
+        return versionCode;
+    }
+
+    private void versionAsset(String tag, int version) throws IOException {
         final VersionDTO versionDTO = versionService.save(new VersionDTO(
-            null, version
+            null, version, tag
         ));
         String newVersionPath = versionsPath + version;
         String newVersionCSVPath = listsPath + version;
@@ -89,7 +163,7 @@ class AssetFacadeImpl implements AssetFacade {
         );
         commands.add(
             new CommandData(
-                copyScript + ' ' + newVersionPath + ' ' + sourcePath,
+                copyScript + ' ' + newVersionPath + ' ' + contentPath,
                 success -> log.info("version{{}} - copying stage success: {}", version, success),
                 failed -> log.error("version{{}} - copying stage failed: {}", version, failed)
             )
@@ -163,7 +237,7 @@ class AssetFacadeImpl implements AssetFacade {
                                 //exists in new version but not in old version
                                 FileAddress newAddress = FileAddress.Companion.fromDiffLine(0, line);
                                 versionToBeUpdateFiles.add(new FileDTO(
-                                    null, newAddress.getName(), newAddress.getChecksum(), newAddress.getPath(),newAddress.getSize(), versionDTO
+                                    null, newAddress.getName(), newAddress.getChecksum(), newAddress.getPath(), newAddress.getSize(), versionDTO
                                 ));
                             }
                         }
@@ -230,25 +304,25 @@ class AssetFacadeImpl implements AssetFacade {
         if (lastVersion.isEmpty())
             throw new BadRequestAlertException("update is pointless when there is no asset on the server", "asset", "");
         List<VersionDTO> allVersions = versionService.findAll();
-        Map<Long,Integer> versionIdToVersion = new HashMap<>();
+        Map<Long, Integer> versionIdToVersion = new HashMap<>();
         for (VersionDTO v : allVersions) {
-            versionIdToVersion.put(v.getId(),v.getVersion());
+            versionIdToVersion.put(v.getId(), v.getVersion());
         }
-        long fromVersionId = allVersions.stream().filter(it->it.getVersion()==fromVersion).findFirst().orElseThrow().getId();
-        long toVersionId = allVersions.stream().filter(it->it.getVersion()==toVersion).findFirst().orElseThrow().getId();
+        long fromVersionId = allVersions.stream().filter(it -> it.getVersion() == fromVersion).findFirst().orElseThrow().getId();
+        long toVersionId = allVersions.stream().filter(it -> it.getVersion() == toVersion).findFirst().orElseThrow().getId();
         List<FileDTO> deletes = fileService.findAllUpdates(fromVersionId, toVersionId);
         List<FileResponse> deleteFileResult = new ArrayList<>();
-        long deleteFileSize  = 0L;
-        for (FileDTO file:deletes){
-            deleteFileSize+=Long.parseLong(file.getSize());
-            deleteFileResult.add(new FileResponse(file.getChecksum(),file.getFtpPath(versionIdToVersion.get(file.getPlacement().getId()))));
+        long deleteFileSize = 0L;
+        for (FileDTO file : deletes) {
+            deleteFileSize += Long.parseLong(file.getSize());
+            deleteFileResult.add(new FileResponse(file.getChecksum(), file.getFtpPath(versionIdToVersion.get(file.getPlacement().getId()))));
         }
         List<FileDTO> updates = fileService.findAllUpdates(toVersionId, fromVersionId);
         List<FileResponse> updateFilesResult = new ArrayList<>();
-        long updateFileSize  = 0L;
-        for (FileDTO file:updates){
-            updateFileSize+=Long.parseLong(file.getSize());
-            updateFilesResult.add(new FileResponse(file.getChecksum(),file.getFtpPath(versionIdToVersion.get(file.getPlacement().getId()))));
+        long updateFileSize = 0L;
+        for (FileDTO file : updates) {
+            updateFileSize += Long.parseLong(file.getSize());
+            updateFilesResult.add(new FileResponse(file.getChecksum(), file.getFtpPath(versionIdToVersion.get(file.getPlacement().getId()))));
         }
         UpdateResponse result = new UpdateResponse(
             updateFileSize,
@@ -285,17 +359,17 @@ class AssetFacadeImpl implements AssetFacade {
         if (lastVersion.isEmpty())
             throw new BadRequestAlertException("download is pointless when there is no asset on the server", "asset", "");
         List<VersionDTO> allVersions = versionService.findAll();
-        Map<Long,Integer> versionIdToVersion = new HashMap<>();
+        Map<Long, Integer> versionIdToVersion = new HashMap<>();
         for (VersionDTO v : allVersions) {
-            versionIdToVersion.put(v.getId(),v.getVersion());
+            versionIdToVersion.put(v.getId(), v.getVersion());
         }
-        Long versionId = allVersions.stream().filter(it->it.getVersion()==version).findFirst().orElseThrow().getId();
+        Long versionId = allVersions.stream().filter(it -> it.getVersion() == version).findFirst().orElseThrow().getId();
         List<FileDTO> files = fileService.findAllBelongsToVersion(versionId);
         List<FileResponse> fileResponses = new ArrayList<>();
         long size = 0L;
-        for (FileDTO file:files){
+        for (FileDTO file : files) {
             size = size + Long.parseLong(file.getSize());
-            fileResponses.add(new FileResponse(file.getChecksum(),file.getFtpPath(versionIdToVersion.get(file.getPlacement().getId()))));
+            fileResponses.add(new FileResponse(file.getChecksum(), file.getFtpPath(versionIdToVersion.get(file.getPlacement().getId()))));
         }
         DownloadResponse result = new DownloadResponse(
             size,

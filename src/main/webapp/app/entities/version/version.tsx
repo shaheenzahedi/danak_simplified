@@ -53,6 +53,9 @@ export const Version = (props: RouteComponentProps<{ url: string }>) => {
                 <th>
                   <Translate contentKey="danakApp.version.version">Version</Translate>
                 </th>
+                <th>
+                  <Translate contentKey="danakApp.version.tag">Tag</Translate>
+                </th>
                 <th />
               </tr>
             </thead>
@@ -65,6 +68,7 @@ export const Version = (props: RouteComponentProps<{ url: string }>) => {
                     </Button>
                   </td>
                   <td>{version.version}</td>
+                  <td>{version.tag}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`/version/${version.id}`} color="info" size="sm" data-cy="entityDetailsButton">

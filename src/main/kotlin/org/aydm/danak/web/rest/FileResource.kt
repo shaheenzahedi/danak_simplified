@@ -99,8 +99,8 @@ class FileResource(
             .body(result)
     }
     @GetMapping("version-assets")
-    fun versionAsset(@RequestParam version: Int) {
-        assetFacade.versionAsset(version)
+    fun versionAsset(@RequestParam tag: String) {
+        assetFacade.initializeVersioning(tag)
     }
     @GetMapping("download-assets")
     fun downloadAssets(@RequestParam version: Int): DownloadResponse? {
