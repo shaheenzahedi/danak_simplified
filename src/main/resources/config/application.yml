@@ -219,6 +219,7 @@ asset:
   lists: ${asset.base}lists/
   diffs: ${asset.base}diffs/
   caches: ${asset.base}cache/
+  android: ${asset.base}android/
   scripts: ${asset.base}scripts/
   sign:
     jks: ${asset.base}jks/savadd.jks

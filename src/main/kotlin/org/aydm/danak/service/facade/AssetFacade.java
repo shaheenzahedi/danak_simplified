@@ -66,6 +66,9 @@ class AssetFacadeImpl implements AssetFacade {
 
     @Value("${asset.caches}")
     private String cachePath;
+
+    @Value("${asset.android}")
+    private String androidPath;
     //base
 
     //repo
