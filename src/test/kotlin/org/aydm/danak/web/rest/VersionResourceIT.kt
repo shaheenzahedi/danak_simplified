@@ -166,7 +166,7 @@ class VersionResourceIT {
         val databaseSizeBeforeUpdate = versionRepository.findAll().size
 
         // Update the version
-        val updatedVersion = versionRepository.findById(version.id).get()
+        val updatedVersion = versionRepository.findById(version.id).orElseThrow()
         // Disconnect from session so that the updates on updatedVersion are not directly saved in db
         em.detach(updatedVersion)
         updatedVersion.version = UPDATED_VERSION

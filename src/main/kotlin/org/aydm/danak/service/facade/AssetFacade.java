@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -162,7 +163,7 @@ class AssetFacadeImpl implements AssetFacade {
     public int getVersionCode(String buildGradlePath) throws IOException {
         // Read the build.gradle file
         File buildGradleFile = new File(buildGradlePath);
-        BufferedReader reader = new BufferedReader(new FileReader(buildGradleFile));
+        BufferedReader reader = new BufferedReader(new FileReader(buildGradleFile, StandardCharsets.UTF_8));
         String line;
         int versionCode = -1;
 
