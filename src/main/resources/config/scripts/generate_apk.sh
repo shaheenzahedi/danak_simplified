@@ -67,7 +67,7 @@ then
     wget -q "https://dl.google.com/android/repository/commandlinetools-linux-7302050_latest.zip" -O "/tmp/cli.zip"
     mkdir -p "${ANDROID_PATH}/cmdline-tools/latest"
     unzip -qo "/tmp/cli.zip" -d "${ANDROID_PATH}/"
-    mv "${ANDROID_PATH}"/cmdline-tools/* "${ANDROID_PATH}/cmdline-tools/latest/"
+    mv "${ANDROID_PATH}"cmdline-tools/* "${ANDROID_PATH}/cmdline-tools/latest/"
     rm "/tmp/cli.zip"
 
     # Download the Android SDK
