@@ -129,7 +129,7 @@ class AssetFacadeImpl implements AssetFacade {
     //sign
 
     @Override
-    public void initializeVersioning(String tag) throws IOException {
+    public void initializeVersioning(String tag) {
         List<CommandData> commands = new ArrayList<>();
         commands.add(
             new CommandData(
