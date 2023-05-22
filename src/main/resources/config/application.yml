@@ -241,4 +241,4 @@ asset:
     generate-diff: ${asset.scripts}/gen_diff.sh
     remove-unnecessary: ${asset.scripts}rem_unnecessary.sh
     checkout: ${asset.scripts}checkout.sh
-    generate-apk: ${asset.scripts}generateـapk.sh
+    generate-apk: ${asset.scripts}generate_apk.sh
