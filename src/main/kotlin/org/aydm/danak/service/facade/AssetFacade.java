@@ -141,9 +141,9 @@ class AssetFacadeImpl implements AssetFacade {
         commands.add(
             new CommandData(
                 String.format("%s --alias=%s --key-password=%s --store-password=%s --keystore=%s " +
-                        "--gradlew=%s --target-folder=%s --apk-name=%s --dropbox-api-key=%s --appmetrica-api-key=%s --appmetrica-post-api-key=%s",
+                        "--gradlew=%s --target-folder=%s --apk-name=%s --dropbox-api-key=%s --appmetrica-api-key=%s --appmetrica-post-api-key=%s --compile-sdk-version=%s",
                     generateAPKScriptPath, signKeyAlias, signKeyPassword, signStorePassword, signJKSPath,
-                    srcPath, signAPKPath, String.format("v%s.apk", tag),dropBoxAPIKey,appmetricaAPIKey,appmetricaPostAPIKey),
+                    srcPath, signAPKPath, String.format("v%s.apk", tag),dropBoxAPIKey,appmetricaAPIKey,appmetricaPostAPIKey,32),
                 success -> log.info("tag{{}} - generate apk to the path {{}} success: {}", tag, signAPKPath, success),
                 failed -> log.error("tag{{}} -  generate apk stage failed: {}", tag, failed)
             )
