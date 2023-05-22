@@ -68,6 +68,9 @@ class AssetFacadeImpl implements AssetFacade {
     //base
 
     //repo
+    @Value("${asset.repo.src}")
+    private String srcPath;
+
     @Value("${asset.repo.content}")
     private String contentPath;
 
@@ -93,8 +96,36 @@ class AssetFacadeImpl implements AssetFacade {
 
     @Value("${asset.script.checkout}")
     private String checkout;
+
+    @Value("${asset.script.generate-apk}")
+    private String generateAPKScriptPath;
     //scripts
 
+    //sign
+    @Value("${asset.sign.jks}")
+    private String signJKSPath;
+
+    @Value("${asset.sign.apk}")
+    private String signAPKPath;
+
+    @Value("${asset.sign.key-alias}")
+    private String signKeyAlias;
+
+    @Value("${asset.sign.key-password}")
+    private String signKeyPassword;
+
+    @Value("${asset.sign.store-password}")
+    private String signStorePassword;
+
+    @Value("${asset.sign.dropbox-api-key}")
+    private String dropBoxAPIKey;
+
+    @Value("${asset.sign.appmetrica-api-key}")
+    private String appmetricaAPIKey;
+
+    @Value("${asset.sign.appmetrica-post-api-key}")
+    private String appmetricaPostAPIKey;
+    //sign
 
     @Override
     public void initializeVersioning(String tag) throws IOException {
@@ -104,6 +135,16 @@ class AssetFacadeImpl implements AssetFacade {
                 checkout + ' ' + contentPath + ' ' + tag,
                 success -> log.info("tag{{}} - git checkout to the tag stage success: {}", tag, success),
                 failed -> log.error("tag{{}} -  git checkout to the tag stage failed: {}", tag, failed)
+            )
+        );
+        commands.add(
+            new CommandData(
+                String.format("%s --alias=%s --key-password=%s --store-password=%s --keystore=%s " +
+                        "--gradlew=%s --target-folder=%s --apk-name=%s --dropbox-api-key=%s --appmetrica-api-key=%s --appmetrica-post-api-key=%s",
+                    generateAPKScriptPath, signKeyAlias, signKeyPassword, signStorePassword, signJKSPath,
+                    srcPath, signAPKPath, String.format("v%s.apk", tag),dropBoxAPIKey,appmetricaAPIKey,appmetricaPostAPIKey),
+                success -> log.info("tag{{}} - generate apk to the path {{}} success: {}", tag, signAPKPath, success),
+                failed -> log.error("tag{{}} -  generate apk stage failed: {}", tag, failed)
             )
         );
         new CommandRunner().runCommands(commands)
@@ -413,7 +454,7 @@ class CommandRunner {
                     else commandModel.getOnFailure().accept(commandResult.getStdError());
                 } catch (IOException | InterruptedException e) {
                     future.completeExceptionally(e);
-                    log.error("error executing command: {} exception is: {}", commandModel.getCommand(), e);
+                    log.error("error executing command: {} exception is", commandModel.getCommand(), e);
                     return;
                 }
             }

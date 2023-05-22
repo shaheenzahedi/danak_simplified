@@ -214,14 +214,24 @@ jhipster:
 
 # application:
 asset:
-  base: '/media/shaheen/Store/sava/sample/'
+  base: '/opt/asset/'
   versions: ${asset.base}versions/
   lists: ${asset.base}lists/
   diffs: ${asset.base}diffs/
   caches: ${asset.base}cache/
   scripts: ${asset.base}scripts/
+  sign:
+    jks: ${asset.base}jks/savadd.jks
+    key-alias: savadd
+    key-password: 920904645
+    store-password: 920904645
+    apk: ${asset.base}apk/
+    dropbox-api-key: somekey
+    appmetrica-api-key: somekey
+    appmetrica-post-api-key: 5c9bece0-3d2d-42df-804e-5e37789a0874
   repo:
-    path: '/media/shaheen/Store/Projects/danak/'
+    path: '/opt/data/danak/'
+    src: ${asset.repo.path}src
     gradle: ${asset.repo.path}src/app/build.gradle
     content: ${asset.repo.path}src/app/src/main/content/
   script:
@@ -231,3 +241,4 @@ asset:
     generate-diff: ${asset.scripts}/gen_diff.sh
     remove-unnecessary: ${asset.scripts}rem_unnecessary.sh
     checkout: ${asset.scripts}checkout.sh
+    generate-apk: ${asset.scripts}generateـapk.sh
