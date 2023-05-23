@@ -12,13 +12,8 @@ services:
       - JHIPSTER_SLEEP=30 # gives time for other services to boot before the application
     # If you want to expose these ports outside your dev PC,
     # remove the "127.0.0.1:" prefix
-    command:
-      - sh
-      - -c
-      - 'apt-get update && apt-get install -y git unzip'
     volumes:
       - /opt/asset:/opt/asset
-      - /var/lib/apt/lists:/var/lib/apt/lists:ro
     ports:
       - 8080:8080
   danak-mysql:
