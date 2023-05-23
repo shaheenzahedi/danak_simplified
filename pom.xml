@@ -846,21 +846,19 @@
                             </environment>
                             <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
                             <user>1000</user>
-                            <extraDirectories>
-                                <paths>
-                                    <path>
-                                        <from>/usr/bin/git</from>
-                                        <into>/usr/bin/git</into>
-                                    </path>
-                                    <path>
-                                        <from>/usr/bin/unzip</from>
-                                        <into>/usr/bin/unzip</into>
-                                    </path>
-                                </paths>
-                            </extraDirectories>
                         </container>
                         <extraDirectories>
-                            <paths>src/main/docker/jib</paths>
+                            <paths>
+                                <path>src/main/docker/jib</path>
+                                <path>
+                                    <from>/usr/bin/git</from>
+                                    <into>/usr/bin/git</into>
+                                </path>
+                                <path>
+                                    <from>/usr/bin/unzip</from>
+                                    <into>/usr/bin/unzip</into>
+                                </path>
+                            </paths>
                             <permissions>
                                 <permission>
                                     <file>/entrypoint.sh</file>
