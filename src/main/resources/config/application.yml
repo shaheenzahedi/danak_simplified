@@ -231,7 +231,7 @@ asset:
     appmetrica-api-key: 268e8168-12fb-45c7-910e-e339f40c4390
     appmetrica-post-api-key: 5c9bece0-3d2d-42df-804e-5e37789a0874
   repo:
-    path: '/opt/data/danak/'
+    path: '/opt/asset/data/danak/'
     src: ${asset.repo.path}src
     gradle: ${asset.repo.path}src/app/build.gradle
     content: ${asset.repo.path}src/app/src/main/content/
