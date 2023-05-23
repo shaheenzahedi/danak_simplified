@@ -12,13 +12,10 @@ services:
       - JHIPSTER_SLEEP=30 # gives time for other services to boot before the application
     # If you want to expose these ports outside your dev PC,
     # remove the "127.0.0.1:" prefix
-    entrypoint:
-      - /bin/bash
+    command:
+      - sh
       - -c
-      - |
-        set -e
-        apt-get update
-        apt-get install -y unzip git
+      - 'apt-get update && apt-get install -y git unzip'
     volumes:
       - /opt/asset:/opt/asset
     ports:
