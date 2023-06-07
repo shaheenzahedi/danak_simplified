@@ -216,7 +216,7 @@ jhipster:
 asset:
   base: '/opt/asset/'
   versions: ${asset.base}versions/
-  zip: ${asset.base}zip/
+  zip: ${asset.base}/apk-ftp/data/offline-zips/
   lists: ${asset.base}lists/
   diffs: ${asset.base}diffs/
   caches: ${asset.base}cache/
