@@ -216,30 +216,19 @@ jhipster:
 asset:
   base: '/opt/asset/'
   versions: ${asset.base}versions/
+  zip: ${asset.base}zip/
   lists: ${asset.base}lists/
   diffs: ${asset.base}diffs/
   caches: ${asset.base}cache/
-  android: ${asset.base}android/
   scripts: ${asset.base}scripts/
-  sign:
-    jks: ${asset.base}jks/savadd.jks
-    key-alias: savadd
-    key-password: 920904645
-    store-password: 920904645
-    apk: ${asset.base}apk/
-    dropbox-api-key: pYkQIZiSy5AAAAAAAAABWriwBwMUByUUv_RZk4Gj5csWa84XVdhrP3pT2s1Ad7Aj
-    appmetrica-api-key: 268e8168-12fb-45c7-910e-e339f40c4390
-    appmetrica-post-api-key: 5c9bece0-3d2d-42df-804e-5e37789a0874
   repo:
     path: '/opt/asset/data/danak/'
-    src: ${asset.repo.path}src
     gradle: ${asset.repo.path}src/app/build.gradle
     content: ${asset.repo.path}src/app/src/main/content/
   script:
     copy: ${asset.scripts}copy.sh
     generate-csv: ${asset.scripts}gen_csv.sh
     cleanup: ${asset.scripts}cleanup.sh
-    generate-diff: ${asset.scripts}/gen_diff.sh
+    generate-diff: ${asset.scripts}gen_diff.sh
     remove-unnecessary: ${asset.scripts}rem_unnecessary.sh
     checkout: ${asset.scripts}checkout.sh
-    generate-apk: ${asset.scripts}generate_apk.sh

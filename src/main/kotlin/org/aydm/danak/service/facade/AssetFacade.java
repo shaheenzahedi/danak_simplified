@@ -58,6 +58,9 @@ class AssetFacadeImpl implements AssetFacade {
     @Value("${asset.diffs}")
     private String diffsPath;
 
+    @Value("${asset.zip}")
+    private String zipPath;
+
     @Value("${asset.versions}")
     private String versionsPath;
 
@@ -66,15 +69,9 @@ class AssetFacadeImpl implements AssetFacade {
 
     @Value("${asset.caches}")
     private String cachePath;
-
-    @Value("${asset.android}")
-    private String androidPath;
     //base
 
     //repo
-    @Value("${asset.repo.src}")
-    private String srcPath;
-
     @Value("${asset.repo.content}")
     private String contentPath;
 
@@ -101,35 +98,8 @@ class AssetFacadeImpl implements AssetFacade {
     @Value("${asset.script.checkout}")
     private String checkout;
 
-    @Value("${asset.script.generate-apk}")
-    private String generateAPKScriptPath;
     //scripts
 
-    //sign
-    @Value("${asset.sign.jks}")
-    private String signJKSPath;
-
-    @Value("${asset.sign.apk}")
-    private String signAPKPath;
-
-    @Value("${asset.sign.key-alias}")
-    private String signKeyAlias;
-
-    @Value("${asset.sign.key-password}")
-    private String signKeyPassword;
-
-    @Value("${asset.sign.store-password}")
-    private String signStorePassword;
-
-    @Value("${asset.sign.dropbox-api-key}")
-    private String dropBoxAPIKey;
-
-    @Value("${asset.sign.appmetrica-api-key}")
-    private String appmetricaAPIKey;
-
-    @Value("${asset.sign.appmetrica-post-api-key}")
-    private String appmetricaPostAPIKey;
-    //sign
 
     @Override
     public void initializeVersioning(String tag) {
@@ -139,17 +109,6 @@ class AssetFacadeImpl implements AssetFacade {
                 checkout + ' ' + contentPath + ' ' + tag,
                 success -> log.info("tag{{}} - git checkout to the tag stage success: {}", tag, success),
                 failed -> log.error("tag{{}} -  git checkout to the tag stage failed: {}", tag, failed)
-            )
-        );
-        commands.add(
-            new CommandData(
-                String.format("%s --alias=%s --key-password=%s --store-password=%s --keystore=%s " +
-                        "--gradlew=%s --target-folder=%s --apk-name=%s --dropbox-api-key=%s --appmetrica-api-key=%s " +
-                        "--appmetrica-post-api-key=%s --compile-sdk-version=%s --android-path=%s",
-                    generateAPKScriptPath, signKeyAlias, signKeyPassword, signStorePassword, signJKSPath,
-                    srcPath, signAPKPath, String.format("v%s.apk", tag),dropBoxAPIKey,appmetricaAPIKey,appmetricaPostAPIKey,32,androidPath),
-                success -> log.info("tag{{}} - generate apk to the path {{}} success: {}", tag, signAPKPath, success),
-                failed -> log.error("tag{{}} -  generate apk stage failed: {}", tag, failed)
             )
         );
         new CommandRunner().runCommands(commands)
@@ -253,69 +212,85 @@ class AssetFacadeImpl implements AssetFacade {
 
         new CommandRunner().runCommands(commands)
             .thenRun(() -> {
-                if (oldVersion.isPresent()) {
-                    try {
-                        final List<FileDTO> versionToBeUpdateFiles = fileService.findAllLastVersion(versionService.findIdByVersion(oldVersion.orElseThrow())).stream()
-                            .peek(fileDTO -> fileDTO.setPlacement(versionDTO)).collect(Collectors.toList());
-                        final String diffAddress = diffsPath + oldVersion.orElseThrow() + '_' + version + "_diff.txt";
-                        File file = new File(diffAddress);
-                        if (!file.exists()) {
-                            log.info("version{{}} - there is no diff so we just update the database", version);
-                            List<FileDTO> allFiles = fileService.saveAll(versionToBeUpdateFiles);
-                            fileBelongingsService.saveAll(allFiles.stream().map(it -> new FileBelongingsDTO(
-                                null,
-                                it,
-                                versionDTO
-                            )).collect(Collectors.toList()));
-                            log.info("version{{}} - All commands finished!", version);
-                            return;
-                        }
-                        final BufferedReader diffBR = new BufferedReader(new FileReader(file, Charset.defaultCharset()));
-                        final String header = diffBR.readLine();
-                        String line;
-                        final List<FileAddress> addresses = new ArrayList<>();
-                        while ((line = diffBR.readLine()) != null) {
-                            if (line.startsWith("<")) {
-                                //exists in old version but not in new version,
-                                // we will remove these for the list of updated files
-                                addresses.add(FileAddress.Companion.fromDiffLine(0, line));
-                            } else if (line.startsWith(">")) {
-                                //exists in new version but not in old version
-                                FileAddress newAddress = FileAddress.Companion.fromDiffLine(0, line);
-                                versionToBeUpdateFiles.add(new FileDTO(
-                                    null, newAddress.getName(), newAddress.getChecksum(), newAddress.getPath(), newAddress.getSize(), versionDTO
-                                ));
-                            }
-                        }
-                        //remove files that was available in old version and not in new version
-                        final List<FileDTO> notUpdatedFiles = new ArrayList<>();
-                        for (FileDTO fileDTO : versionToBeUpdateFiles) {
-                            for (FileAddress fileAddress : addresses) {
-                                if (Objects.equals(fileDTO.getChecksum(), fileAddress.getChecksum()) &&
-                                    Objects.equals(fileDTO.getName(), fileAddress.getName()) &&
-                                    Objects.equals(fileDTO.getPath(), fileAddress.getPath())) {
-                                    notUpdatedFiles.add(fileDTO);
-                                }
-                            }
-                        }
-                        versionToBeUpdateFiles.removeAll(notUpdatedFiles);
-                        List<FileDTO> allFiles = fileService.saveAll(versionToBeUpdateFiles);
-                        fileBelongingsService.saveAll(allFiles.stream().map(it -> new FileBelongingsDTO(
-                            null,
-                            it,
-                            versionDTO
-                        )).collect(Collectors.toList()));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    initializeSaveDB(versionDTO, newVersionCSVPath);
+                saveAllFiles(oldVersion, versionDTO, version, newVersionCSVPath);
+                try {
+                    DownloadResponse download = download(version);
+                    new ZipDownload().start(
+                        download.getFiles(),
+                        versionsPath,
+                        zipPath + version + ".zip",
+                        version
+                    );
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
                 log.info("version{{}} - All commands finished!", version);
             });
     }
 
-    private void initializeSaveDB(VersionDTO version, String csvPath) {
+    private List<FileDTO> saveAllFiles(Optional<Integer> oldVersion, VersionDTO versionDTO, int version, String newVersionCSVPath) {
+        if (oldVersion.isPresent()) {
+            try {
+                final List<FileDTO> versionToBeUpdateFiles = fileService.findAllLastVersion(versionService.findIdByVersion(oldVersion.orElseThrow())).stream()
+                    .peek(fileDTO -> fileDTO.setPlacement(versionDTO)).collect(Collectors.toList());
+                final String diffAddress = diffsPath + oldVersion.orElseThrow() + '_' + version + "_diff.txt";
+                File file = new File(diffAddress);
+                if (!file.exists()) {
+                    log.info("version{{}} - there is no diff so we just update the database", version);
+                    List<FileDTO> allFiles = fileService.saveAll(versionToBeUpdateFiles);
+                    fileBelongingsService.saveAll(allFiles.stream().map(it -> new FileBelongingsDTO(
+                        null,
+                        it,
+                        versionDTO
+                    )).collect(Collectors.toList()));
+                    return allFiles;
+                }
+                final BufferedReader diffBR = new BufferedReader(new FileReader(file, Charset.defaultCharset()));
+                final String header = diffBR.readLine();
+                String line;
+                final List<FileAddress> addresses = new ArrayList<>();
+                while ((line = diffBR.readLine()) != null) {
+                    if (line.startsWith("<")) {
+                        //exists in old version but not in new version,
+                        // we will remove these for the list of updated files
+                        addresses.add(FileAddress.Companion.fromDiffLine(0, line));
+                    } else if (line.startsWith(">")) {
+                        //exists in new version but not in old version
+                        FileAddress newAddress = FileAddress.Companion.fromDiffLine(0, line);
+                        versionToBeUpdateFiles.add(new FileDTO(
+                            null, newAddress.getName(), newAddress.getChecksum(), newAddress.getPath(), newAddress.getSize(), versionDTO
+                        ));
+                    }
+                }
+                //remove files that was available in old version and not in new version
+                final List<FileDTO> notUpdatedFiles = new ArrayList<>();
+                for (FileDTO fileDTO : versionToBeUpdateFiles) {
+                    for (FileAddress fileAddress : addresses) {
+                        if (Objects.equals(fileDTO.getChecksum(), fileAddress.getChecksum()) &&
+                            Objects.equals(fileDTO.getName(), fileAddress.getName()) &&
+                            Objects.equals(fileDTO.getPath(), fileAddress.getPath())) {
+                            notUpdatedFiles.add(fileDTO);
+                        }
+                    }
+                }
+                versionToBeUpdateFiles.removeAll(notUpdatedFiles);
+                List<FileDTO> allFiles = fileService.saveAll(versionToBeUpdateFiles);
+                fileBelongingsService.saveAll(allFiles.stream().map(it -> new FileBelongingsDTO(
+                    null,
+                    it,
+                    versionDTO
+                )).collect(Collectors.toList()));
+                return allFiles;
+            } catch (IOException e) {
+                log.error("version{{}} - an error happened during the final stage", version, e);
+                return null;
+            }
+        } else {
+            return initializeSaveDB(versionDTO, newVersionCSVPath);
+        }
+    }
+
+    private List<FileDTO> initializeSaveDB(VersionDTO version, String csvPath) {
         try {
             final List<FileDTO> files = new ArrayList<>();
             final BufferedReader versionBufferedReader = new BufferedReader(new FileReader(csvPath + '/' + "files.csv", Charset.defaultCharset()));
@@ -335,9 +310,11 @@ class AssetFacadeImpl implements AssetFacade {
             fileBelongingsService.saveAll(fileService.saveAll(files).stream().map(fileDTO -> new FileBelongingsDTO(
                 null, fileDTO, version
             )).collect(Collectors.toList()));
+            return files;
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
 
@@ -397,7 +374,7 @@ class AssetFacadeImpl implements AssetFacade {
 
     @Override
     public DownloadResponse download(int version) throws IOException {
-        String pathname = "D_" + version + ".json";
+        String pathname = getDownloadPathByVersion(version);
         Optional<DownloadResponse> cache = lookupCache(pathname, DownloadResponse.class);
         if (cache.isPresent()) return cache.orElseThrow();
 
@@ -423,6 +400,11 @@ class AssetFacadeImpl implements AssetFacade {
         );
         saveCache(pathname, result);
         return result;
+    }
+
+    @NotNull
+    private static String getDownloadPathByVersion(int version) {
+        return "D_" + version + ".json";
     }
 
     private Optional<Integer> getTheLastVersion() throws IOException {
