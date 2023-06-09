@@ -14,19 +14,20 @@ services:
     # remove the "127.0.0.1:" prefix
     volumes:
       - /opt/asset:/opt/asset
+      - tmp:/tmp
     ports:
       - 8080:8080
   danak-mysql:
     image: mysql:8.0.28
     restart: always
     environment:
-      MYSQL_DATABASE: 'danak'
+      MYSQL_DATABASE: 'aaa'
       # So you don't have to use root, but you can if you like
-      MYSQL_USER: 'user'
+      MYSQL_USER: 'aaa'
       # You can use whatever password you like
-      MYSQL_PASSWORD: 'admin'
+      MYSQL_PASSWORD: 'aaa'
       # Password for root access
-      MYSQL_ROOT_PASSWORD: 'WFS5dJX9dLcahs'
+      MYSQL_ROOT_PASSWORD: '222'
     command: mysqld --sql_mode="" --character-set-server=utf8 --collation-server=utf8_slovenian_ci --init-connect='SET NAMES UTF8;' --innodb-flush-log-at-trx-commit=0
     ports:
       # <Port exposed> : < MySQL Port running inside container>
@@ -37,4 +38,4 @@ services:
 volumes:
   my-db:
   asset:
-
+  tmp:
