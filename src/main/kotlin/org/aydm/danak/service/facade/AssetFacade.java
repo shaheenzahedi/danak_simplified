@@ -9,6 +9,10 @@ import org.aydm.danak.service.dto.FileBelongingsDTO;
 import org.aydm.danak.service.dto.FileDTO;
 import org.aydm.danak.service.dto.VersionDTO;
 import org.aydm.danak.web.rest.errors.BadRequestAlertException;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,6 +79,9 @@ class AssetFacadeImpl implements AssetFacade {
     @Value("${asset.repo.content}")
     private String contentPath;
 
+    @Value("${asset.repo.path}")
+    private String repoPath;
+
     @Value("${asset.repo.gradle}")
     private String gradlePath;
     //repo
@@ -95,33 +102,28 @@ class AssetFacadeImpl implements AssetFacade {
     @Value("${asset.script.remove-unnecessary}")
     private String removeUnnecessaryScript;
 
-    @Value("${asset.script.checkout}")
-    private String checkout;
 
     //scripts
 
 
     @Override
-    public void initializeVersioning(String tag) {
-        List<CommandData> commands = new ArrayList<>();
-        commands.add(
-            new CommandData(
-                checkout + ' ' + contentPath + ' ' + tag,
-                success -> log.info("tag{{}} - git checkout to the tag stage success: {}", tag, success),
-                failed -> log.error("tag{{}} -  git checkout to the tag stage failed: {}", tag, failed)
-            )
-        );
-        new CommandRunner().runCommands(commands)
-            .thenRun(() -> {
-                try {
-                    int versionCode = getVersionCode(gradlePath);
-                    versionAsset(tag, versionCode);
-                } catch (Exception e) {
-                    log.error(e.getMessage());
-                }
-            });
+    public void initializeVersioning(String tag) throws IOException {
+        if (!checkout(repoPath, tag)) return;
+        versionAsset(tag, getVersionCode(gradlePath));
     }
 
+    public boolean checkout(String repoAddress, String tag) {
+        log.info("tag{{}} - start checking out the directory {}", tag, repoAddress);
+        try (Repository repository = new FileRepositoryBuilder().setGitDir(new File(repoAddress + "/.git")).build()) {
+            Git git = new Git(repository);
+            git.checkout().setName("refs/tags/"+tag).call();
+            log.info("tag{{}} - checking out the directory {} is done successfully", tag, repoAddress);
+            return true;
+        } catch (IOException | GitAPIException e) {
+            log.error("tag{{}} - error checking out the directory {}", tag, repoAddress, e);
+            return false;
+        }
+    }
 
     public int getVersionCode(String buildGradlePath) throws IOException {
         // Read the build.gradle file
@@ -153,7 +155,7 @@ class AssetFacadeImpl implements AssetFacade {
     }
 
     private void versionAsset(String tag, int version) throws IOException {
-        final VersionDTO versionDTO = versionService.save(new VersionDTO(
+        final VersionDTO versionDTO = versionService.saveOrGet(new VersionDTO(
             null, version, tag
         ));
         String newVersionPath = versionsPath + version;

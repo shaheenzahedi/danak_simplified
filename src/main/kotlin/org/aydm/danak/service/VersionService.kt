@@ -53,4 +53,5 @@ interface VersionService {
      */
     fun delete(id: Long)
     fun findIdByVersion(fromVersion: Int): Long
+    fun saveOrGet(dto: VersionDTO): VersionDTO
 }

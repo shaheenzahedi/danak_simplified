@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.Optional
+import java.util.function.Supplier
 
 /**
  * Service Implementation for managing [Version].
@@ -70,5 +71,13 @@ class VersionServiceImpl(
 
     override fun findIdByVersion(fromVersion: Int): Long {
         return versionRepository.findByVersion(fromVersion).id!!
+    }
+
+    private fun findByTag(tag:String): Optional<Version> {
+        return versionRepository.findByTag(tag);
+    }
+    override fun saveOrGet(dto: VersionDTO): VersionDTO {
+        val version = findByTag(dto.tag!!).orElseGet { versionMapper.toEntity(save(dto)) }
+        return versionMapper.toDto(version)
     }
 }
