@@ -90,6 +90,9 @@ class AssetFacadeImpl implements AssetFacade {
 
     @Value("${asset.repo.gradle}")
     private String gradlePath;
+
+    @Value("${asset.repo.zip-password}")
+    private String zipPassword;
     //repo
 
     //scripts
@@ -227,7 +230,9 @@ class AssetFacadeImpl implements AssetFacade {
                         download.getFiles(),
                         versionsPath,
                         zipPath + version + ".zip",
-                        version
+                        version,
+                        getDownloadPathByVersion(version),
+                        zipPassword
                     );
                 } catch (IOException e) {
                     throw new RuntimeException(e);

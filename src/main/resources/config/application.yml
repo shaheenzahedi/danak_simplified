@@ -227,6 +227,7 @@ asset:
     path: '/opt/asset/data/danak/'
     gradle: ${asset.repo.path}src/app/build.gradle
     content: ${asset.repo.path}src/app/src/main/content/
+    zip-password: 'eBMYRPR3Gx46C2'
   script:
     copy: ${asset.scripts}copy.sh
     generate-csv: ${asset.scripts}gen_csv.sh

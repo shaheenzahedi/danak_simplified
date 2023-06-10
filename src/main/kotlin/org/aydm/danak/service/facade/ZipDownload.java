@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.zip.*;
 
-import org.aydm.danak.service.dto.FileDTO;
 import org.json.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,16 +13,38 @@ import org.slf4j.LoggerFactory;
 public class ZipDownload {
     private final Logger log = LoggerFactory.getLogger(ZipDownload.class);
 
-    public void start(List<FileResponse> allFiles, String prefixPath, String zipDir, int version) {
+    public void start(List<FileResponse> allFiles, String prefixPath, String zipDir, int version, String jsonFilePath, String password) {
         try {
-            // Read the JSON data from the file
-            log.info("version{{}} - beginning the offline zip creation", version);
-
             // Create the zip file
             File zipFile = new File(zipDir);
             zipFile.createNewFile();
             FileOutputStream fos = new FileOutputStream(zipFile);
             ZipOutputStream zos = new ZipOutputStream(fos);
+
+            // Set password for the zip file
+            if (password != null && !password.isEmpty()) {
+                zos.setMethod(ZipOutputStream.DEFLATED);
+                zos.setComment(password);
+            }
+
+            // Add the JSON file to the root folder of the zip file
+            if (jsonFilePath != null && !jsonFilePath.isEmpty()) {
+                File jsonFile = new File(jsonFilePath);
+                if (jsonFile.exists()) {
+                    ZipEntry jsonEntry = new ZipEntry(jsonFile.getName());
+                    zos.putNextEntry(jsonEntry);
+                    FileInputStream jsonFis = new FileInputStream(jsonFile);
+                    byte[] jsonBuffer = new byte[1024];
+                    int jsonLen;
+                    while ((jsonLen = jsonFis.read(jsonBuffer)) > 0) {
+                        zos.write(jsonBuffer, 0, jsonLen);
+                    }
+                    jsonFis.close();
+                    zos.closeEntry();
+                } else {
+                    log.warn("version{{}} - JSON file does not exist: {}", version, jsonFilePath);
+                }
+            }
 
             // Add each file to the zip file
             for (FileResponse fileDTO : allFiles) {
@@ -59,7 +80,6 @@ public class ZipDownload {
             log.error("version{{}} - Error: ", version, e);
         }
     }
-
     // Verify the checksum of a file
     private static boolean verifyChecksum(String filepath, String checksum) {
         try {
