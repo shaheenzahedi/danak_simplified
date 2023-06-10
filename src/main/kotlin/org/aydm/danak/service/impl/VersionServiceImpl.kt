@@ -83,6 +83,6 @@ class VersionServiceImpl(
     override fun findLastVersion(): Optional<VersionDTO> {
         val lastVersion = versionRepository.findLastVersion()
         if (lastVersion.isEmpty)return Optional.empty()
-        return Optional.of(versionMapper.toDto(lastVersion.get()))
+        return Optional.of(versionMapper.toDto(lastVersion.orElseThrow()))
     }
 }
