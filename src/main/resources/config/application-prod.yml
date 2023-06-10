@@ -26,6 +26,10 @@ management:
         enabled: false
 
 spring:
+  servlet:
+    multipart:
+      max-request-size: 50MB
+      max-file-size: 50MB
   devtools:
     restart:
       enabled: false

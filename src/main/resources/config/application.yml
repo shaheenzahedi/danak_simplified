@@ -214,13 +214,15 @@ jhipster:
 
 # application:
 asset:
-  base: '/opt/asset/'
+  base: '/media/shaheen/Store/sava/sample/'
   versions: ${asset.base}versions/
-  zip: ${asset.base}/apk-ftp/data/offline-zips/
   lists: ${asset.base}lists/
   diffs: ${asset.base}diffs/
   caches: ${asset.base}cache/
   scripts: ${asset.base}scripts/
+  apk:
+    base: ${asset.base}/apk-ftp/data/
+    zip: ${asset.apk.base}offline-zips/
   repo:
     path: '/opt/asset/data/danak/'
     gradle: ${asset.repo.path}src/app/build.gradle

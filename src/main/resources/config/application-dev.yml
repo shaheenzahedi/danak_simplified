@@ -30,6 +30,10 @@ spring:
   jackson:
     serialization:
       indent-output: true
+  servlet:
+    multipart:
+      max-request-size: 50MB
+      max-file-size: 50MB
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:h2:file:./target/h2db/db/danak;DB_CLOSE_DELAY=-1;

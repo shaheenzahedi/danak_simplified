@@ -9,13 +9,16 @@ import org.aydm.danak.service.facade.UpdateResponse
 import org.aydm.danak.web.rest.errors.BadRequestAlertException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 import tech.jhipster.web.util.HeaderUtil
 import tech.jhipster.web.util.ResponseUtil
 import java.net.URI
 import java.net.URISyntaxException
-import java.util.Objects
+import java.util.*
+
 
 private const val ENTITY_NAME = "file"
 /**
@@ -105,6 +108,19 @@ class FileResource(
     @GetMapping("download-assets")
     fun downloadAssets(@RequestParam version: Int): DownloadResponse? {
         return assetFacade.download(version)
+    }
+
+    @PostMapping("/upload-apk")
+    fun handleFileUpload(
+        @RequestParam("file") file: MultipartFile
+    ): ResponseEntity<Void> {
+
+        // Check if file is a valid APK
+        if (!file.originalFilename.endsWith(".apk")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
+        }
+        assetFacade.uploadApk(file)
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build()
     }
     @GetMapping("update-assets")
     fun versionAsset(@RequestParam fromVersion: Int, @RequestParam toVersion: Int): UpdateResponse? {

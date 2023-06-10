@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -41,6 +42,8 @@ public interface AssetFacade {
 
 
     DownloadResponse download(int version) throws IOException;
+
+    void uploadApk(@NotNull MultipartFile file) throws IOException;
 }
 
 @Transactional
@@ -62,8 +65,11 @@ class AssetFacadeImpl implements AssetFacade {
     @Value("${asset.diffs}")
     private String diffsPath;
 
-    @Value("${asset.zip}")
+    @Value("${asset.apk.zip}")
     private String zipPath;
+
+    @Value("${asset.apk.base}")
+    private String apkBasePath;
 
     @Value("${asset.versions}")
     private String versionsPath;
@@ -402,6 +408,19 @@ class AssetFacadeImpl implements AssetFacade {
         );
         saveCache(pathname, result);
         return result;
+    }
+
+    @Override
+    public void uploadApk(@NotNull MultipartFile file) throws IOException {
+        // Create the folder if it doesn't exist
+        File folder = new File(apkBasePath);
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
+
+        // Save the file to the folder
+        File saveFile = new File(folder, file.getOriginalFilename());
+        Files.write(saveFile.toPath(), file.getBytes());
     }
 
     @NotNull
