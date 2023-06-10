@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.Optional
-import java.util.function.Supplier
 
 /**
  * Service Implementation for managing [Version].
@@ -79,5 +78,11 @@ class VersionServiceImpl(
     override fun saveOrGet(dto: VersionDTO): VersionDTO {
         val version = findByTag(dto.tag!!).orElseGet { versionMapper.toEntity(save(dto)) }
         return versionMapper.toDto(version)
+    }
+
+    override fun findLastVersion(): Optional<VersionDTO> {
+        val lastVersion = versionRepository.findLastVersion()
+        if (lastVersion.isEmpty)return Optional.empty()
+        return Optional.of(versionMapper.toDto(lastVersion.get()))
     }
 }

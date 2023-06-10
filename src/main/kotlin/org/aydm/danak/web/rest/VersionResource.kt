@@ -157,6 +157,12 @@ class VersionResource(
         val versionDTO = versionService.findOne(id)
         return ResponseUtil.wrapOrNotFound(versionDTO)
     }
+    @GetMapping("/versions/last")
+    fun getLastVersion(): ResponseEntity<VersionDTO?> {
+        log.debug("REST request to get last Version")
+        val versionDTO = versionService.findLastVersion()
+        return ResponseUtil.wrapOrNotFound(versionDTO)
+    }
     /**
      *  `DELETE  /versions/:id` : delete the "id" version.
      *

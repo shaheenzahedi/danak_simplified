@@ -14,7 +14,6 @@ services:
     # remove the "127.0.0.1:" prefix
     volumes:
       - /opt/asset:/opt/asset
-      - tmp:/tmp
     ports:
       - 8080:8080
   danak-mysql:
@@ -37,4 +36,3 @@ services:
 volumes:
   my-db:
   asset:
-  tmp:
