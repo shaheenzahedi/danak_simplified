@@ -21,16 +21,15 @@ services:
     image: mysql:8.0.28
     restart: always
     environment:
-      MYSQL_DATABASE: 'aaa'
+      MYSQL_DATABASE: 'danak'
       # So you don't have to use root, but you can if you like
-      MYSQL_USER: 'aaa'
+      MYSQL_USER: 'user'
       # You can use whatever password you like
-      MYSQL_PASSWORD: 'aaa'
+      MYSQL_PASSWORD: 'admin'
       # Password for root access
-      MYSQL_ROOT_PASSWORD: '222'
+      MYSQL_ROOT_PASSWORD: 'WFS5dJX9dLcahs'
     command: mysqld --sql_mode="" --character-set-server=utf8 --collation-server=utf8_slovenian_ci --init-connect='SET NAMES UTF8;' --innodb-flush-log-at-trx-commit=0
     ports:
-      # <Port exposed> : < MySQL Port running inside container>
       - '3306:3306'
     volumes:
       - my-db:/var/lib/mysql
