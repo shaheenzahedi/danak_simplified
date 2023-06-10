@@ -214,7 +214,7 @@ jhipster:
 
 # application:
 asset:
-  base: '/media/shaheen/Store/sava/sample/'
+  base: '/opt/asset/'
   versions: ${asset.base}versions/
   lists: ${asset.base}lists/
   diffs: ${asset.base}diffs/
