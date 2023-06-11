@@ -72,8 +72,8 @@ class VersionServiceImpl(
         return versionRepository.findByVersion(fromVersion).id!!
     }
 
-    private fun findByTag(tag:String): Optional<Version> {
-        return versionRepository.findByTag(tag);
+    private fun findByTag(tag: String): Optional<Version> {
+        return versionRepository.findByTag(tag)
     }
     override fun saveOrGet(dto: VersionDTO): VersionDTO {
         val version = findByTag(dto.tag!!).orElseGet { versionMapper.toEntity(save(dto)) }

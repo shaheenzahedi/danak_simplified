@@ -228,6 +228,8 @@ asset:
     gradle: ${asset.repo.path}src/app/build.gradle
     content: ${asset.repo.path}src/app/src/main/content/
     zip-password: 'eBMYRPR3Gx46C2'
+    user: 'shaheenzahedi'
+    token: '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'
   script:
     copy: ${asset.scripts}copy.sh
     generate-csv: ${asset.scripts}gen_csv.sh

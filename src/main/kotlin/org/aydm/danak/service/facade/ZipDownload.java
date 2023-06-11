@@ -4,8 +4,13 @@ import java.io.*;
 import java.security.MessageDigest;
 import java.util.List;
 import java.util.Objects;
-import java.util.zip.*;
+import java.util.zip.ZipException;
 
+import net.lingala.zip4j.ZipFile;
+import net.lingala.zip4j.model.ZipParameters;
+import net.lingala.zip4j.model.enums.CompressionLevel;
+import net.lingala.zip4j.model.enums.CompressionMethod;
+import net.lingala.zip4j.model.enums.EncryptionMethod;
 import org.json.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,33 +19,18 @@ public class ZipDownload {
     private final Logger log = LoggerFactory.getLogger(ZipDownload.class);
 
     public void start(List<FileResponse> allFiles, String prefixPath, String zipDir, int version, String jsonFilePath, String password) {
-        try {
-            // Create the zip file
-            File zipFile = new File(zipDir);
-            zipFile.createNewFile();
-            FileOutputStream fos = new FileOutputStream(zipFile);
-            ZipOutputStream zos = new ZipOutputStream(fos);
-
-            // Set password for the zip file
-            if (password != null && !password.isEmpty()) {
-                zos.setMethod(ZipOutputStream.DEFLATED);
-                zos.setComment(password);
-            }
-
+        log.info("version{{}} - Zip file creation started", version);
+        try (ZipFile zipFile = new ZipFile(zipDir)){
+            ZipParameters zipParameters = new ZipParameters();
+            zipParameters.setEncryptFiles(true);
+            zipParameters.setCompressionLevel(CompressionLevel.HIGHER);
+            zipParameters.setEncryptionMethod(EncryptionMethod.AES);
+            zipFile.setPassword(password.toCharArray());
             // Add the JSON file to the root folder of the zip file
             if (jsonFilePath != null && !jsonFilePath.isEmpty()) {
                 File jsonFile = new File(jsonFilePath);
                 if (jsonFile.exists()) {
-                    ZipEntry jsonEntry = new ZipEntry(jsonFile.getName());
-                    zos.putNextEntry(jsonEntry);
-                    FileInputStream jsonFis = new FileInputStream(jsonFile);
-                    byte[] jsonBuffer = new byte[1024];
-                    int jsonLen;
-                    while ((jsonLen = jsonFis.read(jsonBuffer)) > 0) {
-                        zos.write(jsonBuffer, 0, jsonLen);
-                    }
-                    jsonFis.close();
-                    zos.closeEntry();
+                    zipFile.addFile(jsonFile, zipParameters);
                 } else {
                     log.warn("version{{}} - JSON file does not exist: {}", version, jsonFilePath);
                 }
@@ -54,29 +44,17 @@ public class ZipDownload {
                 // Verify the checksum of the file
                 if (!verifyChecksum(prefixPath + "/" + path, checksum)) {
                     log.error("version{{}} - Checksum verification failed for file: " + prefixPath + "/" + path, version);
-                    zos.close();
-                    zipFile.delete();
+                    zipFile.getFile().delete();
                     return;
                 }
 
                 // Add the file to the zip file
-                ZipEntry zipEntry = new ZipEntry(path);
-                zos.putNextEntry(zipEntry);
-                FileInputStream fis = new FileInputStream(new File(prefixPath, path));
-                byte[] buffer = new byte[1024];
-                int len;
-                while ((len = fis.read(buffer)) > 0) {
-                    zos.write(buffer, 0, len);
-                }
-                fis.close();
-                zos.closeEntry();
+                zipParameters.setFileNameInZip(path);
+                zipFile.addStream(new FileInputStream(new File(prefixPath, path)), zipParameters);
             }
 
-            // Close the zip file
-            zos.close();
-
-            log.info("version{{}} - Zip file created: {}", version, zipFile.getAbsolutePath());
-        } catch (IOException | JSONException e) {
+            log.info("version{{}} - Zip file created: {}", version, zipFile.getFile().getAbsolutePath());
+        } catch (IOException e) {
             log.error("version{{}} - Error: ", version, e);
         }
     }
@@ -100,50 +78,6 @@ public class ZipDownload {
         } catch (Exception e) {
             return false;
         }
-    }
-
-    // Zip a directory and its contents
-    private static void zipDirectory(File sourceDir, File zipFile) throws IOException {
-        FileOutputStream fos = new FileOutputStream(zipFile);
-        ZipOutputStream zos = new ZipOutputStream(fos);
-        zipSubDirectory("", sourceDir, zos);
-        zos.close();
-        fos.close();
-    }
-
-    // Zip a subdirectory and its contents
-    private static void zipSubDirectory(String basePath, File dir, ZipOutputStream zos) throws IOException {
-        File[] files = dir.listFiles();
-        byte[] buffer = new byte[1024];
-        int bytesRead;
-        for (File file : Objects.requireNonNull(files)) {
-            if (file.isDirectory()) {
-                String path = basePath + file.getName() + "/";
-                zos.putNextEntry(new ZipEntry(path));
-                zipSubDirectory(path, file, zos);
-                zos.closeEntry();
-            } else {
-                FileInputStream fis = new FileInputStream(file);
-                String path = basePath + file.getName();
-                zos.putNextEntry(new ZipEntry(path));
-                while ((bytesRead = fis.read(buffer)) != -1) {
-                    zos.write(buffer, 0, bytesRead);
-                }
-                fis.close();
-                zos.closeEntry();
-            }
-        }
-    }
-
-    // Delete a directory and its contents
-    private static void deleteDirectory(File directory) {
-        if (directory.isDirectory()) {
-            File[] files = directory.listFiles();
-            for (File file : files) {
-                deleteDirectory(file);
-            }
-        }
-        directory.delete();
     }
 }
 

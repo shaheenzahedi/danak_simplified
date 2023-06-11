@@ -14,8 +14,8 @@ import java.util.Optional
 @Repository
 interface VersionRepository : JpaRepository<Version, Long> {
     fun findByVersion(@Param("version") fromVersion: Int): Version
-    fun findByTag(tag: String):Optional<Version>
+    fun findByTag(tag: String): Optional<Version>
 
     @Query("SELECT v FROM Version v WHERE v.id = (SELECT MAX(v1.id) FROM Version v1)")
-    fun findLastVersion():Optional<Version>
+    fun findLastVersion(): Optional<Version>
 }

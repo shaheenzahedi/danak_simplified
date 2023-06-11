@@ -377,6 +377,14 @@
             <artifactId>org.eclipse.jgit</artifactId>
             <version>6.5.0.202303070854-r</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/net.lingala.zip4j/zip4j -->
+        <dependency>
+            <groupId>net.lingala.zip4j</groupId>
+            <artifactId>zip4j</artifactId>
+            <version>2.11.5</version>
+        </dependency>
+
     </dependencies>
 
     <build>

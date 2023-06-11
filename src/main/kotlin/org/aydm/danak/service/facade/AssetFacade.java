@@ -9,10 +9,16 @@ import org.aydm.danak.service.dto.FileBelongingsDTO;
 import org.aydm.danak.service.dto.FileDTO;
 import org.aydm.danak.service.dto.VersionDTO;
 import org.aydm.danak.web.rest.errors.BadRequestAlertException;
+import org.eclipse.jgit.api.CheckoutCommand;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.PullCommand;
+import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.transport.CredentialsProvider;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,6 +99,12 @@ class AssetFacadeImpl implements AssetFacade {
 
     @Value("${asset.repo.zip-password}")
     private String zipPassword;
+
+    @Value("${asset.repo.user}")
+    private String repoUser;
+
+    @Value("${asset.repo.token}")
+    private String repoToken;
     //repo
 
     //scripts
@@ -124,8 +136,10 @@ class AssetFacadeImpl implements AssetFacade {
     public boolean checkout(String repoAddress, String tag) {
         log.info("tag{{}} - start checking out the directory {}", tag, repoAddress);
         try (Repository repository = new FileRepositoryBuilder().setGitDir(new File(repoAddress + "/.git")).build()) {
+            CredentialsProvider cp = new UsernamePasswordCredentialsProvider(repoUser, repoToken);
             Git git = new Git(repository);
-            git.checkout().setName("refs/tags/"+tag).call();
+            git.fetch().setCredentialsProvider(cp).call();
+            git.checkout().setName("refs/tags/" + tag).call();
             log.info("tag{{}} - checking out the directory {} is done successfully", tag, repoAddress);
             return true;
         } catch (IOException | GitAPIException e) {
@@ -231,7 +245,7 @@ class AssetFacadeImpl implements AssetFacade {
                         versionsPath,
                         zipPath + version + ".zip",
                         version,
-                        getDownloadPathByVersion(version),
+                        cachePath + getDownloadPathByVersion(version),
                         zipPassword
                     );
                 } catch (IOException e) {

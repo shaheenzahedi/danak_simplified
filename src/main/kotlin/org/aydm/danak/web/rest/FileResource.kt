@@ -19,7 +19,6 @@ import java.net.URI
 import java.net.URISyntaxException
 import java.util.*
 
-
 private const val ENTITY_NAME = "file"
 /**
  * REST controller for managing [org.aydm.danak.domain.File].
