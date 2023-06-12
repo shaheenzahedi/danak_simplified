@@ -16,6 +16,8 @@ services:
       - /opt/asset:/opt/asset
     ports:
       - 8080:8080
+    env_file:
+      - /opt/asset/.env
   danak-mysql:
     image: mysql:8.0.28
     restart: always
@@ -24,9 +26,9 @@ services:
       # So you don't have to use root, but you can if you like
       MYSQL_USER: 'user'
       # You can use whatever password you like
-      MYSQL_PASSWORD: 'admin'
+      MYSQL_PASSWORD: ${MYSQL_ADMIN_USER}
       # Password for root access
-      MYSQL_ROOT_PASSWORD: 'WFS5dJX9dLcahs'
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     command: mysqld --sql_mode="" --character-set-server=utf8 --collation-server=utf8_slovenian_ci --init-connect='SET NAMES UTF8;' --innodb-flush-log-at-trx-commit=0
     ports:
       - '3306:3306'
