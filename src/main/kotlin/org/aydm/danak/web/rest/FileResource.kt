@@ -112,14 +112,14 @@ class FileResource(
     @PostMapping("/upload-apk")
     fun handleFileUpload(
         @RequestParam("file") file: MultipartFile
-    ): ResponseEntity<Void> {
+    ): ResponseEntity<String> {
 
         // Check if file is a valid APK
         if (!file.originalFilename.endsWith(".apk")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
         }
         assetFacade.uploadApk(file)
-        return ResponseEntity.status(HttpStatus.ACCEPTED).build()
+        return ResponseEntity.status(200).body("OK")
     }
     @GetMapping("update-assets")
     fun versionAsset(@RequestParam fromVersion: Int, @RequestParam toVersion: Int): UpdateResponse? {
