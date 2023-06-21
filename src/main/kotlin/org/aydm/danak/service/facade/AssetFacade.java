@@ -129,8 +129,8 @@ class AssetFacadeImpl implements AssetFacade {
 
     @Override
     public void initializeVersioning(String tag) throws IOException {
-        if (!checkout(repoPath, tag)) return;
-        versionAsset(tag, getVersionCode(gradlePath));
+//        if (!checkout(repoPath, tag)) return;
+//        versionAsset(tag, getVersionCode(gradlePath));
     }
 
     public boolean checkout(String repoAddress, String tag) {
