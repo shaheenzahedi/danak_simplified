@@ -16,6 +16,11 @@ interface VersionRepository : JpaRepository<Version, Long> {
     fun findByVersion(@Param("version") fromVersion: Int): Version
     fun findByTag(tag: String): Optional<Version>
 
-    @Query("SELECT v FROM Version v WHERE v.id = (SELECT MAX(v1.id) FROM Version v1)")
+    @Query("SELECT e FROM Version e WHERE " +
+        "e.id = (SELECT MAX(e2.id) FROM Version e2 " +
+        "WHERE e2.tag NOT LIKE '%qa%' " +
+        "AND e2.tag NOT LIKE '%alpha%' " +
+        "AND e2.tag NOT LIKE '%beta%' " +
+        "AND e2.tag NOT LIKE '%rc%')")
     fun findLastVersion(): Optional<Version>
 }
