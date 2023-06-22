@@ -22,10 +22,7 @@ public class ZipDownload {
         log.info("version{{}} - Zip file creation started", version);
         try (ZipFile zipFile = new ZipFile(zipDir)){
             ZipParameters zipParameters = new ZipParameters();
-            zipParameters.setEncryptFiles(true);
-            zipParameters.setCompressionLevel(CompressionLevel.HIGHER);
-            zipParameters.setEncryptionMethod(EncryptionMethod.AES);
-            zipFile.setPassword(password.toCharArray());
+            zipParameters.setCompressionLevel(CompressionLevel.NO_COMPRESSION);
             // Add the JSON file to the root folder of the zip file
             if (jsonFilePath != null && !jsonFilePath.isEmpty()) {
                 File jsonFile = new File(jsonFilePath);
