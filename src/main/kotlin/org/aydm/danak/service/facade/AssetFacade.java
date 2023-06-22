@@ -50,6 +50,8 @@ public interface AssetFacade {
     DownloadResponse download(int version) throws IOException;
 
     void uploadApk(@NotNull MultipartFile file) throws IOException;
+
+    List<String> checkExistence(int version) throws IOException;
 }
 
 @Transactional
@@ -440,6 +442,18 @@ class AssetFacadeImpl implements AssetFacade {
         // Save the file to the folder
         File saveFile = new File(folder, file.getOriginalFilename());
         Files.write(saveFile.toPath(), file.getBytes());
+    }
+
+    @Override
+    public List<String> checkExistence(int version) throws IOException {
+        DownloadResponse download = download(version);
+        List<String> result = new ArrayList<>();
+        download.getFiles().forEach(fileResponse -> {
+            if (!Paths.get(versionsPath + fileResponse.getPath()).toFile().exists()){
+                result.add(fileResponse.path);
+            }
+        });
+        return result;
     }
 
     @NotNull

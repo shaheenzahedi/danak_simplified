@@ -104,6 +104,10 @@ class FileResource(
     fun versionAsset(@RequestParam tag: String) {
         assetFacade.initializeVersioning(tag)
     }
+    @GetMapping("check-existence")
+    fun checkExistence(@RequestParam version: Int):List<String> {
+        return assetFacade.checkExistence(version)
+    }
     @GetMapping("download-assets")
     fun downloadAssets(@RequestParam version: Int): DownloadResponse? {
         return assetFacade.download(version)
