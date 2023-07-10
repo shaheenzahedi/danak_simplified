@@ -15,7 +15,7 @@ error_file="$(mktemp)"
 
 # Delete identical files in directory 1
 echo "Deleting identical files in $dir1"
-if ! find "$dir1" -type f -exec sh -c 'cmp -s "$1" "$2/${1#$3}" && rm "$1"' sh {} "$dir2" "$dir1" \; 2>&1 | tee "$error_file" ; then
+if ! find "$dir1" -type f -exec sh -c 'cmp -s "$1" "$2/${1#$3}" && rm "$1" && ln -s "$2${1#$3}" "$1"' sh {} "$dir2" "$dir1" \; 2>&1 | tee "$error_file" ; then
     echo "Error: Failed to delete identical files in $dir1" >&2
     cat "$error_file" >&2
     rm -f "$error_file"
@@ -30,3 +30,4 @@ if ! find "$dir1" -type d -exec rmdir -p {} \; 2> /dev/null ; then
 fi
 
 echo "Clean up done!"
+
