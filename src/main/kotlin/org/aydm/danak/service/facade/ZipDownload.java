@@ -3,22 +3,17 @@ package org.aydm.danak.service.facade;
 import java.io.*;
 import java.security.MessageDigest;
 import java.util.List;
-import java.util.Objects;
-import java.util.zip.ZipException;
 
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.model.ZipParameters;
 import net.lingala.zip4j.model.enums.CompressionLevel;
-import net.lingala.zip4j.model.enums.CompressionMethod;
-import net.lingala.zip4j.model.enums.EncryptionMethod;
-import org.json.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ZipDownload {
     private final Logger log = LoggerFactory.getLogger(ZipDownload.class);
 
-    public void start(List<FileResponse> allFiles, String prefixPath, String zipDir, int version, String jsonFilePath, String password) {
+    public void start(List<FileResponse> allFiles, String prefixPath, String zipDir, int version, String jsonFilePath) {
         log.info("version{{}} - Zip file creation started", version);
         try (ZipFile zipFile = new ZipFile(zipDir)){
             ZipParameters zipParameters = new ZipParameters();

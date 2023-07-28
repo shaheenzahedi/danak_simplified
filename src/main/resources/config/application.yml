@@ -227,7 +227,6 @@ asset:
     path: '/opt/asset/data/danak/'
     gradle: ${asset.repo.path}src/app/build.gradle
     content: ${asset.repo.path}src/app/src/main/content/
-    zip-password: ${ZIP_PASSWORD}
     user: ${REPO_USER}
     token: ${REPO_TOKEN}
   script:

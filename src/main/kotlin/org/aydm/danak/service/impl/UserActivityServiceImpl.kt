@@ -1,5 +1,6 @@
 package org.aydm.danak.service.impl
 
+import org.aydm.danak.domain.TabletUser
 import org.aydm.danak.domain.UserActivity
 import org.aydm.danak.repository.UserActivityRepository
 import org.aydm.danak.service.UserActivityService
@@ -10,7 +11,8 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.web.danak.service.dto.SubmitDTO
 import org.web.danak.service.dto.SubmitUserDTO
-import java.util.Optional
+import java.util.*
+
 
 /**
  * Service Implementation for managing [UserActivity].
@@ -68,7 +70,6 @@ class UserActivityServiceImpl(
 
     override fun delete(id: Long) {
         log.debug("Request to delete UserActivity : $id")
-
         userActivityRepository.deleteById(id)
     }
 
@@ -125,25 +126,32 @@ class UserActivityServiceImpl(
         }
     }
 
+    override fun getAllActivityByUserPageable(): List<OverallUserActivities?>? {
+        return getUserData(userActivityRepository.best())
+    }
+
+    fun getUserData(results: List<Array<Any?>?>?): List<OverallUserActivities>? {
+        return results?.filterNotNull()?.map { result ->
+            val (id, firstName, lastName) = result[0] as TabletUser
+            val tabletName = result[1] as String
+            val userActivity = result[2] as UserActivity
+            val overallUserActivities = OverallUserActivities(
+                firstName,
+                lastName, tabletName, mutableListOf()
+            )
+            val aggregatedUserActivity = AggregatedUserActivity(
+                id, userActivity.listName, userActivity.listName, userActivity.total, userActivity.completed
+            )
+            overallUserActivities.userActivities?.add(aggregatedUserActivity)
+            overallUserActivities
+        }
+    }
+
     override fun getAllActivityByUser(): List<OverallUserActivities> {
         val tablets = tabletServiceImpl.findAll()
         val tabletUsers = tabletUserServiceImpl.findAllByFirstLastNameImplicit()
             .filter { tablets.any { tablet -> it.tablet?.id == tablet.id } }
-        val userActivities = findAllDistinctActivityIdSummary()
-        return tabletUsers.map { tabletUser ->
-            val activityDTOs =
-                userActivities?.filter { userActivityDTO -> userActivityDTO.tabletUserId == tabletUser.id }
-            OverallUserActivities(
-                firstName = tabletUser.firstName,
-                lastName = tabletUser.lastName,
-                tabletName = tablets.first { tablet -> tablet.id == tabletUser.tablet?.id }.name,
-                userActivities = activityDTOs
-            )
-        }
-    }
-
-    override fun findAllDistinctActivityIdSummary(): List<AggregatedUserActivity>? {
-        return userActivityRepository.findAllDistinctActivityIdSummary()
+        val userActivities = userActivityRepository.findAllDistinctActivityIdSummary()
             ?.map {
                 AggregatedUserActivity(
                     tabletUserId = it.activity?.id,
@@ -153,5 +161,16 @@ class UserActivityServiceImpl(
                     completes = it.completed
                 )
             }
+        return tabletUsers.map { tabletUser ->
+            val activityDTOs =
+                userActivities?.filter { userActivityDTO -> userActivityDTO.tabletUserId == tabletUser.id }
+            OverallUserActivities(
+                firstName = tabletUser.firstName,
+                lastName = tabletUser.lastName,
+                tabletName = tablets.first { tablet -> tablet.id == tabletUser.tablet?.id }.name,
+                userActivities = activityDTOs?.toMutableList()
+            )
+        }
     }
+
 }

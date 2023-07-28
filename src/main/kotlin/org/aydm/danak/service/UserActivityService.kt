@@ -61,5 +61,5 @@ interface UserActivityService {
     fun submit(submitDTO: SubmitDTO): Boolean
     fun getAllActivityByTablet(): List<SubmitDTO>
     fun getAllActivityByUser(): List<OverallUserActivities>
-    fun findAllDistinctActivityIdSummary(): List<AggregatedUserActivity>?
+    fun getAllActivityByUserPageable(): List<OverallUserActivities?>?
 }

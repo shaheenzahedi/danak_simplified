@@ -17,6 +17,7 @@ import java.net.URISyntaxException
 import java.util.Objects
 
 private const val ENTITY_NAME = "userActivity"
+
 /**
  * REST controller for managing [org.aydm.danak.domain.UserActivity].
  */
@@ -47,9 +48,16 @@ class UserActivityResource(
         val allActivity = userActivityService.getAllActivityByTablet()
         return ResponseEntity.ok().body(allActivity)
     }
+
     @GetMapping("all-activities-by-user")
     fun getAllActivityByUser(): ResponseEntity<List<OverallUserActivities>> {
         val allActivity = userActivityService.getAllActivityByUser()
+        return ResponseEntity.ok().body(allActivity)
+    }
+
+    @GetMapping("all-activities-best")
+    fun getAllActivityPageable(/*@ParameterObject pageable: Pageable?*/): ResponseEntity<List<OverallUserActivities?>?> {
+        val allActivity = userActivityService.getAllActivityByUserPageable()
         return ResponseEntity.ok().body(allActivity)
     }
 
@@ -177,6 +185,7 @@ class UserActivityResource(
         val userActivityDTO = userActivityService.findOne(id)
         return ResponseUtil.wrapOrNotFound(userActivityDTO)
     }
+
     /**
      *  `DELETE  /user-activities/:id` : delete the "id" userActivity.
      *

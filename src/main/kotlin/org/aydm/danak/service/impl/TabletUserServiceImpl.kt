@@ -3,6 +3,7 @@ package org.aydm.danak.service.impl
 import org.aydm.danak.domain.TabletUser
 import org.aydm.danak.repository.TabletUserRepository
 import org.aydm.danak.service.TabletUserService
+import org.aydm.danak.service.dto.OverallUserActivities
 import org.aydm.danak.service.dto.TabletUserDTO
 import org.aydm.danak.service.mapper.TabletUserMapper
 import org.slf4j.LoggerFactory
@@ -66,6 +67,7 @@ class TabletUserServiceImpl(
         return tabletUserRepository.findAllByFirstLastNameImplicit()
             .mapTo(mutableListOf(), tabletUserMapper::toDto)
     }
+
 
     override fun createSave(tabletUserDTO: TabletUserDTO): TabletUserDTO {
         val tabletUser =
