@@ -142,6 +142,7 @@ class UserActivityServiceImpl(
             val tablet = result[1] as Tablet
             val userActivity = result[2] as UserActivity
             UserActivityItem(
+                activityId = userActivity.id,
                 tabletUserId = tabletUser.id,
                 firstName = tabletUser.firstName,
                 lastName = tabletUser.lastName,

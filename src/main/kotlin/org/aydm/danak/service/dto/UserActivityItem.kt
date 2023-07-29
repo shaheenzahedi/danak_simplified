@@ -1,6 +1,7 @@
 package org.aydm.danak.service.dto
 
 data class UserActivityItem(
+    val activityId:Long?,
     val tabletUserId: Long?,
     val firstName: String?,
     val lastName: String?,
