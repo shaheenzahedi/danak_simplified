@@ -1,6 +1,7 @@
 package org.aydm.danak.service.dto
 
 data class OverallUserActivities(
+    val tabletUserId: Long?,
     val firstName: String?,
     val lastName: String?,
     val tabletName: String?,
@@ -8,7 +9,7 @@ data class OverallUserActivities(
 )
 
 data class AggregatedUserActivity(
-    val tabletUserId: Long?,
+    val userActivityId: Long?,
     val displayListName: String?,
     val listName: String?,
     val totals: Long?,

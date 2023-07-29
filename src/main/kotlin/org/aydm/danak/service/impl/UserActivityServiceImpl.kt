@@ -141,12 +141,13 @@ class UserActivityServiceImpl(
             val tabletUser = result[0] as TabletUser
             val tablet = result[1] as Tablet
             OverallUserActivities(
+                tabletUserId = tabletUser.id,
                 firstName = tabletUser.firstName,
                 lastName = tabletUser.lastName,
                 tabletName = tablet.name,
                 userActivities = tabletUser.userActivities?.map {
                     AggregatedUserActivity(
-                        tabletUserId = it.activity?.id,
+                        userActivityId = it.activity?.id,
                         displayListName = it.listName,
                         listName = it.uniqueName,
                         totals = it.total,
@@ -164,7 +165,7 @@ class UserActivityServiceImpl(
         val userActivities = userActivityRepository.findAllDistinctActivityIdSummary()
             ?.map {
                 AggregatedUserActivity(
-                    tabletUserId = it.activity?.id,
+                    userActivityId = it.activity?.id,
                     displayListName = it.listName,
                     listName = it.uniqueName,
                     totals = it.total,
@@ -173,8 +174,9 @@ class UserActivityServiceImpl(
             }
         return tabletUsers.map { tabletUser ->
             val activityDTOs =
-                userActivities?.filter { userActivityDTO -> userActivityDTO.tabletUserId == tabletUser.id }
+                userActivities?.filter { userActivityDTO -> userActivityDTO.userActivityId == tabletUser.id }
             OverallUserActivities(
+                tabletUserId = tabletUser.id,
                 firstName = tabletUser.firstName,
                 lastName = tabletUser.lastName,
                 tabletName = tablets.first { tablet -> tablet.id == tabletUser.tablet?.id }.name,
