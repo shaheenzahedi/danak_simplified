@@ -4,7 +4,6 @@ import org.aydm.danak.repository.UserActivityRepository
 import org.aydm.danak.service.UserActivityService
 import org.aydm.danak.service.dto.OverallUserActivities
 import org.aydm.danak.service.dto.UserActivityDTO
-import org.aydm.danak.service.dto.UserActivityItem
 import org.aydm.danak.web.rest.errors.BadRequestAlertException
 import org.slf4j.LoggerFactory
 import org.springdoc.api.annotations.ParameterObject
@@ -64,7 +63,7 @@ class UserActivityResource(
     fun getAllActivityPageable(
         @ParameterObject @Nullable search: String?,
         @ParameterObject pageable: Pageable?
-    ): Page<UserActivityItem?>? {
+    ): Page<OverallUserActivities?>? {
         return userActivityService.getAllActivityByUserPageable(search, pageable)
     }
 

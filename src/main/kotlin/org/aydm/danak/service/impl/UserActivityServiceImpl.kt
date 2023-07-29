@@ -132,26 +132,27 @@ class UserActivityServiceImpl(
     override fun getAllActivityByUserPageable(
         search: String?,
         pageable: Pageable?
-    ): Page<UserActivityItem?>? {
+    ): Page<OverallUserActivities?>? {
         return getUserData(userActivityRepository.getAllActivityByUserPageable(search, pageable))
     }
 
-    fun getUserData(results: Page<Array<Any?>?>?): Page<UserActivityItem?>? {
+    fun getUserData(results: Page<Array<Any?>?>?): Page<OverallUserActivities?>? {
         return results?.filterNotNull()?.map { result ->
             val tabletUser = result[0] as TabletUser
             val tablet = result[1] as Tablet
-            val userActivity = result[2] as UserActivity
-            UserActivityItem(
-                activityId = userActivity.id,
-                tabletUserId = tabletUser.id,
+            OverallUserActivities(
                 firstName = tabletUser.firstName,
                 lastName = tabletUser.lastName,
-                tabletId = tablet.id.toString(),
                 tabletName = tablet.name,
-                displayListName = userActivity.listName,
-                listName = userActivity.uniqueName,
-                totals = userActivity.total,
-                completes = userActivity.completed,
+                userActivities = tabletUser.userActivities?.map {
+                    AggregatedUserActivity(
+                        tabletUserId = it.activity?.id,
+                        displayListName = it.listName,
+                        listName = it.uniqueName,
+                        totals = it.total,
+                        completes = it.completed
+                    )
+                }
             )
         }?.let { PageImpl(it) }
     }
