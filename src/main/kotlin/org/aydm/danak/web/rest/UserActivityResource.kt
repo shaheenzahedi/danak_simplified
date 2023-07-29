@@ -4,9 +4,13 @@ import org.aydm.danak.repository.UserActivityRepository
 import org.aydm.danak.service.UserActivityService
 import org.aydm.danak.service.dto.OverallUserActivities
 import org.aydm.danak.service.dto.UserActivityDTO
+import org.aydm.danak.service.dto.UserActivityItem
 import org.aydm.danak.web.rest.errors.BadRequestAlertException
 import org.slf4j.LoggerFactory
+import org.springdoc.api.annotations.ParameterObject
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.web.danak.service.dto.SubmitDTO
@@ -15,6 +19,7 @@ import tech.jhipster.web.util.ResponseUtil
 import java.net.URI
 import java.net.URISyntaxException
 import java.util.Objects
+import javax.annotation.Nullable
 
 private const val ENTITY_NAME = "userActivity"
 
@@ -55,10 +60,12 @@ class UserActivityResource(
         return ResponseEntity.ok().body(allActivity)
     }
 
-    @GetMapping("all-activities-best")
-    fun getAllActivityPageable(/*@ParameterObject pageable: Pageable?*/): ResponseEntity<List<OverallUserActivities?>?> {
-        val allActivity = userActivityService.getAllActivityByUserPageable()
-        return ResponseEntity.ok().body(allActivity)
+    @GetMapping("all-activities-page")
+    fun getAllActivityPageable(
+        @ParameterObject @Nullable search: String?,
+        @ParameterObject pageable: Pageable?
+    ): Page<UserActivityItem?>? {
+        return userActivityService.getAllActivityByUserPageable(search, pageable)
     }
 
     /**

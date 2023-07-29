@@ -1,9 +1,11 @@
 package org.aydm.danak.repository
 
 import org.aydm.danak.domain.UserActivity
-import org.aydm.danak.service.dto.OverallUserActivities
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 
 
@@ -17,9 +19,13 @@ interface UserActivityRepository : JpaRepository<UserActivity, Long> {
     fun findAllDistinctActivityIdSummary(): List<UserActivity>?
 
     @Query(
-        "SELECT tu, t.name, ua FROM TabletUser tu " +
+        "SELECT tu, t, ua FROM TabletUser tu " +
             "JOIN tu.tablet t " +
-            "LEFT JOIN tu.userActivities ua"
+            "LEFT JOIN tu.userActivities ua " +
+            "WHERE (:searchString IS NULL OR " +
+            "LOWER(tu.firstName) LIKE CONCAT('%', LOWER(:searchString), '%') OR " +
+            "LOWER(tu.lastName) LIKE CONCAT('%', LOWER(:searchString), '%') OR " +
+            "LOWER(t.name) LIKE CONCAT('%', LOWER(:searchString), '%'))"
     )
-    fun best(): List<Array<Any?>?>?
+    fun getAllActivityByUserPageable(@Param("searchString") searchString: String?, pageable: Pageable?): Page<Array<Any?>?>?
 }

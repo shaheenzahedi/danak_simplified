@@ -1,5 +1,6 @@
 package org.aydm.danak.service.impl
 
+import org.aydm.danak.domain.Tablet
 import org.aydm.danak.domain.TabletUser
 import org.aydm.danak.domain.UserActivity
 import org.aydm.danak.repository.UserActivityRepository
@@ -7,12 +8,14 @@ import org.aydm.danak.service.UserActivityService
 import org.aydm.danak.service.dto.*
 import org.aydm.danak.service.mapper.UserActivityMapper
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.web.danak.service.dto.SubmitDTO
 import org.web.danak.service.dto.SubmitUserDTO
 import java.util.*
-
 
 /**
  * Service Implementation for managing [UserActivity].
@@ -126,25 +129,30 @@ class UserActivityServiceImpl(
         }
     }
 
-    override fun getAllActivityByUserPageable(): List<OverallUserActivities?>? {
-        return getUserData(userActivityRepository.best())
+    override fun getAllActivityByUserPageable(
+        search: String?,
+        pageable: Pageable?
+    ): Page<UserActivityItem?>? {
+        return getUserData(userActivityRepository.getAllActivityByUserPageable(search, pageable))
     }
 
-    fun getUserData(results: List<Array<Any?>?>?): List<OverallUserActivities>? {
+    fun getUserData(results: Page<Array<Any?>?>?): Page<UserActivityItem?>? {
         return results?.filterNotNull()?.map { result ->
-            val (id, firstName, lastName) = result[0] as TabletUser
-            val tabletName = result[1] as String
+            val tabletUser = result[0] as TabletUser
+            val tablet = result[1] as Tablet
             val userActivity = result[2] as UserActivity
-            val overallUserActivities = OverallUserActivities(
-                firstName,
-                lastName, tabletName, mutableListOf()
+            UserActivityItem(
+                tabletUserId = tabletUser.id,
+                firstName = tabletUser.firstName,
+                lastName = tabletUser.lastName,
+                tabletId = tablet.id.toString(),
+                tabletName = tablet.name,
+                displayListName = userActivity.listName,
+                listName = userActivity.uniqueName,
+                totals = userActivity.total,
+                completes = userActivity.completed,
             )
-            val aggregatedUserActivity = AggregatedUserActivity(
-                id, userActivity.listName, userActivity.listName, userActivity.total, userActivity.completed
-            )
-            overallUserActivities.userActivities?.add(aggregatedUserActivity)
-            overallUserActivities
-        }
+        }?.let { PageImpl(it) }
     }
 
     override fun getAllActivityByUser(): List<OverallUserActivities> {
@@ -172,5 +180,4 @@ class UserActivityServiceImpl(
             )
         }
     }
-
 }
