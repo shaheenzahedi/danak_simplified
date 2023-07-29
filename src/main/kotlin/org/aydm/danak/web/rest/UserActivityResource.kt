@@ -17,7 +17,7 @@ import tech.jhipster.web.util.HeaderUtil
 import tech.jhipster.web.util.ResponseUtil
 import java.net.URI
 import java.net.URISyntaxException
-import java.util.Objects
+import java.util.*
 import javax.annotation.Nullable
 
 private const val ENTITY_NAME = "userActivity"
@@ -63,8 +63,11 @@ class UserActivityResource(
     fun getAllActivityPageable(
         @ParameterObject @Nullable search: String?,
         @ParameterObject pageable: Pageable?
-    ): Page<OverallUserActivities?>? {
-        return userActivityService.getAllActivityByUserPageable(search, pageable)
+    ): ResponseEntity<Page<OverallUserActivities?>?> {
+        val page = userActivityService.getAllActivityByUserPageable(search, pageable)
+        return ResponseEntity.ok()
+            .header("X-Total-Count", page?.totalElements.toString())
+            .body(page)
     }
 
     /**

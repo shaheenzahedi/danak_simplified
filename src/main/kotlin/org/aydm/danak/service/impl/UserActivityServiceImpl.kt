@@ -154,7 +154,7 @@ class UserActivityServiceImpl(
                     )
                 }
             )
-        }?.let { PageImpl(it) }
+        }?.let { PageImpl(it, results.pageable, results.totalElements) }
     }
 
     override fun getAllActivityByUser(): List<OverallUserActivities> {
