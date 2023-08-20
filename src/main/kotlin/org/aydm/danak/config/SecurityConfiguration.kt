@@ -73,6 +73,7 @@ class SecurityConfiguration(
             .authorizeRequests()
             .antMatchers("/api/authenticate").permitAll()
             .antMatchers("/api/submit-activity").permitAll()
+            .antMatchers("/api/versions/last").permitAll()
 //            .antMatchers("/api/all-activities-by-user").permitAll()
 //            .antMatchers("/api/all-activities-by-tablet").permitAll()
             .antMatchers("/api/tablets").permitAll()
