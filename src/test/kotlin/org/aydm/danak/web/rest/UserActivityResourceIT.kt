@@ -143,7 +143,7 @@ class UserActivityResourceIT {
             .andExpect(jsonPath("$.[*].total").value(hasItem(DEFAULT_TOTAL?.toInt())))
             .andExpect(jsonPath("$.[*].completed").value(hasItem(DEFAULT_COMPLETED?.toInt())))
             .andExpect(jsonPath("$.[*].uniqueName").value(hasItem(DEFAULT_UNIQUE_NAME)))    }
-    
+
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -183,7 +183,7 @@ class UserActivityResourceIT {
         val databaseSizeBeforeUpdate = userActivityRepository.findAll().size
 
         // Update the userActivity
-        val updatedUserActivity = userActivityRepository.findById(userActivity.id).get()
+        val updatedUserActivity = userActivityRepository.findById(userActivity.id).orElseThrow()
         // Disconnect from session so that the updates on updatedUserActivity are not directly saved in db
         em.detach(updatedUserActivity)
         updatedUserActivity.createTimeStamp = UPDATED_CREATE_TIME_STAMP
@@ -277,21 +277,21 @@ class UserActivityResourceIT {
         assertThat(userActivityList).hasSize(databaseSizeBeforeUpdate)
     }
 
-    
+
     @Test
     @Transactional
     @Throws(Exception::class)
     fun partialUpdateUserActivityWithPatch() {
         userActivityRepository.saveAndFlush(userActivity)
-        
-        
+
+
 val databaseSizeBeforeUpdate = userActivityRepository.findAll().size
 
 // Update the userActivity using partial update
 val partialUpdatedUserActivity = UserActivity().apply {
     id = userActivity.id
 
-    
+
         deviceTimeStamp = UPDATED_DEVICE_TIME_STAMP
         listName = UPDATED_LIST_NAME
 }
@@ -320,15 +320,15 @@ val testUserActivity = userActivityList.last()
     @Throws(Exception::class)
     fun fullUpdateUserActivityWithPatch() {
         userActivityRepository.saveAndFlush(userActivity)
-        
-        
+
+
 val databaseSizeBeforeUpdate = userActivityRepository.findAll().size
 
 // Update the userActivity using partial update
 val partialUpdatedUserActivity = UserActivity().apply {
     id = userActivity.id
 
-    
+
         createTimeStamp = UPDATED_CREATE_TIME_STAMP
         updateTimeStamp = UPDATED_UPDATE_TIME_STAMP
         deviceTimeStamp = UPDATED_DEVICE_TIME_STAMP
