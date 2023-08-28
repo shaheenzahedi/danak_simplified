@@ -1,13 +1,15 @@
 package org.aydm.danak.service.dto
 
+import org.junit.jupiter.api.Test
 import org.assertj.core.api.Assertions.assertThat
 import org.aydm.danak.web.rest.equalsVerifier
-import org.junit.jupiter.api.Test
+
+import java.util.UUID
 
 class UserActivityDTOTest {
 
     @Test
-    fun dtoEqualsVerifier() {
+    fun dtoEqualsVerifier(){
         equalsVerifier(UserActivityDTO::class)
         val userActivityDTO1 = UserActivityDTO()
         userActivityDTO1.id = 1L

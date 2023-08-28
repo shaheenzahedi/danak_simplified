@@ -1,7 +1,9 @@
 package org.aydm.danak.service.dto
 
-import java.io.Serializable
 import java.util.Objects
+import java.time.Instant
+import java.io.Serializable
+
 
 /**
  * A DTO for the [org.aydm.danak.domain.UserActivity] entity.
@@ -9,6 +11,12 @@ import java.util.Objects
 data class UserActivityDTO(
 
     var id: Long? = null,
+
+    var createTimeStamp: Instant? = null,
+
+    var updateTimeStamp: Instant? = null,
+
+    var deviceTimeStamp: Instant? = null,
 
     var listName: String? = null,
 
@@ -21,15 +29,16 @@ data class UserActivityDTO(
     var activity: TabletUserDTO? = null
 ) : Serializable {
 
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is UserActivityDTO) return false
         val userActivityDTO = other
-        if (this.id == null) {
-            return false
+        if (this.id == null){
+            return false;
         }
-        return Objects.equals(this.id, userActivityDTO.id)
+        return Objects.equals(this.id, userActivityDTO.id);
     }
 
-    override fun hashCode() = Objects.hash(this.id)
+    override fun hashCode() =        Objects.hash(this.id)
 }

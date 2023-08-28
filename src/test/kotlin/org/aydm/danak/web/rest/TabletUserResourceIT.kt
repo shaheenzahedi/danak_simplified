@@ -1,28 +1,40 @@
 package org.aydm.danak.web.rest
 
-import org.assertj.core.api.Assertions.assertThat
+
 import org.aydm.danak.IntegrationTest
 import org.aydm.danak.domain.TabletUser
 import org.aydm.danak.repository.TabletUserRepository
+import org.aydm.danak.service.dto.TabletUserDTO
 import org.aydm.danak.service.mapper.TabletUserMapper
-import org.hamcrest.Matchers.hasItem
+
+import kotlin.test.assertNotNull
+
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.Mock
+import org.mockito.MockitoAnnotations
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver
 import org.springframework.http.MediaType
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
-import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.Validator
+import javax.persistence.EntityManager
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 import java.util.Random
 import java.util.concurrent.atomic.AtomicLong
-import javax.persistence.EntityManager
-import kotlin.test.assertNotNull
+import java.util.stream.Stream
+
+import org.assertj.core.api.Assertions.assertThat
+import org.hamcrest.Matchers.hasItem
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+
 
 /**
  * Integration tests for the [TabletUserResource] REST controller.
@@ -46,13 +58,16 @@ class TabletUserResourceIT {
     @Autowired
     private lateinit var validator: Validator
 
+
     @Autowired
     private lateinit var em: EntityManager
+
 
     @Autowired
     private lateinit var restTabletUserMockMvc: MockMvc
 
     private lateinit var tabletUser: TabletUser
+
 
     @BeforeEach
     fun initTest() {
@@ -77,8 +92,11 @@ class TabletUserResourceIT {
         assertThat(tabletUserList).hasSize(databaseSizeBeforeCreate + 1)
         val testTabletUser = tabletUserList[tabletUserList.size - 1]
 
+        assertThat(testTabletUser.createTimeStamp).isEqualTo(DEFAULT_CREATE_TIME_STAMP)
+        assertThat(testTabletUser.updateTimeStamp).isEqualTo(DEFAULT_UPDATE_TIME_STAMP)
         assertThat(testTabletUser.firstName).isEqualTo(DEFAULT_FIRST_NAME)
         assertThat(testTabletUser.lastName).isEqualTo(DEFAULT_LAST_NAME)
+        assertThat(testTabletUser.email).isEqualTo(DEFAULT_EMAIL)
     }
 
     @Test
@@ -103,6 +121,7 @@ class TabletUserResourceIT {
         assertThat(tabletUserList).hasSize(databaseSizeBeforeCreate)
     }
 
+
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -111,14 +130,16 @@ class TabletUserResourceIT {
         tabletUserRepository.saveAndFlush(tabletUser)
 
         // Get all the tabletUserList
-        restTabletUserMockMvc.perform(get(ENTITY_API_URL + "?sort=id,desc"))
+        restTabletUserMockMvc.perform(get(ENTITY_API_URL+ "?sort=id,desc"))
             .andExpect(status().isOk)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(tabletUser.id?.toInt())))
+            .andExpect(jsonPath("$.[*].createTimeStamp").value(hasItem(DEFAULT_CREATE_TIME_STAMP.toString())))
+            .andExpect(jsonPath("$.[*].updateTimeStamp").value(hasItem(DEFAULT_UPDATE_TIME_STAMP.toString())))
             .andExpect(jsonPath("$.[*].firstName").value(hasItem(DEFAULT_FIRST_NAME)))
             .andExpect(jsonPath("$.[*].lastName").value(hasItem(DEFAULT_LAST_NAME)))
-    }
-
+            .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL)))    }
+    
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -134,9 +155,11 @@ class TabletUserResourceIT {
             .andExpect(status().isOk)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(tabletUser.id?.toInt()))
+            .andExpect(jsonPath("$.createTimeStamp").value(DEFAULT_CREATE_TIME_STAMP.toString()))
+            .andExpect(jsonPath("$.updateTimeStamp").value(DEFAULT_UPDATE_TIME_STAMP.toString()))
             .andExpect(jsonPath("$.firstName").value(DEFAULT_FIRST_NAME))
             .andExpect(jsonPath("$.lastName").value(DEFAULT_LAST_NAME))
-    }
+            .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL))    }
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -154,11 +177,14 @@ class TabletUserResourceIT {
         val databaseSizeBeforeUpdate = tabletUserRepository.findAll().size
 
         // Update the tabletUser
-        val updatedTabletUser = tabletUserRepository.findById(tabletUser.id).orElseThrow()
+        val updatedTabletUser = tabletUserRepository.findById(tabletUser.id).get()
         // Disconnect from session so that the updates on updatedTabletUser are not directly saved in db
         em.detach(updatedTabletUser)
+        updatedTabletUser.createTimeStamp = UPDATED_CREATE_TIME_STAMP
+        updatedTabletUser.updateTimeStamp = UPDATED_UPDATE_TIME_STAMP
         updatedTabletUser.firstName = UPDATED_FIRST_NAME
         updatedTabletUser.lastName = UPDATED_LAST_NAME
+        updatedTabletUser.email = UPDATED_EMAIL
         val tabletUserDTO = tabletUserMapper.toDto(updatedTabletUser)
 
         restTabletUserMockMvc.perform(
@@ -171,8 +197,11 @@ class TabletUserResourceIT {
         val tabletUserList = tabletUserRepository.findAll()
         assertThat(tabletUserList).hasSize(databaseSizeBeforeUpdate)
         val testTabletUser = tabletUserList[tabletUserList.size - 1]
+        assertThat(testTabletUser.createTimeStamp).isEqualTo(UPDATED_CREATE_TIME_STAMP)
+        assertThat(testTabletUser.updateTimeStamp).isEqualTo(UPDATED_UPDATE_TIME_STAMP)
         assertThat(testTabletUser.firstName).isEqualTo(UPDATED_FIRST_NAME)
         assertThat(testTabletUser.lastName).isEqualTo(UPDATED_LAST_NAME)
+        assertThat(testTabletUser.email).isEqualTo(UPDATED_EMAIL)
     }
 
     @Test
@@ -185,11 +214,9 @@ class TabletUserResourceIT {
         val tabletUserDTO = tabletUserMapper.toDto(tabletUser)
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
-        restTabletUserMockMvc.perform(
-            put(ENTITY_API_URL_ID, tabletUserDTO.id)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(convertObjectToJsonBytes(tabletUserDTO))
-        )
+        restTabletUserMockMvc.perform(put(ENTITY_API_URL_ID, tabletUserDTO.id)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(convertObjectToJsonBytes(tabletUserDTO)))
             .andExpect(status().isBadRequest)
 
         // Validate the TabletUser in the database
@@ -230,11 +257,9 @@ class TabletUserResourceIT {
         val tabletUserDTO = tabletUserMapper.toDto(tabletUser)
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
-        restTabletUserMockMvc.perform(
-            put(ENTITY_API_URL)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(convertObjectToJsonBytes(tabletUserDTO))
-        )
+        restTabletUserMockMvc.perform(put(ENTITY_API_URL)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(convertObjectToJsonBytes(tabletUserDTO)))
             .andExpect(status().isMethodNotAllowed)
 
         // Validate the TabletUser in the database
@@ -242,34 +267,41 @@ class TabletUserResourceIT {
         assertThat(tabletUserList).hasSize(databaseSizeBeforeUpdate)
     }
 
+    
     @Test
     @Transactional
     @Throws(Exception::class)
     fun partialUpdateTabletUserWithPatch() {
         tabletUserRepository.saveAndFlush(tabletUser)
-
-        val databaseSizeBeforeUpdate = tabletUserRepository.findAll().size
+        
+        
+val databaseSizeBeforeUpdate = tabletUserRepository.findAll().size
 
 // Update the tabletUser using partial update
-        val partialUpdatedTabletUser = TabletUser().apply {
-            id = tabletUser.id
+val partialUpdatedTabletUser = TabletUser().apply {
+    id = tabletUser.id
 
-            firstName = UPDATED_FIRST_NAME
-        }
+    
+        createTimeStamp = UPDATED_CREATE_TIME_STAMP
+        firstName = UPDATED_FIRST_NAME
+        email = UPDATED_EMAIL
+}
 
-        restTabletUserMockMvc.perform(
-            patch(ENTITY_API_URL_ID, partialUpdatedTabletUser.id)
-                .contentType("application/merge-patch+json")
-                .content(convertObjectToJsonBytes(partialUpdatedTabletUser))
-        )
-            .andExpect(status().isOk)
+
+restTabletUserMockMvc.perform(patch(ENTITY_API_URL_ID, partialUpdatedTabletUser.id)
+.contentType("application/merge-patch+json")
+.content(convertObjectToJsonBytes(partialUpdatedTabletUser)))
+.andExpect(status().isOk)
 
 // Validate the TabletUser in the database
-        val tabletUserList = tabletUserRepository.findAll()
-        assertThat(tabletUserList).hasSize(databaseSizeBeforeUpdate)
-        val testTabletUser = tabletUserList.last()
-        assertThat(testTabletUser.firstName).isEqualTo(UPDATED_FIRST_NAME)
-        assertThat(testTabletUser.lastName).isEqualTo(DEFAULT_LAST_NAME)
+val tabletUserList = tabletUserRepository.findAll()
+assertThat(tabletUserList).hasSize(databaseSizeBeforeUpdate)
+val testTabletUser = tabletUserList.last()
+    assertThat(testTabletUser.createTimeStamp).isEqualTo(UPDATED_CREATE_TIME_STAMP)
+    assertThat(testTabletUser.updateTimeStamp).isEqualTo(DEFAULT_UPDATE_TIME_STAMP)
+    assertThat(testTabletUser.firstName).isEqualTo(UPDATED_FIRST_NAME)
+    assertThat(testTabletUser.lastName).isEqualTo(DEFAULT_LAST_NAME)
+    assertThat(testTabletUser.email).isEqualTo(UPDATED_EMAIL)
     }
 
     @Test
@@ -277,30 +309,37 @@ class TabletUserResourceIT {
     @Throws(Exception::class)
     fun fullUpdateTabletUserWithPatch() {
         tabletUserRepository.saveAndFlush(tabletUser)
-
-        val databaseSizeBeforeUpdate = tabletUserRepository.findAll().size
+        
+        
+val databaseSizeBeforeUpdate = tabletUserRepository.findAll().size
 
 // Update the tabletUser using partial update
-        val partialUpdatedTabletUser = TabletUser().apply {
-            id = tabletUser.id
+val partialUpdatedTabletUser = TabletUser().apply {
+    id = tabletUser.id
 
-            firstName = UPDATED_FIRST_NAME
-            lastName = UPDATED_LAST_NAME
-        }
+    
+        createTimeStamp = UPDATED_CREATE_TIME_STAMP
+        updateTimeStamp = UPDATED_UPDATE_TIME_STAMP
+        firstName = UPDATED_FIRST_NAME
+        lastName = UPDATED_LAST_NAME
+        email = UPDATED_EMAIL
+}
 
-        restTabletUserMockMvc.perform(
-            patch(ENTITY_API_URL_ID, partialUpdatedTabletUser.id)
-                .contentType("application/merge-patch+json")
-                .content(convertObjectToJsonBytes(partialUpdatedTabletUser))
-        )
-            .andExpect(status().isOk)
+
+restTabletUserMockMvc.perform(patch(ENTITY_API_URL_ID, partialUpdatedTabletUser.id)
+.contentType("application/merge-patch+json")
+.content(convertObjectToJsonBytes(partialUpdatedTabletUser)))
+.andExpect(status().isOk)
 
 // Validate the TabletUser in the database
-        val tabletUserList = tabletUserRepository.findAll()
-        assertThat(tabletUserList).hasSize(databaseSizeBeforeUpdate)
-        val testTabletUser = tabletUserList.last()
-        assertThat(testTabletUser.firstName).isEqualTo(UPDATED_FIRST_NAME)
-        assertThat(testTabletUser.lastName).isEqualTo(UPDATED_LAST_NAME)
+val tabletUserList = tabletUserRepository.findAll()
+assertThat(tabletUserList).hasSize(databaseSizeBeforeUpdate)
+val testTabletUser = tabletUserList.last()
+    assertThat(testTabletUser.createTimeStamp).isEqualTo(UPDATED_CREATE_TIME_STAMP)
+    assertThat(testTabletUser.updateTimeStamp).isEqualTo(UPDATED_UPDATE_TIME_STAMP)
+    assertThat(testTabletUser.firstName).isEqualTo(UPDATED_FIRST_NAME)
+    assertThat(testTabletUser.lastName).isEqualTo(UPDATED_LAST_NAME)
+    assertThat(testTabletUser.email).isEqualTo(UPDATED_EMAIL)
     }
 
     @Throws(Exception::class)
@@ -312,11 +351,9 @@ class TabletUserResourceIT {
         val tabletUserDTO = tabletUserMapper.toDto(tabletUser)
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
-        restTabletUserMockMvc.perform(
-            patch(ENTITY_API_URL_ID, tabletUserDTO.id)
-                .contentType("application/merge-patch+json")
-                .content(convertObjectToJsonBytes(tabletUserDTO))
-        )
+        restTabletUserMockMvc.perform(patch(ENTITY_API_URL_ID, tabletUserDTO.id)
+            .contentType("application/merge-patch+json")
+            .content(convertObjectToJsonBytes(tabletUserDTO)))
             .andExpect(status().isBadRequest)
 
         // Validate the TabletUser in the database
@@ -335,11 +372,9 @@ class TabletUserResourceIT {
         val tabletUserDTO = tabletUserMapper.toDto(tabletUser)
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
-        restTabletUserMockMvc.perform(
-            patch(ENTITY_API_URL_ID, count.incrementAndGet())
-                .contentType("application/merge-patch+json")
-                .content(convertObjectToJsonBytes(tabletUserDTO))
-        )
+        restTabletUserMockMvc.perform(patch(ENTITY_API_URL_ID, count.incrementAndGet())
+            .contentType("application/merge-patch+json")
+            .content(convertObjectToJsonBytes(tabletUserDTO)))
             .andExpect(status().isBadRequest)
 
         // Validate the TabletUser in the database
@@ -358,11 +393,9 @@ class TabletUserResourceIT {
         val tabletUserDTO = tabletUserMapper.toDto(tabletUser)
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
-        restTabletUserMockMvc.perform(
-            patch(ENTITY_API_URL)
-                .contentType("application/merge-patch+json")
-                .content(convertObjectToJsonBytes(tabletUserDTO))
-        )
+        restTabletUserMockMvc.perform(patch(ENTITY_API_URL)
+            .contentType("application/merge-patch+json")
+            .content(convertObjectToJsonBytes(tabletUserDTO)))
             .andExpect(status().isMethodNotAllowed)
 
         // Validate the TabletUser in the database
@@ -390,7 +423,14 @@ class TabletUserResourceIT {
         assertThat(tabletUserList).hasSize(databaseSizeBeforeDelete - 1)
     }
 
+
     companion object {
+
+        private val DEFAULT_CREATE_TIME_STAMP: Instant = Instant.ofEpochMilli(0L)
+        private val UPDATED_CREATE_TIME_STAMP: Instant = Instant.now().truncatedTo(ChronoUnit.MILLIS)
+
+        private val DEFAULT_UPDATE_TIME_STAMP: Instant = Instant.ofEpochMilli(0L)
+        private val UPDATED_UPDATE_TIME_STAMP: Instant = Instant.now().truncatedTo(ChronoUnit.MILLIS)
 
         private const val DEFAULT_FIRST_NAME = "AAAAAAAAAA"
         private const val UPDATED_FIRST_NAME = "BBBBBBBBBB"
@@ -398,11 +438,18 @@ class TabletUserResourceIT {
         private const val DEFAULT_LAST_NAME = "AAAAAAAAAA"
         private const val UPDATED_LAST_NAME = "BBBBBBBBBB"
 
+        private const val DEFAULT_EMAIL = "AAAAAAAAAA"
+        private const val UPDATED_EMAIL = "BBBBBBBBBB"
+
+
         private val ENTITY_API_URL: String = "/api/tablet-users"
         private val ENTITY_API_URL_ID: String = ENTITY_API_URL + "/{id}"
 
         private val random: Random = Random()
-        private val count: AtomicLong = AtomicLong(random.nextInt().toLong() + (2 * Integer.MAX_VALUE))
+        private val count: AtomicLong = AtomicLong(random.nextInt().toLong() + ( 2 * Integer.MAX_VALUE ))
+
+
+
 
         /**
          * Create an entity for this test.
@@ -413,11 +460,18 @@ class TabletUserResourceIT {
         @JvmStatic
         fun createEntity(em: EntityManager): TabletUser {
             val tabletUser = TabletUser(
+                createTimeStamp = DEFAULT_CREATE_TIME_STAMP,
+
+                updateTimeStamp = DEFAULT_UPDATE_TIME_STAMP,
+
                 firstName = DEFAULT_FIRST_NAME,
 
-                lastName = DEFAULT_LAST_NAME
+                lastName = DEFAULT_LAST_NAME,
+
+                email = DEFAULT_EMAIL
 
             )
+
 
             return tabletUser
         }
@@ -431,13 +485,21 @@ class TabletUserResourceIT {
         @JvmStatic
         fun createUpdatedEntity(em: EntityManager): TabletUser {
             val tabletUser = TabletUser(
+                createTimeStamp = UPDATED_CREATE_TIME_STAMP,
+
+                updateTimeStamp = UPDATED_UPDATE_TIME_STAMP,
+
                 firstName = UPDATED_FIRST_NAME,
 
-                lastName = UPDATED_LAST_NAME
+                lastName = UPDATED_LAST_NAME,
+
+                email = UPDATED_EMAIL
 
             )
 
+
             return tabletUser
         }
+
     }
 }

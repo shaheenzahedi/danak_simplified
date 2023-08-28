@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
-import { Translate } from 'react-jhipster';
+import { Translate, TextFormat } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
@@ -51,6 +51,12 @@ export const Tablet = (props: RouteComponentProps<{ url: string }>) => {
                   <Translate contentKey="danakApp.tablet.id">ID</Translate>
                 </th>
                 <th>
+                  <Translate contentKey="danakApp.tablet.createTimeStamp">Create Time Stamp</Translate>
+                </th>
+                <th>
+                  <Translate contentKey="danakApp.tablet.updateTimeStamp">Update Time Stamp</Translate>
+                </th>
+                <th>
                   <Translate contentKey="danakApp.tablet.name">Name</Translate>
                 </th>
                 <th>
@@ -72,6 +78,12 @@ export const Tablet = (props: RouteComponentProps<{ url: string }>) => {
                     <Button tag={Link} to={`/tablet/${tablet.id}`} color="link" size="sm">
                       {tablet.id}
                     </Button>
+                  </td>
+                  <td>
+                    {tablet.createTimeStamp ? <TextFormat type="date" value={tablet.createTimeStamp} format={APP_DATE_FORMAT} /> : null}
+                  </td>
+                  <td>
+                    {tablet.updateTimeStamp ? <TextFormat type="date" value={tablet.updateTimeStamp} format={APP_DATE_FORMAT} /> : null}
                   </td>
                   <td>{tablet.name}</td>
                   <td>{tablet.androidId}</td>

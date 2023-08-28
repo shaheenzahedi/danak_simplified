@@ -18,6 +18,9 @@
         "title": "User Activity"
       },
       "id": "ID",
+      "createTimeStamp": "Create Time Stamp",
+      "updateTimeStamp": "Update Time Stamp",
+      "deviceTimeStamp": "Device Time Stamp",
       "listName": "List Name",
       "total": "Total",
       "completed": "Completed",

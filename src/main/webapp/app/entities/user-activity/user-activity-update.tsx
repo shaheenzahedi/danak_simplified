@@ -44,6 +44,10 @@ export const UserActivityUpdate = (props: RouteComponentProps<{ id: string }>) =
   }, [updateSuccess]);
 
   const saveEntity = values => {
+    values.createTimeStamp = convertDateTimeToServer(values.createTimeStamp);
+    values.updateTimeStamp = convertDateTimeToServer(values.updateTimeStamp);
+    values.deviceTimeStamp = convertDateTimeToServer(values.deviceTimeStamp);
+
     const entity = {
       ...userActivityEntity,
       ...values,
@@ -59,9 +63,16 @@ export const UserActivityUpdate = (props: RouteComponentProps<{ id: string }>) =
 
   const defaultValues = () =>
     isNew
-      ? {}
+      ? {
+          createTimeStamp: displayDefaultDateTime(),
+          updateTimeStamp: displayDefaultDateTime(),
+          deviceTimeStamp: displayDefaultDateTime(),
+        }
       : {
           ...userActivityEntity,
+          createTimeStamp: convertDateTimeFromServer(userActivityEntity.createTimeStamp),
+          updateTimeStamp: convertDateTimeFromServer(userActivityEntity.updateTimeStamp),
+          deviceTimeStamp: convertDateTimeFromServer(userActivityEntity.deviceTimeStamp),
           activity: userActivityEntity?.activity?.id,
         };
 
@@ -90,6 +101,30 @@ export const UserActivityUpdate = (props: RouteComponentProps<{ id: string }>) =
                   validate={{ required: true }}
                 />
               ) : null}
+              <ValidatedField
+                label={translate('danakApp.userActivity.createTimeStamp')}
+                id="user-activity-createTimeStamp"
+                name="createTimeStamp"
+                data-cy="createTimeStamp"
+                type="datetime-local"
+                placeholder="YYYY-MM-DD HH:mm"
+              />
+              <ValidatedField
+                label={translate('danakApp.userActivity.updateTimeStamp')}
+                id="user-activity-updateTimeStamp"
+                name="updateTimeStamp"
+                data-cy="updateTimeStamp"
+                type="datetime-local"
+                placeholder="YYYY-MM-DD HH:mm"
+              />
+              <ValidatedField
+                label={translate('danakApp.userActivity.deviceTimeStamp')}
+                id="user-activity-deviceTimeStamp"
+                name="deviceTimeStamp"
+                data-cy="deviceTimeStamp"
+                type="datetime-local"
+                placeholder="YYYY-MM-DD HH:mm"
+              />
               <ValidatedField
                 label={translate('danakApp.userActivity.listName')}
                 id="user-activity-listName"

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col } from 'reactstrap';
-import { Translate } from 'react-jhipster';
+import { Translate, TextFormat } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
@@ -31,6 +31,26 @@ export const TabletUserDetail = (props: RouteComponentProps<{ id: string }>) => 
           </dt>
           <dd>{tabletUserEntity.id}</dd>
           <dt>
+            <span id="createTimeStamp">
+              <Translate contentKey="danakApp.tabletUser.createTimeStamp">Create Time Stamp</Translate>
+            </span>
+          </dt>
+          <dd>
+            {tabletUserEntity.createTimeStamp ? (
+              <TextFormat value={tabletUserEntity.createTimeStamp} type="date" format={APP_DATE_FORMAT} />
+            ) : null}
+          </dd>
+          <dt>
+            <span id="updateTimeStamp">
+              <Translate contentKey="danakApp.tabletUser.updateTimeStamp">Update Time Stamp</Translate>
+            </span>
+          </dt>
+          <dd>
+            {tabletUserEntity.updateTimeStamp ? (
+              <TextFormat value={tabletUserEntity.updateTimeStamp} type="date" format={APP_DATE_FORMAT} />
+            ) : null}
+          </dd>
+          <dt>
             <span id="firstName">
               <Translate contentKey="danakApp.tabletUser.firstName">First Name</Translate>
             </span>
@@ -42,6 +62,12 @@ export const TabletUserDetail = (props: RouteComponentProps<{ id: string }>) => 
             </span>
           </dt>
           <dd>{tabletUserEntity.lastName}</dd>
+          <dt>
+            <span id="email">
+              <Translate contentKey="danakApp.tabletUser.email">Email</Translate>
+            </span>
+          </dt>
+          <dd>{tabletUserEntity.email}</dd>
           <dt>
             <Translate contentKey="danakApp.tabletUser.tablet">Tablet</Translate>
           </dt>

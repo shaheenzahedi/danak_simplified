@@ -39,6 +39,9 @@ export const TabletUpdate = (props: RouteComponentProps<{ id: string }>) => {
   }, [updateSuccess]);
 
   const saveEntity = values => {
+    values.createTimeStamp = convertDateTimeToServer(values.createTimeStamp);
+    values.updateTimeStamp = convertDateTimeToServer(values.updateTimeStamp);
+
     const entity = {
       ...tabletEntity,
       ...values,
@@ -53,9 +56,14 @@ export const TabletUpdate = (props: RouteComponentProps<{ id: string }>) => {
 
   const defaultValues = () =>
     isNew
-      ? {}
+      ? {
+          createTimeStamp: displayDefaultDateTime(),
+          updateTimeStamp: displayDefaultDateTime(),
+        }
       : {
           ...tabletEntity,
+          createTimeStamp: convertDateTimeFromServer(tabletEntity.createTimeStamp),
+          updateTimeStamp: convertDateTimeFromServer(tabletEntity.updateTimeStamp),
         };
 
   return (
@@ -83,6 +91,22 @@ export const TabletUpdate = (props: RouteComponentProps<{ id: string }>) => {
                   validate={{ required: true }}
                 />
               ) : null}
+              <ValidatedField
+                label={translate('danakApp.tablet.createTimeStamp')}
+                id="tablet-createTimeStamp"
+                name="createTimeStamp"
+                data-cy="createTimeStamp"
+                type="datetime-local"
+                placeholder="YYYY-MM-DD HH:mm"
+              />
+              <ValidatedField
+                label={translate('danakApp.tablet.updateTimeStamp')}
+                id="tablet-updateTimeStamp"
+                name="updateTimeStamp"
+                data-cy="updateTimeStamp"
+                type="datetime-local"
+                placeholder="YYYY-MM-DD HH:mm"
+              />
               <ValidatedField label={translate('danakApp.tablet.name')} id="tablet-name" name="name" data-cy="name" type="text" />
               <ValidatedField
                 label={translate('danakApp.tablet.androidId')}

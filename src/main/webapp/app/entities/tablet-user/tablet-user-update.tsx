@@ -44,6 +44,9 @@ export const TabletUserUpdate = (props: RouteComponentProps<{ id: string }>) => 
   }, [updateSuccess]);
 
   const saveEntity = values => {
+    values.createTimeStamp = convertDateTimeToServer(values.createTimeStamp);
+    values.updateTimeStamp = convertDateTimeToServer(values.updateTimeStamp);
+
     const entity = {
       ...tabletUserEntity,
       ...values,
@@ -59,9 +62,14 @@ export const TabletUserUpdate = (props: RouteComponentProps<{ id: string }>) => 
 
   const defaultValues = () =>
     isNew
-      ? {}
+      ? {
+          createTimeStamp: displayDefaultDateTime(),
+          updateTimeStamp: displayDefaultDateTime(),
+        }
       : {
           ...tabletUserEntity,
+          createTimeStamp: convertDateTimeFromServer(tabletUserEntity.createTimeStamp),
+          updateTimeStamp: convertDateTimeFromServer(tabletUserEntity.updateTimeStamp),
           tablet: tabletUserEntity?.tablet?.id,
         };
 
@@ -91,6 +99,22 @@ export const TabletUserUpdate = (props: RouteComponentProps<{ id: string }>) => 
                 />
               ) : null}
               <ValidatedField
+                label={translate('danakApp.tabletUser.createTimeStamp')}
+                id="tablet-user-createTimeStamp"
+                name="createTimeStamp"
+                data-cy="createTimeStamp"
+                type="datetime-local"
+                placeholder="YYYY-MM-DD HH:mm"
+              />
+              <ValidatedField
+                label={translate('danakApp.tabletUser.updateTimeStamp')}
+                id="tablet-user-updateTimeStamp"
+                name="updateTimeStamp"
+                data-cy="updateTimeStamp"
+                type="datetime-local"
+                placeholder="YYYY-MM-DD HH:mm"
+              />
+              <ValidatedField
                 label={translate('danakApp.tabletUser.firstName')}
                 id="tablet-user-firstName"
                 name="firstName"
@@ -102,6 +126,13 @@ export const TabletUserUpdate = (props: RouteComponentProps<{ id: string }>) => 
                 id="tablet-user-lastName"
                 name="lastName"
                 data-cy="lastName"
+                type="text"
+              />
+              <ValidatedField
+                label={translate('danakApp.tabletUser.email')}
+                id="tablet-user-email"
+                name="email"
+                data-cy="email"
                 type="text"
               />
               <ValidatedField

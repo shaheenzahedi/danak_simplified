@@ -1,28 +1,38 @@
 package org.aydm.danak.web.rest
 
-import org.assertj.core.api.Assertions.assertThat
+
 import org.aydm.danak.IntegrationTest
 import org.aydm.danak.domain.File
 import org.aydm.danak.repository.FileRepository
+import org.aydm.danak.service.dto.FileDTO
 import org.aydm.danak.service.mapper.FileMapper
-import org.hamcrest.Matchers.hasItem
+
+import kotlin.test.assertNotNull
+
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.Mock
+import org.mockito.MockitoAnnotations
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver
 import org.springframework.http.MediaType
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
-import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.Validator
+import javax.persistence.EntityManager
 import java.util.Random
 import java.util.concurrent.atomic.AtomicLong
-import javax.persistence.EntityManager
-import kotlin.test.assertNotNull
+import java.util.stream.Stream
+
+import org.assertj.core.api.Assertions.assertThat
+import org.hamcrest.Matchers.hasItem
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+
 
 /**
  * Integration tests for the [FileResource] REST controller.
@@ -46,13 +56,16 @@ class FileResourceIT {
     @Autowired
     private lateinit var validator: Validator
 
+
     @Autowired
     private lateinit var em: EntityManager
+
 
     @Autowired
     private lateinit var restFileMockMvc: MockMvc
 
     private lateinit var file: File
+
 
     @BeforeEach
     fun initTest() {
@@ -105,6 +118,7 @@ class FileResourceIT {
         assertThat(fileList).hasSize(databaseSizeBeforeCreate)
     }
 
+
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -113,16 +127,15 @@ class FileResourceIT {
         fileRepository.saveAndFlush(file)
 
         // Get all the fileList
-        restFileMockMvc.perform(get(ENTITY_API_URL + "?sort=id,desc"))
+        restFileMockMvc.perform(get(ENTITY_API_URL+ "?sort=id,desc"))
             .andExpect(status().isOk)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(file.id?.toInt())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
             .andExpect(jsonPath("$.[*].checksum").value(hasItem(DEFAULT_CHECKSUM)))
             .andExpect(jsonPath("$.[*].path").value(hasItem(DEFAULT_PATH)))
-            .andExpect(jsonPath("$.[*].size").value(hasItem(DEFAULT_SIZE)))
-    }
-
+            .andExpect(jsonPath("$.[*].size").value(hasItem(DEFAULT_SIZE)))    }
+    
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -141,8 +154,7 @@ class FileResourceIT {
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
             .andExpect(jsonPath("$.checksum").value(DEFAULT_CHECKSUM))
             .andExpect(jsonPath("$.path").value(DEFAULT_PATH))
-            .andExpect(jsonPath("$.size").value(DEFAULT_SIZE))
-    }
+            .andExpect(jsonPath("$.size").value(DEFAULT_SIZE))    }
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -160,7 +172,7 @@ class FileResourceIT {
         val databaseSizeBeforeUpdate = fileRepository.findAll().size
 
         // Update the file
-        val updatedFile = fileRepository.findById(file.id).orElseThrow()
+        val updatedFile = fileRepository.findById(file.id).get()
         // Disconnect from session so that the updates on updatedFile are not directly saved in db
         em.detach(updatedFile)
         updatedFile.name = UPDATED_NAME
@@ -195,11 +207,9 @@ class FileResourceIT {
         val fileDTO = fileMapper.toDto(file)
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
-        restFileMockMvc.perform(
-            put(ENTITY_API_URL_ID, fileDTO.id)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(convertObjectToJsonBytes(fileDTO))
-        )
+        restFileMockMvc.perform(put(ENTITY_API_URL_ID, fileDTO.id)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(convertObjectToJsonBytes(fileDTO)))
             .andExpect(status().isBadRequest)
 
         // Validate the File in the database
@@ -240,11 +250,9 @@ class FileResourceIT {
         val fileDTO = fileMapper.toDto(file)
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
-        restFileMockMvc.perform(
-            put(ENTITY_API_URL)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(convertObjectToJsonBytes(fileDTO))
-        )
+        restFileMockMvc.perform(put(ENTITY_API_URL)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(convertObjectToJsonBytes(fileDTO)))
             .andExpect(status().isMethodNotAllowed)
 
         // Validate the File in the database
@@ -252,37 +260,39 @@ class FileResourceIT {
         assertThat(fileList).hasSize(databaseSizeBeforeUpdate)
     }
 
+    
     @Test
     @Transactional
     @Throws(Exception::class)
     fun partialUpdateFileWithPatch() {
         fileRepository.saveAndFlush(file)
-
-        val databaseSizeBeforeUpdate = fileRepository.findAll().size
+        
+        
+val databaseSizeBeforeUpdate = fileRepository.findAll().size
 
 // Update the file using partial update
-        val partialUpdatedFile = File().apply {
-            id = file.id
+val partialUpdatedFile = File().apply {
+    id = file.id
 
-            path = UPDATED_PATH
-            size = UPDATED_SIZE
-        }
+    
+        path = UPDATED_PATH
+        size = UPDATED_SIZE
+}
 
-        restFileMockMvc.perform(
-            patch(ENTITY_API_URL_ID, partialUpdatedFile.id)
-                .contentType("application/merge-patch+json")
-                .content(convertObjectToJsonBytes(partialUpdatedFile))
-        )
-            .andExpect(status().isOk)
+
+restFileMockMvc.perform(patch(ENTITY_API_URL_ID, partialUpdatedFile.id)
+.contentType("application/merge-patch+json")
+.content(convertObjectToJsonBytes(partialUpdatedFile)))
+.andExpect(status().isOk)
 
 // Validate the File in the database
-        val fileList = fileRepository.findAll()
-        assertThat(fileList).hasSize(databaseSizeBeforeUpdate)
-        val testFile = fileList.last()
-        assertThat(testFile.name).isEqualTo(DEFAULT_NAME)
-        assertThat(testFile.checksum).isEqualTo(DEFAULT_CHECKSUM)
-        assertThat(testFile.path).isEqualTo(UPDATED_PATH)
-        assertThat(testFile.size).isEqualTo(UPDATED_SIZE)
+val fileList = fileRepository.findAll()
+assertThat(fileList).hasSize(databaseSizeBeforeUpdate)
+val testFile = fileList.last()
+    assertThat(testFile.name).isEqualTo(DEFAULT_NAME)
+    assertThat(testFile.checksum).isEqualTo(DEFAULT_CHECKSUM)
+    assertThat(testFile.path).isEqualTo(UPDATED_PATH)
+    assertThat(testFile.size).isEqualTo(UPDATED_SIZE)
     }
 
     @Test
@@ -290,34 +300,35 @@ class FileResourceIT {
     @Throws(Exception::class)
     fun fullUpdateFileWithPatch() {
         fileRepository.saveAndFlush(file)
-
-        val databaseSizeBeforeUpdate = fileRepository.findAll().size
+        
+        
+val databaseSizeBeforeUpdate = fileRepository.findAll().size
 
 // Update the file using partial update
-        val partialUpdatedFile = File().apply {
-            id = file.id
+val partialUpdatedFile = File().apply {
+    id = file.id
 
-            name = UPDATED_NAME
-            checksum = UPDATED_CHECKSUM
-            path = UPDATED_PATH
-            size = UPDATED_SIZE
-        }
+    
+        name = UPDATED_NAME
+        checksum = UPDATED_CHECKSUM
+        path = UPDATED_PATH
+        size = UPDATED_SIZE
+}
 
-        restFileMockMvc.perform(
-            patch(ENTITY_API_URL_ID, partialUpdatedFile.id)
-                .contentType("application/merge-patch+json")
-                .content(convertObjectToJsonBytes(partialUpdatedFile))
-        )
-            .andExpect(status().isOk)
+
+restFileMockMvc.perform(patch(ENTITY_API_URL_ID, partialUpdatedFile.id)
+.contentType("application/merge-patch+json")
+.content(convertObjectToJsonBytes(partialUpdatedFile)))
+.andExpect(status().isOk)
 
 // Validate the File in the database
-        val fileList = fileRepository.findAll()
-        assertThat(fileList).hasSize(databaseSizeBeforeUpdate)
-        val testFile = fileList.last()
-        assertThat(testFile.name).isEqualTo(UPDATED_NAME)
-        assertThat(testFile.checksum).isEqualTo(UPDATED_CHECKSUM)
-        assertThat(testFile.path).isEqualTo(UPDATED_PATH)
-        assertThat(testFile.size).isEqualTo(UPDATED_SIZE)
+val fileList = fileRepository.findAll()
+assertThat(fileList).hasSize(databaseSizeBeforeUpdate)
+val testFile = fileList.last()
+    assertThat(testFile.name).isEqualTo(UPDATED_NAME)
+    assertThat(testFile.checksum).isEqualTo(UPDATED_CHECKSUM)
+    assertThat(testFile.path).isEqualTo(UPDATED_PATH)
+    assertThat(testFile.size).isEqualTo(UPDATED_SIZE)
     }
 
     @Throws(Exception::class)
@@ -329,11 +340,9 @@ class FileResourceIT {
         val fileDTO = fileMapper.toDto(file)
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
-        restFileMockMvc.perform(
-            patch(ENTITY_API_URL_ID, fileDTO.id)
-                .contentType("application/merge-patch+json")
-                .content(convertObjectToJsonBytes(fileDTO))
-        )
+        restFileMockMvc.perform(patch(ENTITY_API_URL_ID, fileDTO.id)
+            .contentType("application/merge-patch+json")
+            .content(convertObjectToJsonBytes(fileDTO)))
             .andExpect(status().isBadRequest)
 
         // Validate the File in the database
@@ -352,11 +361,9 @@ class FileResourceIT {
         val fileDTO = fileMapper.toDto(file)
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
-        restFileMockMvc.perform(
-            patch(ENTITY_API_URL_ID, count.incrementAndGet())
-                .contentType("application/merge-patch+json")
-                .content(convertObjectToJsonBytes(fileDTO))
-        )
+        restFileMockMvc.perform(patch(ENTITY_API_URL_ID, count.incrementAndGet())
+            .contentType("application/merge-patch+json")
+            .content(convertObjectToJsonBytes(fileDTO)))
             .andExpect(status().isBadRequest)
 
         // Validate the File in the database
@@ -375,11 +382,9 @@ class FileResourceIT {
         val fileDTO = fileMapper.toDto(file)
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
-        restFileMockMvc.perform(
-            patch(ENTITY_API_URL)
-                .contentType("application/merge-patch+json")
-                .content(convertObjectToJsonBytes(fileDTO))
-        )
+        restFileMockMvc.perform(patch(ENTITY_API_URL)
+            .contentType("application/merge-patch+json")
+            .content(convertObjectToJsonBytes(fileDTO)))
             .andExpect(status().isMethodNotAllowed)
 
         // Validate the File in the database
@@ -407,6 +412,7 @@ class FileResourceIT {
         assertThat(fileList).hasSize(databaseSizeBeforeDelete - 1)
     }
 
+
     companion object {
 
         private const val DEFAULT_NAME = "AAAAAAAAAA"
@@ -421,11 +427,15 @@ class FileResourceIT {
         private const val DEFAULT_SIZE = "AAAAAAAAAA"
         private const val UPDATED_SIZE = "BBBBBBBBBB"
 
+
         private val ENTITY_API_URL: String = "/api/files"
         private val ENTITY_API_URL_ID: String = ENTITY_API_URL + "/{id}"
 
         private val random: Random = Random()
-        private val count: AtomicLong = AtomicLong(random.nextInt().toLong() + (2 * Integer.MAX_VALUE))
+        private val count: AtomicLong = AtomicLong(random.nextInt().toLong() + ( 2 * Integer.MAX_VALUE ))
+
+
+
 
         /**
          * Create an entity for this test.
@@ -445,6 +455,7 @@ class FileResourceIT {
                 size = DEFAULT_SIZE
 
             )
+
 
             return file
         }
@@ -468,7 +479,9 @@ class FileResourceIT {
 
             )
 
+
             return file
         }
+
     }
 }

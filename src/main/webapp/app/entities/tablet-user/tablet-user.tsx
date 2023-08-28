@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
-import { Translate } from 'react-jhipster';
+import { Translate, TextFormat } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
@@ -51,10 +51,19 @@ export const TabletUser = (props: RouteComponentProps<{ url: string }>) => {
                   <Translate contentKey="danakApp.tabletUser.id">ID</Translate>
                 </th>
                 <th>
+                  <Translate contentKey="danakApp.tabletUser.createTimeStamp">Create Time Stamp</Translate>
+                </th>
+                <th>
+                  <Translate contentKey="danakApp.tabletUser.updateTimeStamp">Update Time Stamp</Translate>
+                </th>
+                <th>
                   <Translate contentKey="danakApp.tabletUser.firstName">First Name</Translate>
                 </th>
                 <th>
                   <Translate contentKey="danakApp.tabletUser.lastName">Last Name</Translate>
+                </th>
+                <th>
+                  <Translate contentKey="danakApp.tabletUser.email">Email</Translate>
                 </th>
                 <th>
                   <Translate contentKey="danakApp.tabletUser.tablet">Tablet</Translate>
@@ -70,8 +79,19 @@ export const TabletUser = (props: RouteComponentProps<{ url: string }>) => {
                       {tabletUser.id}
                     </Button>
                   </td>
+                  <td>
+                    {tabletUser.createTimeStamp ? (
+                      <TextFormat type="date" value={tabletUser.createTimeStamp} format={APP_DATE_FORMAT} />
+                    ) : null}
+                  </td>
+                  <td>
+                    {tabletUser.updateTimeStamp ? (
+                      <TextFormat type="date" value={tabletUser.updateTimeStamp} format={APP_DATE_FORMAT} />
+                    ) : null}
+                  </td>
                   <td>{tabletUser.firstName}</td>
                   <td>{tabletUser.lastName}</td>
+                  <td>{tabletUser.email}</td>
                   <td>{tabletUser.tablet ? <Link to={`/tablet/${tabletUser.tablet.id}`}>{tabletUser.tablet.id}</Link> : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">

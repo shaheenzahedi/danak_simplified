@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
-import { Translate } from 'react-jhipster';
+import { Translate, TextFormat } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
@@ -51,6 +51,15 @@ export const UserActivity = (props: RouteComponentProps<{ url: string }>) => {
                   <Translate contentKey="danakApp.userActivity.id">ID</Translate>
                 </th>
                 <th>
+                  <Translate contentKey="danakApp.userActivity.createTimeStamp">Create Time Stamp</Translate>
+                </th>
+                <th>
+                  <Translate contentKey="danakApp.userActivity.updateTimeStamp">Update Time Stamp</Translate>
+                </th>
+                <th>
+                  <Translate contentKey="danakApp.userActivity.deviceTimeStamp">Device Time Stamp</Translate>
+                </th>
+                <th>
                   <Translate contentKey="danakApp.userActivity.listName">List Name</Translate>
                 </th>
                 <th>
@@ -75,6 +84,21 @@ export const UserActivity = (props: RouteComponentProps<{ url: string }>) => {
                     <Button tag={Link} to={`/user-activity/${userActivity.id}`} color="link" size="sm">
                       {userActivity.id}
                     </Button>
+                  </td>
+                  <td>
+                    {userActivity.createTimeStamp ? (
+                      <TextFormat type="date" value={userActivity.createTimeStamp} format={APP_DATE_FORMAT} />
+                    ) : null}
+                  </td>
+                  <td>
+                    {userActivity.updateTimeStamp ? (
+                      <TextFormat type="date" value={userActivity.updateTimeStamp} format={APP_DATE_FORMAT} />
+                    ) : null}
+                  </td>
+                  <td>
+                    {userActivity.deviceTimeStamp ? (
+                      <TextFormat type="date" value={userActivity.deviceTimeStamp} format={APP_DATE_FORMAT} />
+                    ) : null}
                   </td>
                   <td>{userActivity.listName}</td>
                   <td>{userActivity.total}</td>

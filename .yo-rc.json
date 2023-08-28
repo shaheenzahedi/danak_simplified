@@ -30,7 +30,7 @@
     "jhipsterVersion": "7.8.1",
     "jwtSecretKey": "ZmM0MGM4MDM4ZDM3YzJiYWJmNWNlNjc3MWRhMDZlOTUyMzBlMWRmNTRjYWZmZDgxN2MwNTg3NWRkZDhlMjQxZjIwNDM5N2JlMGY4OTEwZTMzMTQxZDdlYTNiMGRiY2YzNzAzZmU2NzAwZWUwODkyMWJkMzliNjk3MzZiMjI2NTU=",
     "languages": ["en", "fa"],
-    "lastLiquibaseTimestamp": 1682852938000,
+    "lastLiquibaseTimestamp": 1693153956000,
     "messageBroker": false,
     "nativeLanguage": "en",
     "otherModules": [

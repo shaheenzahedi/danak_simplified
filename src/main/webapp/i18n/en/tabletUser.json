@@ -18,8 +18,11 @@
         "title": "Tablet User"
       },
       "id": "ID",
+      "createTimeStamp": "Create Time Stamp",
+      "updateTimeStamp": "Update Time Stamp",
       "firstName": "First Name",
       "lastName": "Last Name",
+      "email": "Email",
       "userActivity": "User Activity",
       "tablet": "Tablet"
     }

@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <databaseChangeLog
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd
-                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <!--
         Added the entity TabletUser.
@@ -14,10 +12,19 @@
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
+            <column name="create_time_stamp" type="${datetimeType}">
+                <constraints nullable="true" />
+            </column>
+            <column name="update_time_stamp" type="${datetimeType}">
+                <constraints nullable="true" />
+            </column>
             <column name="first_name" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
             <column name="last_name" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="email" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
             <column name="tablet_id" type="bigint">
@@ -25,6 +32,8 @@
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
+        <dropDefaultValue tableName="tablet_user" columnName="create_time_stamp" columnDataType="${datetimeType}"/>
+        <dropDefaultValue tableName="tablet_user" columnName="update_time_stamp" columnDataType="${datetimeType}"/>
     </changeSet>
 
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here -->
@@ -39,13 +48,16 @@
     -->
     <changeSet id="20230117084926-1-data" author="jhipster" context="faker">
         <loadData
-                  file="config/liquibase/fake-data/tablet_user.csv"
-                  separator=";"
-                  tableName="tablet_user"
-                  usePreparedStatements="true">
+            file="config/liquibase/fake-data/tablet_user.csv"
+            separator=";"
+            tableName="tablet_user"
+            usePreparedStatements="true">
             <column name="id" type="numeric"/>
+            <column name="create_time_stamp" type="date"/>
+            <column name="update_time_stamp" type="date"/>
             <column name="first_name" type="string"/>
             <column name="last_name" type="string"/>
+            <column name="email" type="string"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>
     </changeSet>

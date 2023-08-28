@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col } from 'reactstrap';
-import { Translate } from 'react-jhipster';
+import { Translate, TextFormat } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
@@ -30,6 +30,22 @@ export const TabletDetail = (props: RouteComponentProps<{ id: string }>) => {
             </span>
           </dt>
           <dd>{tabletEntity.id}</dd>
+          <dt>
+            <span id="createTimeStamp">
+              <Translate contentKey="danakApp.tablet.createTimeStamp">Create Time Stamp</Translate>
+            </span>
+          </dt>
+          <dd>
+            {tabletEntity.createTimeStamp ? <TextFormat value={tabletEntity.createTimeStamp} type="date" format={APP_DATE_FORMAT} /> : null}
+          </dd>
+          <dt>
+            <span id="updateTimeStamp">
+              <Translate contentKey="danakApp.tablet.updateTimeStamp">Update Time Stamp</Translate>
+            </span>
+          </dt>
+          <dd>
+            {tabletEntity.updateTimeStamp ? <TextFormat value={tabletEntity.updateTimeStamp} type="date" format={APP_DATE_FORMAT} /> : null}
+          </dd>
           <dt>
             <span id="name">
               <Translate contentKey="danakApp.tablet.name">Name</Translate>

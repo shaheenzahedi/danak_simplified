@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col } from 'reactstrap';
-import { Translate } from 'react-jhipster';
+import { Translate, TextFormat } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
@@ -30,6 +30,36 @@ export const UserActivityDetail = (props: RouteComponentProps<{ id: string }>) =
             </span>
           </dt>
           <dd>{userActivityEntity.id}</dd>
+          <dt>
+            <span id="createTimeStamp">
+              <Translate contentKey="danakApp.userActivity.createTimeStamp">Create Time Stamp</Translate>
+            </span>
+          </dt>
+          <dd>
+            {userActivityEntity.createTimeStamp ? (
+              <TextFormat value={userActivityEntity.createTimeStamp} type="date" format={APP_DATE_FORMAT} />
+            ) : null}
+          </dd>
+          <dt>
+            <span id="updateTimeStamp">
+              <Translate contentKey="danakApp.userActivity.updateTimeStamp">Update Time Stamp</Translate>
+            </span>
+          </dt>
+          <dd>
+            {userActivityEntity.updateTimeStamp ? (
+              <TextFormat value={userActivityEntity.updateTimeStamp} type="date" format={APP_DATE_FORMAT} />
+            ) : null}
+          </dd>
+          <dt>
+            <span id="deviceTimeStamp">
+              <Translate contentKey="danakApp.userActivity.deviceTimeStamp">Device Time Stamp</Translate>
+            </span>
+          </dt>
+          <dd>
+            {userActivityEntity.deviceTimeStamp ? (
+              <TextFormat value={userActivityEntity.deviceTimeStamp} type="date" format={APP_DATE_FORMAT} />
+            ) : null}
+          </dd>
           <dt>
             <span id="listName">
               <Translate contentKey="danakApp.userActivity.listName">List Name</Translate>

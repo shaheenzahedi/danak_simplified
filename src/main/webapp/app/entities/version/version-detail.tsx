@@ -36,12 +36,6 @@ export const VersionDetail = (props: RouteComponentProps<{ id: string }>) => {
             </span>
           </dt>
           <dd>{versionEntity.version}</dd>
-          <dt>
-            <span id="tag">
-              <Translate contentKey="danakApp.version.tag">Tag</Translate>
-            </span>
-          </dt>
-          <dd>{versionEntity.tag}</dd>
         </dl>
         <Button tag={Link} to="/version" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" />{' '}

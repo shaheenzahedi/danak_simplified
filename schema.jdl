@@ -1,14 +1,22 @@
 entity Tablet {
+    createTimeStamp Instant
+    updateTimeStamp Instant
     name String
     androidId String
     macId String
     model String
 }
 entity TabletUser {
+    createTimeStamp Instant
+    updateTimeStamp Instant
     firstName String
     lastName String
+    email String
 }
 entity UserActivity {
+    createTimeStamp Instant
+    updateTimeStamp Instant
+    deviceTimeStamp Instant
     listName String
     total Long
     completed Long

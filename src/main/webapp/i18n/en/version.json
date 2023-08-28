@@ -19,7 +19,6 @@
       },
       "id": "ID",
       "version": "Version",
-      "tag": "Tag",
       "fileBelongings": "File Belongings",
       "file": "File"
     }
