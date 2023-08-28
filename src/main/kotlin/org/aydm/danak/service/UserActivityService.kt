@@ -59,7 +59,7 @@ interface UserActivityService {
     fun delete(id: Long)
 
     @Transactional
-    fun submit(submitDTO: SubmitDTO): Boolean
+    fun submit(submitDTO: SubmitDTO): SubmitDTO
     fun getAllActivityByTablet(): List<SubmitDTO>
     fun getAllActivityByUser(): List<OverallUserActivities>
     fun getAllActivityByUserPageable(search: String?, pageable: Pageable?): Page<OverallUserActivities?>?

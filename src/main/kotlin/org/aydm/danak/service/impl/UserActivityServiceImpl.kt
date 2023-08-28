@@ -78,9 +78,10 @@ class UserActivityServiceImpl(
     }
 
     @Transactional
-    override fun submit(submitDTO: SubmitDTO): Boolean {
+    override fun submit(submitDTO: SubmitDTO): SubmitDTO {
         val tablet = tabletServiceImpl.createSave(submitDTO.tablet)
-        submitDTO.users.map { user ->
+        val result = SubmitDTO(tablet.id,tablet.name!!);
+        result.users = submitDTO.users.map { user ->
             val tabletUser = tabletUserServiceImpl.createSave(
                 TabletUserDTO(
                     firstName = user.firstName,
@@ -88,7 +89,7 @@ class UserActivityServiceImpl(
                     tablet = tablet
                 )
             )
-            user.activity.forEach { activity ->
+            val activities = user.activity.map { activity ->
                 save(
                     UserActivityDTO(
                         listName = activity.listName,
@@ -100,8 +101,20 @@ class UserActivityServiceImpl(
                     )
                 )
             }
+            SubmitUserDTO(
+               tabletUser.id,
+                tabletUser.firstName!!,
+                tabletUser.lastName!!,
+                activities.map { SubmitActivityDTO(
+                    listName = it.listName,
+                    uniqueName = it.uniqueName,
+                    total = it.total,
+                    completed = it.completed,
+                    id = it.id
+                ) }
+            );
         }
-        return true
+        return result
     }
 
     override fun getAllActivityByTablet(): List<SubmitDTO> {
@@ -119,6 +132,7 @@ class UserActivityServiceImpl(
                             activity = userActivities.filter { it.activity?.tablet?.id == tabletUser.tablet?.id }
                                 .map { userActivity ->
                                     SubmitActivityDTO(
+                                        id = userActivity.id,
                                         listName = userActivity.listName,
                                         uniqueName = userActivity.uniqueName,
                                         total = userActivity.total,

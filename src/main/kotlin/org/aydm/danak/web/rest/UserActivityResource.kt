@@ -42,9 +42,8 @@ class UserActivityResource(
     private var applicationName: String? = null
 
     @PostMapping("submit-activity")
-    fun submitActivity(@RequestBody submitDTO: SubmitDTO): ResponseEntity<Void> {
-        userActivityService.submit(submitDTO)
-        return ResponseEntity.ok().build()
+    fun submitActivity(@RequestBody submitDTO: SubmitDTO): ResponseEntity<SubmitDTO> {
+        return ResponseEntity.ok(userActivityService.submit(submitDTO))
     }
 
     @GetMapping("all-activities-by-tablet")
