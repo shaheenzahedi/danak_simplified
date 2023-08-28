@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.web.danak.service.dto.SubmitDTO
 import org.web.danak.service.dto.SubmitUserDTO
+import java.time.Instant
 import java.util.*
 
 /**
@@ -94,7 +95,8 @@ class UserActivityServiceImpl(
                         uniqueName = activity.uniqueName,
                         total = activity.total,
                         completed = activity.completed,
-                        activity = tabletUser
+                        activity = tabletUser,
+                        createTimeStamp = Instant.now()
                     )
                 )
             }

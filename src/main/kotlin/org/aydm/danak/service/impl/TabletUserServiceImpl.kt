@@ -9,6 +9,7 @@ import org.aydm.danak.service.mapper.TabletUserMapper
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.Instant
 import java.util.Optional
 
 /**
@@ -72,8 +73,12 @@ class TabletUserServiceImpl(
     override fun createSave(tabletUserDTO: TabletUserDTO): TabletUserDTO {
         val tabletUser =
             tabletUserRepository.findByNameAndFamily(tabletUserDTO.firstName, tabletUserDTO.lastName).orElse(null)
-        if (tabletUser != null) return tabletUserMapper.toDto(tabletUser)
-        return save(tabletUserDTO)
+        if (tabletUser != null) {
+            val existedTabletUser = tabletUserMapper.toDto(tabletUser)
+            existedTabletUser.updateTimeStamp = Instant.now();
+            return existedTabletUser
+        }
+        return save(tabletUserDTO.apply { createTimeStamp= Instant.now() })
     }
 
     override fun delete(id: Long) {

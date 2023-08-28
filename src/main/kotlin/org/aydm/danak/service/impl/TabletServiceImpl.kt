@@ -8,6 +8,7 @@ import org.aydm.danak.service.mapper.TabletMapper
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.Instant
 import java.util.Optional
 
 /**
@@ -76,7 +77,11 @@ class TabletServiceImpl(
     @Transactional
     override fun createSave(tabletName: String): TabletDTO {
         val tablet = tabletRepository.findByName(tabletName).orElse(null)
-        if (tablet != null) return tabletMapper.toDto(tablet)
-        return save(TabletDTO(name = tabletName))
+        if (tablet != null) {
+            val tabletDTO = tabletMapper.toDto(tablet)
+            tabletDTO.updateTimeStamp = Instant.now()
+            return tabletDTO
+        }
+        return save(TabletDTO(name = tabletName, createTimeStamp = Instant.now()))
     }
 }
