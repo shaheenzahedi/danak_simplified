@@ -135,7 +135,7 @@ class FileResourceIT {
             .andExpect(jsonPath("$.[*].checksum").value(hasItem(DEFAULT_CHECKSUM)))
             .andExpect(jsonPath("$.[*].path").value(hasItem(DEFAULT_PATH)))
             .andExpect(jsonPath("$.[*].size").value(hasItem(DEFAULT_SIZE)))    }
-    
+
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -172,7 +172,7 @@ class FileResourceIT {
         val databaseSizeBeforeUpdate = fileRepository.findAll().size
 
         // Update the file
-        val updatedFile = fileRepository.findById(file.id).get()
+        val updatedFile = fileRepository.findById(file.id).orElseThrow()
         // Disconnect from session so that the updates on updatedFile are not directly saved in db
         em.detach(updatedFile)
         updatedFile.name = UPDATED_NAME
@@ -260,21 +260,21 @@ class FileResourceIT {
         assertThat(fileList).hasSize(databaseSizeBeforeUpdate)
     }
 
-    
+
     @Test
     @Transactional
     @Throws(Exception::class)
     fun partialUpdateFileWithPatch() {
         fileRepository.saveAndFlush(file)
-        
-        
+
+
 val databaseSizeBeforeUpdate = fileRepository.findAll().size
 
 // Update the file using partial update
 val partialUpdatedFile = File().apply {
     id = file.id
 
-    
+
         path = UPDATED_PATH
         size = UPDATED_SIZE
 }
@@ -300,15 +300,15 @@ val testFile = fileList.last()
     @Throws(Exception::class)
     fun fullUpdateFileWithPatch() {
         fileRepository.saveAndFlush(file)
-        
-        
+
+
 val databaseSizeBeforeUpdate = fileRepository.findAll().size
 
 // Update the file using partial update
 val partialUpdatedFile = File().apply {
     id = file.id
 
-    
+
         name = UPDATED_NAME
         checksum = UPDATED_CHECKSUM
         path = UPDATED_PATH

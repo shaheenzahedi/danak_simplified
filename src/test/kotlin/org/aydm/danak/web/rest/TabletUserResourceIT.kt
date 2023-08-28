@@ -139,7 +139,7 @@ class TabletUserResourceIT {
             .andExpect(jsonPath("$.[*].firstName").value(hasItem(DEFAULT_FIRST_NAME)))
             .andExpect(jsonPath("$.[*].lastName").value(hasItem(DEFAULT_LAST_NAME)))
             .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL)))    }
-    
+
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -177,7 +177,7 @@ class TabletUserResourceIT {
         val databaseSizeBeforeUpdate = tabletUserRepository.findAll().size
 
         // Update the tabletUser
-        val updatedTabletUser = tabletUserRepository.findById(tabletUser.id).get()
+        val updatedTabletUser = tabletUserRepository.findById(tabletUser.id).orElseThrow()
         // Disconnect from session so that the updates on updatedTabletUser are not directly saved in db
         em.detach(updatedTabletUser)
         updatedTabletUser.createTimeStamp = UPDATED_CREATE_TIME_STAMP
@@ -267,21 +267,21 @@ class TabletUserResourceIT {
         assertThat(tabletUserList).hasSize(databaseSizeBeforeUpdate)
     }
 
-    
+
     @Test
     @Transactional
     @Throws(Exception::class)
     fun partialUpdateTabletUserWithPatch() {
         tabletUserRepository.saveAndFlush(tabletUser)
-        
-        
+
+
 val databaseSizeBeforeUpdate = tabletUserRepository.findAll().size
 
 // Update the tabletUser using partial update
 val partialUpdatedTabletUser = TabletUser().apply {
     id = tabletUser.id
 
-    
+
         createTimeStamp = UPDATED_CREATE_TIME_STAMP
         firstName = UPDATED_FIRST_NAME
         email = UPDATED_EMAIL
@@ -309,15 +309,15 @@ val testTabletUser = tabletUserList.last()
     @Throws(Exception::class)
     fun fullUpdateTabletUserWithPatch() {
         tabletUserRepository.saveAndFlush(tabletUser)
-        
-        
+
+
 val databaseSizeBeforeUpdate = tabletUserRepository.findAll().size
 
 // Update the tabletUser using partial update
 val partialUpdatedTabletUser = TabletUser().apply {
     id = tabletUser.id
 
-    
+
         createTimeStamp = UPDATED_CREATE_TIME_STAMP
         updateTimeStamp = UPDATED_UPDATE_TIME_STAMP
         firstName = UPDATED_FIRST_NAME

@@ -141,7 +141,7 @@ class TabletResourceIT {
             .andExpect(jsonPath("$.[*].androidId").value(hasItem(DEFAULT_ANDROID_ID)))
             .andExpect(jsonPath("$.[*].macId").value(hasItem(DEFAULT_MAC_ID)))
             .andExpect(jsonPath("$.[*].model").value(hasItem(DEFAULT_MODEL)))    }
-    
+
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -180,7 +180,7 @@ class TabletResourceIT {
         val databaseSizeBeforeUpdate = tabletRepository.findAll().size
 
         // Update the tablet
-        val updatedTablet = tabletRepository.findById(tablet.id).get()
+        val updatedTablet = tabletRepository.findById(tablet.id).orElseThrow()
         // Disconnect from session so that the updates on updatedTablet are not directly saved in db
         em.detach(updatedTablet)
         updatedTablet.createTimeStamp = UPDATED_CREATE_TIME_STAMP
@@ -272,21 +272,21 @@ class TabletResourceIT {
         assertThat(tabletList).hasSize(databaseSizeBeforeUpdate)
     }
 
-    
+
     @Test
     @Transactional
     @Throws(Exception::class)
     fun partialUpdateTabletWithPatch() {
         tabletRepository.saveAndFlush(tablet)
-        
-        
+
+
 val databaseSizeBeforeUpdate = tabletRepository.findAll().size
 
 // Update the tablet using partial update
 val partialUpdatedTablet = Tablet().apply {
     id = tablet.id
 
-    
+
         createTimeStamp = UPDATED_CREATE_TIME_STAMP
         updateTimeStamp = UPDATED_UPDATE_TIME_STAMP
         name = UPDATED_NAME
@@ -318,15 +318,15 @@ val testTablet = tabletList.last()
     @Throws(Exception::class)
     fun fullUpdateTabletWithPatch() {
         tabletRepository.saveAndFlush(tablet)
-        
-        
+
+
 val databaseSizeBeforeUpdate = tabletRepository.findAll().size
 
 // Update the tablet using partial update
 val partialUpdatedTablet = Tablet().apply {
     id = tablet.id
 
-    
+
         createTimeStamp = UPDATED_CREATE_TIME_STAMP
         updateTimeStamp = UPDATED_UPDATE_TIME_STAMP
         name = UPDATED_NAME
