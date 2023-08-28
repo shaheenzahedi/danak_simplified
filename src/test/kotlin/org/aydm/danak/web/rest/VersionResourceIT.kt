@@ -129,7 +129,7 @@ class VersionResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(version.id?.toInt())))
             .andExpect(jsonPath("$.[*].version").value(hasItem(DEFAULT_VERSION)))    }
-    
+
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -245,21 +245,21 @@ class VersionResourceIT {
         assertThat(versionList).hasSize(databaseSizeBeforeUpdate)
     }
 
-    
+
     @Test
     @Transactional
     @Throws(Exception::class)
     fun partialUpdateVersionWithPatch() {
         versionRepository.saveAndFlush(version)
-        
-        
+
+
 val databaseSizeBeforeUpdate = versionRepository.findAll().size
 
 // Update the version using partial update
 val partialUpdatedVersion = Version().apply {
-    id = version.id
+//    id = version.id
 
-    
+
         version = UPDATED_VERSION
 }
 
@@ -281,15 +281,15 @@ val testVersion = versionList.last()
     @Throws(Exception::class)
     fun fullUpdateVersionWithPatch() {
         versionRepository.saveAndFlush(version)
-        
-        
+
+
 val databaseSizeBeforeUpdate = versionRepository.findAll().size
 
 // Update the version using partial update
 val partialUpdatedVersion = Version().apply {
-    id = version.id
+//    id = version.id
 
-    
+
         version = UPDATED_VERSION
 }
 
