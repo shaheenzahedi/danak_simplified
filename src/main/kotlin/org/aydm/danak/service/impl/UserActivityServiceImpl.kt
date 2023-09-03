@@ -118,7 +118,7 @@ class UserActivityServiceImpl(
         val existingActivities = userId?.let { userActivityRepository.findAllByActivityId(it).map(userActivityMapper::toDto) }
         return inputActivities.map { inputActivity ->
             val foundActivities = existingActivities?.filter { it.uniqueName == inputActivity.uniqueName }
-            val maxTotal = foundActivities?.maxByOrNull { it.total ?: 0 }
+            val maxTotal = foundActivities?.maxByOrNull { it.completed ?: 0 }
             val userActivityDTO = UserActivityDTO(
                 listName = inputActivity.listName,
                 uniqueName = inputActivity.uniqueName,
