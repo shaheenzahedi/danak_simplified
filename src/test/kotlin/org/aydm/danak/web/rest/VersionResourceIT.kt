@@ -558,7 +558,6 @@ class VersionResourceIT {
 
 // Update the version using partial update
         val partialUpdatedVersion = Version().apply {
-            id = version.id
 
             version = UPDATED_VERSION
         }
@@ -588,7 +587,6 @@ class VersionResourceIT {
 
 // Update the version using partial update
         val partialUpdatedVersion = Version().apply {
-            id = version.id
 
             version = UPDATED_VERSION
             tag = UPDATED_TAG
