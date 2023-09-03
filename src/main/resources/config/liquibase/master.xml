@@ -21,15 +21,7 @@
     <include file="config/liquibase/changelog/20230430110856_added_entity_File.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20230430110857_added_entity_FileBelongings.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20230430110858_added_entity_Version.xml" relativeToChangelogFile="false"/>
-
-    <include file="config/liquibase/changelog/20230903102537_added_entity_Donor.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20230903102538_added_entity_Center.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20230903102531_added_entity_Tablet.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20230903102532_added_entity_TabletUser.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20230903102533_added_entity_UserActivity.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20230903102534_added_entity_File.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20230903102535_added_entity_FileBelongings.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20230903102536_added_entity_Version.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20230117084926_added_entity_constraints_TabletUser.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20230117084927_added_entity_constraints_UserActivity.xml" relativeToChangelogFile="false"/>
@@ -37,10 +29,6 @@
     <include file="config/liquibase/changelog/20230430110857_added_entity_constraints_FileBelongings.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20230903102531_added_entity_constraints_Tablet.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20230903102537_added_entity_constraints_Donor.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20230903102532_added_entity_constraints_TabletUser.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20230903102533_added_entity_constraints_UserActivity.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20230903102534_added_entity_constraints_File.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20230903102535_added_entity_constraints_FileBelongings.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
 </databaseChangeLog>
