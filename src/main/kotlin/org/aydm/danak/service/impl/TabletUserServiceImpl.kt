@@ -3,7 +3,6 @@ package org.aydm.danak.service.impl
 import org.aydm.danak.domain.TabletUser
 import org.aydm.danak.repository.TabletUserRepository
 import org.aydm.danak.service.TabletUserService
-import org.aydm.danak.service.dto.OverallUserActivities
 import org.aydm.danak.service.dto.TabletUserDTO
 import org.aydm.danak.service.mapper.TabletUserMapper
 import org.slf4j.LoggerFactory
@@ -69,14 +68,13 @@ class TabletUserServiceImpl(
             .mapTo(mutableListOf(), tabletUserMapper::toDto)
     }
 
-
     override fun createSave(tabletUserDTO: TabletUserDTO): TabletUserDTO {
         if (tabletUserDTO.id != null) return findOne(tabletUserDTO.id!!).orElse(null)
         val tabletUser =
             tabletUserRepository.findByNameAndFamily(tabletUserDTO.firstName, tabletUserDTO.lastName).orElse(null)
         if (tabletUser != null) {
             val existedTabletUser = tabletUserMapper.toDto(tabletUser)
-            existedTabletUser.updateTimeStamp = Instant.now();
+            existedTabletUser.updateTimeStamp = Instant.now()
             return existedTabletUser
         }
         return save(tabletUserDTO.apply { createTimeStamp = Instant.now() })

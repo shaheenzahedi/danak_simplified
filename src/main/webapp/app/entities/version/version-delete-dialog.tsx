@@ -20,7 +20,7 @@ export const VersionDeleteDialog = (props: RouteComponentProps<{ id: string }>) 
   const updateSuccess = useAppSelector(state => state.version.updateSuccess);
 
   const handleClose = () => {
-    props.history.push('/version');
+    props.history.push('/version' + props.location.search);
   };
 
   useEffect(() => {

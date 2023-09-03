@@ -8,6 +8,10 @@ import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateT
 import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
+import { ICenter } from 'app/shared/model/center.model';
+import { getEntities as getCenters } from 'app/entities/center/center.reducer';
+import { IDonor } from 'app/shared/model/donor.model';
+import { getEntities as getDonors } from 'app/entities/donor/donor.reducer';
 import { ITablet } from 'app/shared/model/tablet.model';
 import { getEntity, updateEntity, createEntity, reset } from './tablet.reducer';
 
@@ -16,12 +20,14 @@ export const TabletUpdate = (props: RouteComponentProps<{ id: string }>) => {
 
   const [isNew] = useState(!props.match.params || !props.match.params.id);
 
+  const centers = useAppSelector(state => state.center.entities);
+  const donors = useAppSelector(state => state.donor.entities);
   const tabletEntity = useAppSelector(state => state.tablet.entity);
   const loading = useAppSelector(state => state.tablet.loading);
   const updating = useAppSelector(state => state.tablet.updating);
   const updateSuccess = useAppSelector(state => state.tablet.updateSuccess);
   const handleClose = () => {
-    props.history.push('/tablet');
+    props.history.push('/tablet' + props.location.search);
   };
 
   useEffect(() => {
@@ -30,6 +36,9 @@ export const TabletUpdate = (props: RouteComponentProps<{ id: string }>) => {
     } else {
       dispatch(getEntity(props.match.params.id));
     }
+
+    dispatch(getCenters({}));
+    dispatch(getDonors({}));
   }, []);
 
   useEffect(() => {
@@ -45,6 +54,8 @@ export const TabletUpdate = (props: RouteComponentProps<{ id: string }>) => {
     const entity = {
       ...tabletEntity,
       ...values,
+      center: centers.find(it => it.id.toString() === values.center.toString()),
+      donor: donors.find(it => it.id.toString() === values.donor.toString()),
     };
 
     if (isNew) {
@@ -64,6 +75,8 @@ export const TabletUpdate = (props: RouteComponentProps<{ id: string }>) => {
           ...tabletEntity,
           createTimeStamp: convertDateTimeFromServer(tabletEntity.createTimeStamp),
           updateTimeStamp: convertDateTimeFromServer(tabletEntity.updateTimeStamp),
+          center: tabletEntity?.center?.id,
+          donor: tabletEntity?.donor?.id,
         };
 
   return (
@@ -109,14 +122,33 @@ export const TabletUpdate = (props: RouteComponentProps<{ id: string }>) => {
               />
               <ValidatedField label={translate('danakApp.tablet.name')} id="tablet-name" name="name" data-cy="name" type="text" />
               <ValidatedField
-                label={translate('danakApp.tablet.androidId')}
-                id="tablet-androidId"
-                name="androidId"
-                data-cy="androidId"
+                label={translate('danakApp.tablet.identifier')}
+                id="tablet-identifier"
+                name="identifier"
+                data-cy="identifier"
                 type="text"
               />
-              <ValidatedField label={translate('danakApp.tablet.macId')} id="tablet-macId" name="macId" data-cy="macId" type="text" />
               <ValidatedField label={translate('danakApp.tablet.model')} id="tablet-model" name="model" data-cy="model" type="text" />
+              <ValidatedField id="tablet-center" name="center" data-cy="center" label={translate('danakApp.tablet.center')} type="select">
+                <option value="" key="0" />
+                {centers
+                  ? centers.map(otherEntity => (
+                      <option value={otherEntity.id} key={otherEntity.id}>
+                        {otherEntity.id}
+                      </option>
+                    ))
+                  : null}
+              </ValidatedField>
+              <ValidatedField id="tablet-donor" name="donor" data-cy="donor" label={translate('danakApp.tablet.donor')} type="select">
+                <option value="" key="0" />
+                {donors
+                  ? donors.map(otherEntity => (
+                      <option value={otherEntity.id} key={otherEntity.id}>
+                        {otherEntity.id}
+                      </option>
+                    ))
+                  : null}
+              </ValidatedField>
               <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/tablet" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;

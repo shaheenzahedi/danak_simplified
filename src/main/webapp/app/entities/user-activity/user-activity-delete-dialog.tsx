@@ -20,7 +20,7 @@ export const UserActivityDeleteDialog = (props: RouteComponentProps<{ id: string
   const updateSuccess = useAppSelector(state => state.userActivity.updateSuccess);
 
   const handleClose = () => {
-    props.history.push('/user-activity');
+    props.history.push('/user-activity' + props.location.search);
   };
 
   useEffect(() => {

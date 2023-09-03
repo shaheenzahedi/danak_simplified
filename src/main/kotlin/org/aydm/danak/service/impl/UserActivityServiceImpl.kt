@@ -105,7 +105,7 @@ class UserActivityServiceImpl(
                         completed = it.completed
                     )
                 }
-            );
+            )
         }
         return result
     }
@@ -130,7 +130,6 @@ class UserActivityServiceImpl(
             save(maxTotal ?: userActivityDTO)
         }
     }
-
 
     override fun getAllActivityByTablet(): List<SubmitDTO> {
         val tablets = tabletServiceImpl.findAll()

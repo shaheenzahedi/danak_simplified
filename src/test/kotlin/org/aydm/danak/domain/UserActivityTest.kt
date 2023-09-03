@@ -1,10 +1,8 @@
 package org.aydm.danak.domain
 
-import org.junit.jupiter.api.Test
 import org.assertj.core.api.Assertions.assertThat
 import org.aydm.danak.web.rest.equalsVerifier
-
-import java.util.UUID
+import org.junit.jupiter.api.Test
 
 class UserActivityTest {
 

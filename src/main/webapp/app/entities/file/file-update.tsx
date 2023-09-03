@@ -24,7 +24,7 @@ export const FileUpdate = (props: RouteComponentProps<{ id: string }>) => {
   const updating = useAppSelector(state => state.file.updating);
   const updateSuccess = useAppSelector(state => state.file.updateSuccess);
   const handleClose = () => {
-    props.history.push('/file');
+    props.history.push('/file' + props.location.search);
   };
 
   useEffect(() => {

@@ -20,7 +20,7 @@ export const TabletDeleteDialog = (props: RouteComponentProps<{ id: string }>) =
   const updateSuccess = useAppSelector(state => state.tablet.updateSuccess);
 
   const handleClose = () => {
-    props.history.push('/tablet');
+    props.history.push('/tablet' + props.location.search);
   };
 
   useEffect(() => {

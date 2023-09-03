@@ -2,6 +2,7 @@ package org.aydm.danak.repository
 
 import org.aydm.danak.domain.TabletUser
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
 import java.util.*
@@ -11,7 +12,7 @@ import java.util.*
  */
 @Suppress("unused")
 @Repository
-interface TabletUserRepository : JpaRepository<TabletUser, Long> {
+interface TabletUserRepository : JpaRepository<TabletUser, Long>, JpaSpecificationExecutor<TabletUser> {
 
     @Query("select tu from TabletUser tu where tu.firstName=:firstName AND tu.lastName=:lastName")
     fun findByNameAndFamily(firstName: String?, lastName: String?): Optional<TabletUser>

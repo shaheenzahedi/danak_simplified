@@ -36,10 +36,10 @@
     -->
     <changeSet id="20230430110858-1-data" author="jhipster" context="faker">
         <loadData
-                  file="config/liquibase/fake-data/version.csv"
-                  separator=";"
-                  tableName="version"
-                  usePreparedStatements="true">
+            file="config/liquibase/fake-data/version.csv"
+            separator=";"
+            tableName="version"
+            usePreparedStatements="true">
             <column name="id" type="numeric"/>
             <column name="version" type="numeric"/>
             <column name="tag" type="string"/>

@@ -21,7 +21,7 @@ export const VersionUpdate = (props: RouteComponentProps<{ id: string }>) => {
   const updating = useAppSelector(state => state.version.updating);
   const updateSuccess = useAppSelector(state => state.version.updateSuccess);
   const handleClose = () => {
-    props.history.push('/version');
+    props.history.push('/version' + props.location.search);
   };
 
   useEffect(() => {
@@ -90,6 +90,7 @@ export const VersionUpdate = (props: RouteComponentProps<{ id: string }>) => {
                 data-cy="version"
                 type="text"
               />
+              <ValidatedField label={translate('danakApp.version.tag')} id="version-tag" name="tag" data-cy="tag" type="text" />
               <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/version" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;

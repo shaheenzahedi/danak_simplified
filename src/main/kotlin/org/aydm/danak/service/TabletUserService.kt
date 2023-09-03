@@ -1,5 +1,4 @@
 package org.aydm.danak.service
-import org.aydm.danak.service.dto.OverallUserActivities
 import org.aydm.danak.service.dto.TabletUserDTO
 import java.util.Optional
 

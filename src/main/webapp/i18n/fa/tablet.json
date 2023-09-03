@@ -21,10 +21,11 @@
       "createTimeStamp": "Create Time Stamp",
       "updateTimeStamp": "Update Time Stamp",
       "name": "Name",
-      "androidId": "Android Id",
-      "macId": "Mac Id",
+      "identifier": "Identifier",
       "model": "Model",
-      "tabletUser": "Tablet User"
+      "tabletUser": "Tablet User",
+      "center": "Center",
+      "donor": "Donor"
     }
   }
 }

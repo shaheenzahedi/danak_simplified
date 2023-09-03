@@ -24,7 +24,7 @@ export const TabletUserUpdate = (props: RouteComponentProps<{ id: string }>) => 
   const updating = useAppSelector(state => state.tabletUser.updating);
   const updateSuccess = useAppSelector(state => state.tabletUser.updateSuccess);
   const handleClose = () => {
-    props.history.push('/tablet-user');
+    props.history.push('/tablet-user' + props.location.search);
   };
 
   useEffect(() => {

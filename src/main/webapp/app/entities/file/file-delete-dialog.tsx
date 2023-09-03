@@ -20,7 +20,7 @@ export const FileDeleteDialog = (props: RouteComponentProps<{ id: string }>) => 
   const updateSuccess = useAppSelector(state => state.file.updateSuccess);
 
   const handleClose = () => {
-    props.history.push('/file');
+    props.history.push('/file' + props.location.search);
   };
 
   useEffect(() => {

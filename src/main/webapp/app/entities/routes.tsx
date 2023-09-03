@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch } from 'react-router-dom';
+import {Route, Switch} from 'react-router-dom';
 import ErrorBoundaryRoute from 'app/shared/error/error-boundary-route';
 
 import Tablet from './tablet';
@@ -8,6 +8,8 @@ import UserActivity from './user-activity';
 import File from './file';
 import FileBelongings from './file-belongings';
 import Version from './version';
+import Donor from './donor';
+import Center from './center';
 /* jhipster-needle-add-route-import - JHipster will add routes here */
 
 export default ({ match }) => {
@@ -21,6 +23,8 @@ export default ({ match }) => {
         <ErrorBoundaryRoute path={`${match.url}file`} component={File} />
         <ErrorBoundaryRoute path={`${match.url}file-belongings`} component={FileBelongings} />
         <ErrorBoundaryRoute path={`${match.url}version`} component={Version} />
+        <ErrorBoundaryRoute path={`${match.url}donor`} component={Donor} />
+        <ErrorBoundaryRoute path={`${match.url}center`} component={Center} />
         {/* jhipster-needle-add-route-path - JHipster will add routes here */}
       </Switch>
     </div>

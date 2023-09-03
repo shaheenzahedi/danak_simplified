@@ -20,7 +20,7 @@ export const FileBelongingsDeleteDialog = (props: RouteComponentProps<{ id: stri
   const updateSuccess = useAppSelector(state => state.fileBelongings.updateSuccess);
 
   const handleClose = () => {
-    props.history.push('/file-belongings');
+    props.history.push('/file-belongings' + props.location.search);
   };
 
   useEffect(() => {

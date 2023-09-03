@@ -4,6 +4,7 @@ import org.aydm.danak.domain.User
 import org.springframework.data.domain.*
 import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.stereotype.Repository
 import java.time.Instant
 import java.util.Optional
@@ -12,7 +13,7 @@ import java.util.Optional
  * Spring Data JPA repository for the {@link User} entity.
  */
 @Repository
-interface UserRepository : JpaRepository<User, Long> {
+interface UserRepository : JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
 
     fun findOneByActivationKey(activationKey: String): Optional<User>
 

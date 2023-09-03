@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+    <!--
+        Added the constraints for entity Tablet.
+    -->
+    <changeSet id="20230903102531-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="center_id"
+                                 baseTableName="tablet"
+                                 constraintName="fk_tablet__center_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="center"/>
+
+        <addForeignKeyConstraint baseColumnNames="donor_id"
+                                 baseTableName="tablet"
+                                 constraintName="fk_tablet__donor_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="donor"/>
+    </changeSet>
+</databaseChangeLog>

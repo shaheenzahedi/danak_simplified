@@ -1,0 +1,30 @@
+{
+  "danakApp": {
+    "donor": {
+      "home": {
+        "title": "Donors",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Donor",
+        "createOrEditLabel": "Create or edit a Donor",
+        "notFound": "No Donors found"
+      },
+      "created": "A new Donor is created with identifier {{ param }}",
+      "updated": "A Donor is updated with identifier {{ param }}",
+      "deleted": "A Donor is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Donor {{ id }}?"
+      },
+      "detail": {
+        "title": "Donor"
+      },
+      "id": "ID",
+      "createTimeStamp": "Create Time Stamp",
+      "updateTimeStamp": "Update Time Stamp",
+      "name": "Name",
+      "city": "City",
+      "country": "Country",
+      "user": "User",
+      "tablet": "Tablet"
+    }
+  }
+}

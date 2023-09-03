@@ -76,7 +76,7 @@ class TabletServiceImpl(
 
     @Transactional
     override fun createSave(tabletName: String, tabletId: Long?): TabletDTO {
-        if (tabletId != null) return findOne(tabletId).orElse(null);
+        if (tabletId != null) return findOne(tabletId).orElse(null)
         val tablet = tabletRepository.findByName(tabletName).orElse(null)
         if (tablet != null) {
             val tabletDTO = tabletMapper.toDto(tablet)

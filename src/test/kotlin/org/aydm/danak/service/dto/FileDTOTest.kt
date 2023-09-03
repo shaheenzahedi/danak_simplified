@@ -1,15 +1,13 @@
 package org.aydm.danak.service.dto
 
-import org.junit.jupiter.api.Test
 import org.assertj.core.api.Assertions.assertThat
 import org.aydm.danak.web.rest.equalsVerifier
-
-import java.util.UUID
+import org.junit.jupiter.api.Test
 
 class FileDTOTest {
 
     @Test
-    fun dtoEqualsVerifier(){
+    fun dtoEqualsVerifier() {
         equalsVerifier(FileDTO::class)
         val fileDTO1 = FileDTO()
         fileDTO1.id = 1L

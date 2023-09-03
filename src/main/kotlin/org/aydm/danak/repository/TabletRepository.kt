@@ -2,6 +2,7 @@ package org.aydm.danak.repository
 
 import org.aydm.danak.domain.Tablet
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
 import java.util.*
@@ -11,7 +12,7 @@ import java.util.*
  */
 @Suppress("unused")
 @Repository
-interface TabletRepository : JpaRepository<Tablet, Long> {
+interface TabletRepository : JpaRepository<Tablet, Long>, JpaSpecificationExecutor<Tablet> {
     fun findByName(tabletName: String): Optional<Tablet>
 //    @Query("select t.id from Tablet t where t.androidId is not null")
     @Query("select t.id from Tablet t")

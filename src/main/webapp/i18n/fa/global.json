@@ -13,6 +13,8 @@
         "file": "File",
         "fileBelongings": "File Belongings",
         "version": "Version",
+        "donor": "Donor",
+        "center": "Center",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "account": {

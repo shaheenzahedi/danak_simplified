@@ -53,23 +53,25 @@ export const TabletDetail = (props: RouteComponentProps<{ id: string }>) => {
           </dt>
           <dd>{tabletEntity.name}</dd>
           <dt>
-            <span id="androidId">
-              <Translate contentKey="danakApp.tablet.androidId">Android Id</Translate>
+            <span id="identifier">
+              <Translate contentKey="danakApp.tablet.identifier">Identifier</Translate>
             </span>
           </dt>
-          <dd>{tabletEntity.androidId}</dd>
-          <dt>
-            <span id="macId">
-              <Translate contentKey="danakApp.tablet.macId">Mac Id</Translate>
-            </span>
-          </dt>
-          <dd>{tabletEntity.macId}</dd>
+          <dd>{tabletEntity.identifier}</dd>
           <dt>
             <span id="model">
               <Translate contentKey="danakApp.tablet.model">Model</Translate>
             </span>
           </dt>
           <dd>{tabletEntity.model}</dd>
+          <dt>
+            <Translate contentKey="danakApp.tablet.center">Center</Translate>
+          </dt>
+          <dd>{tabletEntity.center ? tabletEntity.center.id : ''}</dd>
+          <dt>
+            <Translate contentKey="danakApp.tablet.donor">Donor</Translate>
+          </dt>
+          <dd>{tabletEntity.donor ? tabletEntity.donor.id : ''}</dd>
         </dl>
         <Button tag={Link} to="/tablet" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" />{' '}
