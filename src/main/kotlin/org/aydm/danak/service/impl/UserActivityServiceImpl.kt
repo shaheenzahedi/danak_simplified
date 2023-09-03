@@ -79,43 +79,58 @@ class UserActivityServiceImpl(
 
     @Transactional
     override fun submit(submitDTO: SubmitDTO): SubmitDTO {
-        val tablet = tabletServiceImpl.createSave(submitDTO.tablet)
-        val result = SubmitDTO(tablet.id,tablet.name!!);
+        val tablet = tabletServiceImpl.createSave(submitDTO.tablet, submitDTO.tabletId)
+        val result = SubmitDTO(tablet.id, tablet.name!!)
         result.users = submitDTO.users.map { user ->
             val tabletUser = tabletUserServiceImpl.createSave(
                 TabletUserDTO(
+                    id = user.userId,
                     firstName = user.firstName,
                     lastName = user.lastName,
                     tablet = tablet
                 )
             )
-            val activities = user.activity.map { activity ->
-                save(
-                    UserActivityDTO(
-                        listName = activity.listName,
-                        uniqueName = activity.uniqueName,
-                        total = activity.total,
-                        completed = activity.completed,
-                        activity = tabletUser,
-                        createTimeStamp = Instant.now()
-                    )
-                )
-            }
+
+            val activities = decideActivities(user.userId, user.activity, tabletUser)
             SubmitUserDTO(
-               tabletUser.id,
+                tabletUser.id,
                 tabletUser.firstName!!,
                 tabletUser.lastName!!,
-                activities.map { SubmitActivityDTO(
-                    listName = it.listName,
-                    uniqueName = it.uniqueName,
-                    total = it.total,
-                    completed = it.completed,
-                    id = it.id
-                ) }
+                activities.map {
+                    SubmitActivityDTO(
+                        id = it.id,
+                        listName = it.listName,
+                        uniqueName = it.uniqueName,
+                        total = it.total,
+                        completed = it.completed
+                    )
+                }
             );
         }
         return result
     }
+
+    private fun decideActivities(
+        userId: Long?,
+        inputActivities: List<SubmitActivityDTO>,
+        tabletUser: TabletUserDTO
+    ): List<UserActivityDTO> {
+        val existingActivities = userId?.let { userActivityRepository.findAllByActivityId(it).map(userActivityMapper::toDto) }
+        return inputActivities.map { inputActivity ->
+            val foundActivities = existingActivities?.filter { it.uniqueName == inputActivity.uniqueName }
+            val maxTotal = foundActivities?.maxByOrNull { it.total ?: 0 }
+            val userActivityDTO = UserActivityDTO(
+                listName = inputActivity.listName,
+                uniqueName = inputActivity.uniqueName,
+                total = inputActivity.total,
+                completed = inputActivity.completed,
+                activity = tabletUser,
+                createTimeStamp = Instant.now()
+            )
+            save(maxTotal ?: userActivityDTO)
+        }
+    }
+
 
     override fun getAllActivityByTablet(): List<SubmitDTO> {
         val tablets = tabletServiceImpl.findAll()

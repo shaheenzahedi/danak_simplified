@@ -55,6 +55,7 @@ class TabletServiceImpl(
         return tabletRepository.findAll()
             .mapTo(mutableListOf(), tabletMapper::toDto)
     }
+
     @Transactional(readOnly = true)
     override fun findAllRegistered(): List<Long>? {
         log.debug("Request to get all Tablets")
@@ -70,12 +71,12 @@ class TabletServiceImpl(
 
     override fun delete(id: Long) {
         log.debug("Request to delete Tablet : $id")
-
         tabletRepository.deleteById(id)
     }
 
     @Transactional
-    override fun createSave(tabletName: String): TabletDTO {
+    override fun createSave(tabletName: String, tabletId: Long?): TabletDTO {
+        if (tabletId != null) return findOne(tabletId).orElse(null);
         val tablet = tabletRepository.findByName(tabletName).orElse(null)
         if (tablet != null) {
             val tabletDTO = tabletMapper.toDto(tablet)

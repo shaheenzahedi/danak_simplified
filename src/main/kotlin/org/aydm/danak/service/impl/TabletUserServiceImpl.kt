@@ -71,6 +71,7 @@ class TabletUserServiceImpl(
 
 
     override fun createSave(tabletUserDTO: TabletUserDTO): TabletUserDTO {
+        if (tabletUserDTO.id != null) return findOne(tabletUserDTO.id!!).orElse(null)
         val tabletUser =
             tabletUserRepository.findByNameAndFamily(tabletUserDTO.firstName, tabletUserDTO.lastName).orElse(null)
         if (tabletUser != null) {
@@ -78,7 +79,7 @@ class TabletUserServiceImpl(
             existedTabletUser.updateTimeStamp = Instant.now();
             return existedTabletUser
         }
-        return save(tabletUserDTO.apply { createTimeStamp= Instant.now() })
+        return save(tabletUserDTO.apply { createTimeStamp = Instant.now() })
     }
 
     override fun delete(id: Long) {

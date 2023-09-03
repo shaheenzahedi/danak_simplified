@@ -29,4 +29,5 @@ interface UserActivityRepository : JpaRepository<UserActivity, Long> {
             "GROUP BY tu.id"
     )
     fun getAllActivityByUserPageable(@Param("searchString") searchString: String?, pageable: Pageable?): Page<Array<Any?>?>?
+    fun findAllByActivityId(activityId:Long):List<UserActivity>
 }

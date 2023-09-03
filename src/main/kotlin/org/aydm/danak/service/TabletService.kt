@@ -52,6 +52,6 @@ interface TabletService {
      * @param id the id of the entity.
      */
     fun delete(id: Long)
-    fun createSave(tabletName: String): TabletDTO
+    fun createSave(tabletName: String, tabletId: Long?): TabletDTO
     fun findAllRegistered(): List<Long>?
 }
