@@ -612,7 +612,7 @@ class CenterResourceIT {
         val databaseSizeBeforeUpdate = centerRepository.findAll().size
 
         // Update the center
-        val updatedCenter = centerRepository.findById(center.id).get()
+        val updatedCenter = centerRepository.findById(center.id).orElseThrow()
         // Disconnect from session so that the updates on updatedCenter are not directly saved in db
         em.detach(updatedCenter)
         updatedCenter.createTimeStamp = UPDATED_CREATE_TIME_STAMP

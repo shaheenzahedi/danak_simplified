@@ -640,7 +640,7 @@ class TabletUserResourceIT {
         val databaseSizeBeforeUpdate = tabletUserRepository.findAll().size
 
         // Update the tabletUser
-        val updatedTabletUser = tabletUserRepository.findById(tabletUser.id).get()
+        val updatedTabletUser = tabletUserRepository.findById(tabletUser.id).orElseThrow()
         // Disconnect from session so that the updates on updatedTabletUser are not directly saved in db
         em.detach(updatedTabletUser)
         updatedTabletUser.createTimeStamp = UPDATED_CREATE_TIME_STAMP

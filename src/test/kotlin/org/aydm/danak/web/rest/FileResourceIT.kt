@@ -605,7 +605,7 @@ class FileResourceIT {
         val databaseSizeBeforeUpdate = fileRepository.findAll().size
 
         // Update the file
-        val updatedFile = fileRepository.findById(file.id).get()
+        val updatedFile = fileRepository.findById(file.id).orElseThrow()
         // Disconnect from session so that the updates on updatedFile are not directly saved in db
         em.detach(updatedFile)
         updatedFile.name = UPDATED_NAME

@@ -640,7 +640,7 @@ class DonorResourceIT {
         val databaseSizeBeforeUpdate = donorRepository.findAll().size
 
         // Update the donor
-        val updatedDonor = donorRepository.findById(donor.id).get()
+        val updatedDonor = donorRepository.findById(donor.id).orElseThrow()
         // Disconnect from session so that the updates on updatedDonor are not directly saved in db
         em.detach(updatedDonor)
         updatedDonor.createTimeStamp = UPDATED_CREATE_TIME_STAMP

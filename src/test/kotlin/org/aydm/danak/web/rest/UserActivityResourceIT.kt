@@ -817,7 +817,7 @@ class UserActivityResourceIT {
         val databaseSizeBeforeUpdate = userActivityRepository.findAll().size
 
         // Update the userActivity
-        val updatedUserActivity = userActivityRepository.findById(userActivity.id).get()
+        val updatedUserActivity = userActivityRepository.findById(userActivity.id).orElseThrow()
         // Disconnect from session so that the updates on updatedUserActivity are not directly saved in db
         em.detach(updatedUserActivity)
         updatedUserActivity.createTimeStamp = UPDATED_CREATE_TIME_STAMP

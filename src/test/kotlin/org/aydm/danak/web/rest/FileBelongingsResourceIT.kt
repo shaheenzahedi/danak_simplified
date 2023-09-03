@@ -256,7 +256,7 @@ class FileBelongingsResourceIT {
         val databaseSizeBeforeUpdate = fileBelongingsRepository.findAll().size
 
         // Update the fileBelongings
-        val updatedFileBelongings = fileBelongingsRepository.findById(fileBelongings.id).get()
+        val updatedFileBelongings = fileBelongingsRepository.findById(fileBelongings.id).orElseThrow()
         // Disconnect from session so that the updates on updatedFileBelongings are not directly saved in db
         em.detach(updatedFileBelongings)
         val fileBelongingsDTO = fileBelongingsMapper.toDto(updatedFileBelongings)
