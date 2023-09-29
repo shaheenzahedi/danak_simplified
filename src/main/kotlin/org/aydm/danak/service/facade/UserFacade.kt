@@ -2,20 +2,22 @@ package org.aydm.danak.service.facade
 
 import org.aydm.danak.domain.Authority
 import org.aydm.danak.domain.User
-import org.aydm.danak.repository.DonorRepository
 import org.aydm.danak.repository.UserRepository
 import org.aydm.danak.security.DONOR
 import org.aydm.danak.service.DonorService
 import org.aydm.danak.service.UsernameAlreadyUsedException
 import org.aydm.danak.service.dto.DonorDTO
 import org.springframework.security.crypto.password.PasswordEncoder
-import tech.jhipster.security.RandomUtil
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 interface UserFacade {
     fun registerDonor(dto: DonorDTO): DonorDTO
 }
 
+@Transactional
+@Service
 class UserFacadeImpl(
     private val userRepository: UserRepository,
     private val donorService: DonorService,
