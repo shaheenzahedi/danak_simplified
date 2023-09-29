@@ -5,6 +5,7 @@ import org.aydm.danak.service.DonorQueryService
 import org.aydm.danak.service.DonorService
 import org.aydm.danak.service.criteria.DonorCriteria
 import org.aydm.danak.service.dto.DonorDTO
+import org.aydm.danak.service.facade.UserFacade
 import org.aydm.danak.web.rest.errors.BadRequestAlertException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -29,6 +30,7 @@ class DonorResource(
     private val donorService: DonorService,
     private val donorRepository: DonorRepository,
     private val donorQueryService: DonorQueryService,
+    private val userFacade: UserFacade,
 ) {
 
     private val log = LoggerFactory.getLogger(javaClass)
@@ -57,6 +59,20 @@ class DonorResource(
             )
         }
         val result = donorService.save(donorDTO)
+        return ResponseEntity.created(URI("/api/donors/${result.id}"))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.id.toString()))
+            .body(result)
+    }
+    @PostMapping("/donors/register")
+    fun registerDonor(@RequestBody donorDTO: DonorDTO): ResponseEntity<DonorDTO> {
+        log.debug("REST request to save Donor : {}", donorDTO)
+        if (donorDTO.id != null) {
+            throw BadRequestAlertException(
+                "A new donor cannot already have an ID",
+                ENTITY_NAME, "idexists"
+            )
+        }
+        val result = userFacade.registerDonor(donorDTO)
         return ResponseEntity.created(URI("/api/donors/${result.id}"))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.id.toString()))
             .body(result)
