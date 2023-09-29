@@ -7,6 +7,7 @@ import org.aydm.danak.security.DONOR
 import org.aydm.danak.service.DonorService
 import org.aydm.danak.service.UsernameAlreadyUsedException
 import org.aydm.danak.service.dto.DonorDTO
+import org.aydm.danak.service.mapper.UserMapper
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -21,6 +22,7 @@ interface UserFacade {
 class UserFacadeImpl(
     private val userRepository: UserRepository,
     private val donorService: DonorService,
+    private val userMapper:UserMapper,
     private val passwordEncoder: PasswordEncoder,
 ) : UserFacade {
 
@@ -42,7 +44,8 @@ class UserFacadeImpl(
         val authorities = HashSet<Authority>()
         authorities.add(Authority(DONOR))
         newUser.authorities = authorities
-        userRepository.save(newUser)
+        val user = userRepository.save(newUser)
+        dto.user = userMapper.userToUserDTO(user)
         return donorService.save(dto)
     }
 

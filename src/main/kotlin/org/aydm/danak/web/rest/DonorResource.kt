@@ -1,6 +1,7 @@
 package org.aydm.danak.web.rest
 
 import org.aydm.danak.repository.DonorRepository
+import org.aydm.danak.security.ADMIN
 import org.aydm.danak.service.DonorQueryService
 import org.aydm.danak.service.DonorService
 import org.aydm.danak.service.criteria.DonorCriteria
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import tech.jhipster.web.util.HeaderUtil
@@ -64,6 +66,7 @@ class DonorResource(
             .body(result)
     }
     @PostMapping("/donors/register")
+    @PreAuthorize("hasAuthority(\"$ADMIN\")")
     fun registerDonor(@RequestBody donorDTO: DonorDTO): ResponseEntity<DonorDTO> {
         log.debug("REST request to save Donor : {}", donorDTO)
         if (donorDTO.id != null) {
