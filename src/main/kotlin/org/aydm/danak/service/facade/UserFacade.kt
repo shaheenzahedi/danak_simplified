@@ -50,8 +50,7 @@ class UserFacadeImpl(
         userRepository
             .findOneByEmailIgnoreCase(dto.user?.email)
             .ifPresent { existingUser ->
-                val removed = removeNonActivatedUser(existingUser)
-                if (!removed) throw UsernameAlreadyUsedException()
+                throw UsernameAlreadyUsedException()
             }
         val newUser = User()
         val encryptedPassword: String = passwordEncoder.encode(dto.user?.password)
