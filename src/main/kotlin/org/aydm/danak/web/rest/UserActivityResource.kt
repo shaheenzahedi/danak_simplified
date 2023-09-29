@@ -4,6 +4,7 @@ import org.aydm.danak.repository.UserActivityRepository
 import org.aydm.danak.service.UserActivityService
 import org.aydm.danak.service.dto.OverallUserActivities
 import org.aydm.danak.service.dto.UserActivityDTO
+import org.aydm.danak.service.facade.UserFacade
 import org.aydm.danak.web.rest.errors.BadRequestAlertException
 import org.slf4j.LoggerFactory
 import org.springdoc.api.annotations.ParameterObject
@@ -30,6 +31,7 @@ private const val ENTITY_NAME = "userActivity"
 class UserActivityResource(
     private val userActivityService: UserActivityService,
     private val userActivityRepository: UserActivityRepository,
+    private val userFacade: UserFacade
 ) {
 
     private val log = LoggerFactory.getLogger(javaClass)
@@ -63,7 +65,8 @@ class UserActivityResource(
         @ParameterObject @Nullable search: String?,
         @ParameterObject pageable: Pageable?
     ): ResponseEntity<Page<OverallUserActivities?>?> {
-        val page = userActivityService.getAllActivityByUserPageable(search, pageable)
+        val keyword = userFacade.getDonorKeyword()
+        val page = userActivityService.getAllActivityByUserPageable(keyword ?: search, pageable)
         return ResponseEntity.ok()
             .header("X-Total-Count", page?.totalElements.toString())
             .body(page)
