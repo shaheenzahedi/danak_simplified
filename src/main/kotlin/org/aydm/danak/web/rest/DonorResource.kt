@@ -10,6 +10,7 @@ import org.aydm.danak.service.facade.UserFacade
 import org.aydm.danak.web.rest.errors.BadRequestAlertException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -64,6 +65,14 @@ class DonorResource(
         return ResponseEntity.created(URI("/api/donors/${result.id}"))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.id.toString()))
             .body(result)
+    }
+    @PostMapping("/donors/list")
+    @PreAuthorize("hasAuthority(\"$ADMIN\")")
+    fun donorList(        @org.springdoc.api.annotations.ParameterObject pageable: Pageable
+    ): ResponseEntity<Page<DonorDTO>> {
+        log.debug("REST request to get Donors")
+        val donors = userFacade.getDonors(pageable)
+        return ResponseEntity.ok().body(donors)
     }
     @PostMapping("/donors/register")
     @PreAuthorize("hasAuthority(\"$ADMIN\")")

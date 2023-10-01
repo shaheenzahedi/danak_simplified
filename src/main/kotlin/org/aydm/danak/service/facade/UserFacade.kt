@@ -10,6 +10,8 @@ import org.aydm.danak.service.UsernameAlreadyUsedException
 import org.aydm.danak.service.criteria.DonorCriteria
 import org.aydm.danak.service.dto.DonorDTO
 import org.aydm.danak.service.mapper.UserMapper
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -20,6 +22,7 @@ import java.util.*
 interface UserFacade {
     fun registerDonor(dto: DonorDTO): DonorDTO
     fun getDonorKeyword(): String?
+    fun getDonors(pageable: Pageable): Page<DonorDTO>?
 }
 
 @Transactional
@@ -46,10 +49,19 @@ class UserFacadeImpl(
         return if (result.isEmpty()) null else result.first().name
     }
 
+    override fun getDonors(pageable: Pageable): Page<DonorDTO>? {
+        return donorService.findAll(pageable)
+            .map {
+                val user = userRepository.findById(it.user?.id!!)
+                it.user = userMapper.userToUserDTO(user.get())
+                it
+            }
+    }
+
     override fun registerDonor(dto: DonorDTO): DonorDTO {
         userRepository
             .findOneByEmailIgnoreCase(dto.user?.email)
-            .ifPresent { existingUser ->
+            .ifPresent {
                 throw UsernameAlreadyUsedException()
             }
         val newUser = User()
