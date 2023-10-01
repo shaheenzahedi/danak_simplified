@@ -53,7 +53,7 @@ class UserFacadeImpl(
         return donorService.findAll(pageable)
             .map {
                 val user = userRepository.findById(it.user?.id!!)
-                it.user = userMapper.userToUserDTO(user.get())
+                it.user = userMapper.userToUserDTO(user.orElseThrow())
                 it
             }
     }
