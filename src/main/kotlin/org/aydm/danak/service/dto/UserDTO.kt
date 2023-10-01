@@ -10,8 +10,8 @@ open class UserDTO(
     var login: String? = null,
     val email: String? = null,
     val password: String? = null,
-    val firstName: String? = null,
-    val lastName: String? = null
+    var firstName: String? = null,
+    var lastName: String? = null
 ) {
 
 

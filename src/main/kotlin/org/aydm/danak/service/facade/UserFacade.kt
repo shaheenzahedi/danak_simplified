@@ -52,8 +52,12 @@ class UserFacadeImpl(
     override fun getDonors(pageable: Pageable): Page<DonorDTO>? {
         return donorService.findAll(pageable)
             .map {
-                val user = userRepository.findById(it.user?.id!!)
-                it.user = userMapper.userToUserDTO(user.orElseThrow())
+                val user = userRepository.findById(it.user?.id!!).orElseThrow()
+                val userDTO = userMapper.userToUserDTO(user)
+                it.user = userDTO.apply {
+                    firstName = user.firstName
+                    lastName = user.lastName
+                }
                 it
             }
     }
