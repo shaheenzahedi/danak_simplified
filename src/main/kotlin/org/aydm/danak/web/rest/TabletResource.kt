@@ -7,6 +7,7 @@ import org.aydm.danak.service.facade.UserFacade
 import org.aydm.danak.web.rest.errors.BadRequestAlertException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import tech.jhipster.web.util.HeaderUtil
@@ -147,11 +148,11 @@ class TabletResource(
         return tabletService.findAll()
     }
 
-    @GetMapping("/tablets-panel") fun getAllTabletsPanel(): MutableList<TabletDTO> {
+    @GetMapping("/tablets-panel") fun getAllTabletsPanel(@org.springdoc.api.annotations.ParameterObject pageable: Pageable): MutableList<TabletDTO> {
 
         log.debug("REST request to get all Tablets")
 
-        return userFacade.findAllTablets()
+        return userFacade.findAllTablets(pageable)
     }
         /**
      * `GET  /tablets/:id` : get the "id" tablet.
