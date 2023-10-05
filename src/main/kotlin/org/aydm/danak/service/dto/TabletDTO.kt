@@ -21,6 +21,8 @@ data class TabletDTO(
 
     var model: String? = null,
 
+    var numberOfUsers:Long = 0,
+
     var center: CenterDTO? = null,
 
     var donor: DonorDTO? = null

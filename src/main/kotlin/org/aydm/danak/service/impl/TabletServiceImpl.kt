@@ -6,6 +6,7 @@ import org.aydm.danak.service.TabletService
 import org.aydm.danak.service.dto.TabletDTO
 import org.aydm.danak.service.mapper.TabletMapper
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
@@ -84,5 +85,11 @@ class TabletServiceImpl(
             return tabletDTO
         }
         return save(TabletDTO(name = tabletName, createTimeStamp = Instant.now()))
+    }
+
+    override fun findAll(pageable: Pageable): MutableList<TabletDTO> {
+        log.debug("Request to get all Tablets")
+        return tabletRepository.findAll(pageable)
+            .mapTo(mutableListOf(), tabletMapper::toDto)
     }
 }

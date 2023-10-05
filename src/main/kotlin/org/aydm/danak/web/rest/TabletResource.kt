@@ -3,6 +3,7 @@ package org.aydm.danak.web.rest
 import org.aydm.danak.repository.TabletRepository
 import org.aydm.danak.service.TabletService
 import org.aydm.danak.service.dto.TabletDTO
+import org.aydm.danak.service.facade.UserFacade
 import org.aydm.danak.web.rest.errors.BadRequestAlertException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -23,6 +24,7 @@ private const val ENTITY_NAME = "tablet"
 class TabletResource(
     private val tabletService: TabletService,
     private val tabletRepository: TabletRepository,
+    private val userFacade: UserFacade
 ) {
 
     private val log = LoggerFactory.getLogger(javaClass)
@@ -145,7 +147,13 @@ class TabletResource(
         return tabletService.findAll()
     }
 
-    /**
+    @GetMapping("/tablets-panel") fun getAllTabletsPanel(): MutableList<TabletDTO> {
+
+        log.debug("REST request to get all Tablets")
+
+        return userFacade.findAllTablets()
+    }
+        /**
      * `GET  /tablets/:id` : get the "id" tablet.
      *
      * @param id the id of the tabletDTO to retrieve.

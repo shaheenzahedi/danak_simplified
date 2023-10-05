@@ -1,5 +1,6 @@
 package org.aydm.danak.service
 import org.aydm.danak.service.dto.TabletDTO
+import org.springframework.data.domain.Pageable
 import java.util.Optional
 
 /**
@@ -54,4 +55,5 @@ interface TabletService {
     fun delete(id: Long)
     fun createSave(tabletName: String, tabletId: Long?): TabletDTO
     fun findAllRegistered(): List<Long>?
+    fun findAll(pageable: Pageable): MutableList<TabletDTO>
 }
