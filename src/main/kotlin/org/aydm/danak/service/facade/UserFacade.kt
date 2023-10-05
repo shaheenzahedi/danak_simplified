@@ -23,7 +23,7 @@ interface UserFacade {
     fun registerDonor(dto: DonorDTO): DonorDTO
     fun getDonorKeyword(): String?
     fun getDonors(pageable: Pageable): Page<DonorDTO>?
-    fun findAllTablets(@org.springdoc.api.annotations.ParameterObject pageable: Pageable): MutableList<TabletDTO>
+    fun findAllTablets(@org.springdoc.api.annotations.ParameterObject pageable: Pageable): Page<TabletDTO>
 }
 
 @Transactional
@@ -65,7 +65,7 @@ class UserFacadeImpl(
             }
     }
 
-    override fun findAllTablets(pageable: Pageable): MutableList<TabletDTO> {
+    override fun findAllTablets(pageable: Pageable): Page<TabletDTO> {
         return tabletService.findAll(pageable)
             .onEach {
                 it.numberOfUsers = tabletUserQueryService.countByCriteria(
