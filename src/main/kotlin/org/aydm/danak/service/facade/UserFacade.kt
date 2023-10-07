@@ -7,9 +7,11 @@ import org.aydm.danak.security.DONOR
 import org.aydm.danak.service.*
 import org.aydm.danak.service.criteria.DonorCriteria
 import org.aydm.danak.service.criteria.TabletUserCriteria
+import org.aydm.danak.service.criteria.UserActivityCriteria
 import org.aydm.danak.service.dto.DonorDTO
 import org.aydm.danak.service.dto.TabletDTO
 import org.aydm.danak.service.dto.TabletUserDTO
+import org.aydm.danak.service.dto.UserActivityDTO
 import org.aydm.danak.service.mapper.UserMapper
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -26,6 +28,7 @@ interface UserFacade {
     fun getDonors(pageable: Pageable): Page<DonorDTO>?
     fun findAllTablets(@org.springdoc.api.annotations.ParameterObject pageable: Pageable): Page<TabletDTO>
     fun findAllTabletUsers(criteria: TabletUserCriteria?, pageable: Pageable): Page<TabletUserDTO>
+    fun getAllActivities(criteria: UserActivityCriteria?, pageable: Pageable): Page<UserActivityDTO>
 }
 
 @Transactional
@@ -37,6 +40,7 @@ class UserFacadeImpl(
     private val userMapper: UserMapper,
     private val passwordEncoder: PasswordEncoder,
     private val tabletService: TabletService,
+    private val activityQueryService: UserActivityQueryService,
     private val tabletUserQueryService: TabletUserQueryService
 ) : UserFacade {
     private fun getCurrentUserName(): String {
@@ -80,6 +84,10 @@ class UserFacadeImpl(
 
     override fun findAllTabletUsers(criteria: TabletUserCriteria?, pageable: Pageable): Page<TabletUserDTO> =
         tabletUserQueryService.findAll(criteria, pageable)
+
+    override fun getAllActivities(criteria: UserActivityCriteria?, pageable: Pageable): Page<UserActivityDTO> {
+        return activityQueryService.findByCriteria(criteria,pageable)
+    }
 
     override fun registerDonor(dto: DonorDTO): DonorDTO {
         userRepository

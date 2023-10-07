@@ -2,6 +2,7 @@ package org.aydm.danak.web.rest
 
 import org.aydm.danak.repository.UserActivityRepository
 import org.aydm.danak.service.UserActivityService
+import org.aydm.danak.service.criteria.UserActivityCriteria
 import org.aydm.danak.service.dto.OverallUserActivities
 import org.aydm.danak.service.dto.UserActivityDTO
 import org.aydm.danak.service.facade.UserFacade
@@ -58,6 +59,11 @@ class UserActivityResource(
     fun getAllActivityByUser(): ResponseEntity<List<OverallUserActivities>> {
         val allActivity = userActivityService.getAllActivityByUser()
         return ResponseEntity.ok().body(allActivity)
+    }
+    @GetMapping("activities")
+    fun getAllActivities(criteria:UserActivityCriteria?,
+        @org.springdoc.api.annotations.ParameterObject pageable: Pageable): Page<UserActivityDTO> {
+        return userFacade.getAllActivities(criteria, pageable)
     }
 
     @GetMapping("all-activities-page")
