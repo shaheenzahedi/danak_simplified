@@ -2,6 +2,7 @@ package org.aydm.danak.web.rest
 
 import org.aydm.danak.repository.TabletUserRepository
 import org.aydm.danak.service.TabletUserService
+import org.aydm.danak.service.criteria.TabletUserCriteria
 import org.aydm.danak.service.dto.TabletUserDTO
 import org.aydm.danak.service.facade.UserFacade
 import org.aydm.danak.web.rest.errors.BadRequestAlertException
@@ -150,10 +151,14 @@ class TabletUserResource(
 
         return tabletUserService.findAll()
     }
+
     @GetMapping("/tablet-users-panel")
-    fun getAllTabletUsers(@org.springdoc.api.annotations.ParameterObject pageable: Pageable): Page<TabletUserDTO> {
+    fun getAllTabletUsers(
+        criteria: TabletUserCriteria?,
+        @org.springdoc.api.annotations.ParameterObject pageable: Pageable
+    ): Page<TabletUserDTO> {
         log.debug("REST request to get all TabletUsers")
-        return userFacade.findAllTabletUsers(pageable)
+        return userFacade.findAllTabletUsers(criteria, pageable)
     }
 
     /**

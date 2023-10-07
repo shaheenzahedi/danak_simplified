@@ -25,7 +25,7 @@ interface UserFacade {
     fun getDonorKeyword(): String?
     fun getDonors(pageable: Pageable): Page<DonorDTO>?
     fun findAllTablets(@org.springdoc.api.annotations.ParameterObject pageable: Pageable): Page<TabletDTO>
-    fun findAllTabletUsers(pageable: Pageable): Page<TabletUserDTO>
+    fun findAllTabletUsers(criteria: TabletUserCriteria?, pageable: Pageable): Page<TabletUserDTO>
 }
 
 @Transactional
@@ -77,7 +77,9 @@ class UserFacadeImpl(
                 )
             }
     }
-    override fun findAllTabletUsers(pageable: Pageable): Page<TabletUserDTO> = tabletUserQueryService.findAll(pageable)
+
+    override fun findAllTabletUsers(criteria: TabletUserCriteria?, pageable: Pageable): Page<TabletUserDTO> =
+        tabletUserQueryService.findAll(criteria, pageable)
 
     override fun registerDonor(dto: DonorDTO): DonorDTO {
         userRepository
