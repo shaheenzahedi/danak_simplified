@@ -5,6 +5,7 @@ import org.aydm.danak.domain.TabletUser
 import org.aydm.danak.repository.TabletUserRepository
 import org.aydm.danak.service.criteria.TabletUserCriteria
 import org.aydm.danak.service.dto.TabletUserDTO
+import org.aydm.danak.service.mapper.TabletMapper
 import org.aydm.danak.service.mapper.TabletUserMapper
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import tech.jhipster.service.QueryService
 import tech.jhipster.service.filter.Filter
+import tech.jhipster.service.filter.LongFilter
 import javax.persistence.criteria.JoinType
 
 /**
@@ -27,6 +29,7 @@ import javax.persistence.criteria.JoinType
 class TabletUserQueryService(
     private val tabletUserRepository: TabletUserRepository,
     private val tabletUserMapper: TabletUserMapper,
+    private val tabletMapper: TabletMapper,
 ) : QueryService<TabletUser>() {
 
     private val log = LoggerFactory.getLogger(javaClass)
@@ -116,5 +119,11 @@ class TabletUserQueryService(
             }
         }
         return specification
+    }
+
+    fun findAll(pageable: Pageable): Page<TabletUserDTO> = tabletUserRepository.findAll(pageable).map {
+        val res = tabletUserMapper.toDto(it)
+        res.tablet = tabletMapper.toDto(it.tablet!!)
+        res
     }
 }

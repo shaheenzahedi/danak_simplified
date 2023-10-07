@@ -9,6 +9,7 @@ import org.aydm.danak.service.criteria.DonorCriteria
 import org.aydm.danak.service.criteria.TabletUserCriteria
 import org.aydm.danak.service.dto.DonorDTO
 import org.aydm.danak.service.dto.TabletDTO
+import org.aydm.danak.service.dto.TabletUserDTO
 import org.aydm.danak.service.mapper.UserMapper
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -24,6 +25,7 @@ interface UserFacade {
     fun getDonorKeyword(): String?
     fun getDonors(pageable: Pageable): Page<DonorDTO>?
     fun findAllTablets(@org.springdoc.api.annotations.ParameterObject pageable: Pageable): Page<TabletDTO>
+    fun findAllTabletUsers(pageable: Pageable): Page<TabletUserDTO>
 }
 
 @Transactional
@@ -75,6 +77,7 @@ class UserFacadeImpl(
                 )
             }
     }
+    override fun findAllTabletUsers(pageable: Pageable): Page<TabletUserDTO> = tabletUserQueryService.findAll(pageable)
 
     override fun registerDonor(dto: DonorDTO): DonorDTO {
         userRepository

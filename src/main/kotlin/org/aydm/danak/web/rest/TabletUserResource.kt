@@ -3,9 +3,12 @@ package org.aydm.danak.web.rest
 import org.aydm.danak.repository.TabletUserRepository
 import org.aydm.danak.service.TabletUserService
 import org.aydm.danak.service.dto.TabletUserDTO
+import org.aydm.danak.service.facade.UserFacade
 import org.aydm.danak.web.rest.errors.BadRequestAlertException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import tech.jhipster.web.util.HeaderUtil
@@ -23,6 +26,7 @@ private const val ENTITY_NAME = "tabletUser"
 @RequestMapping("/api")
 class TabletUserResource(
     private val tabletUserService: TabletUserService,
+    private val userFacade: UserFacade,
     private val tabletUserRepository: TabletUserRepository,
 ) {
 
@@ -145,6 +149,11 @@ class TabletUserResource(
         log.debug("REST request to get all TabletUsers")
 
         return tabletUserService.findAll()
+    }
+    @GetMapping("/tablet-users-panel")
+    fun getAllTabletUsers(@org.springdoc.api.annotations.ParameterObject pageable: Pageable): Page<TabletUserDTO> {
+        log.debug("REST request to get all TabletUsers")
+        return userFacade.findAllTabletUsers(pageable)
     }
 
     /**
