@@ -89,10 +89,12 @@ class TabletUserQueryService(
                 specification = specification.and(buildRangeSpecification(criteria.id, TabletUser_.id))
             }
             if (criteria.createTimeStamp != null) {
-                specification = specification.and(buildRangeSpecification(criteria.createTimeStamp, TabletUser_.createTimeStamp))
+                specification =
+                    specification.and(buildRangeSpecification(criteria.createTimeStamp, TabletUser_.createTimeStamp))
             }
             if (criteria.updateTimeStamp != null) {
-                specification = specification.and(buildRangeSpecification(criteria.updateTimeStamp, TabletUser_.updateTimeStamp))
+                specification =
+                    specification.and(buildRangeSpecification(criteria.updateTimeStamp, TabletUser_.updateTimeStamp))
             }
             if (criteria.firstName != null) {
                 specification = specification.and(buildStringSpecification(criteria.firstName, TabletUser_.firstName))
@@ -121,9 +123,10 @@ class TabletUserQueryService(
         return specification
     }
 
-    fun findAll(pageable: Pageable): Page<TabletUserDTO> = tabletUserRepository.findAll(pageable).map {
-        val res = tabletUserMapper.toDto(it)
-        res.tablet = tabletMapper.toDto(it.tablet!!)
-        res
-    }
+    fun findAll(criteria: TabletUserCriteria?, pageable: Pageable): Page<TabletUserDTO> = tabletUserRepository
+        .findAll(createSpecification(criteria), pageable).map {
+            tabletUserMapper.toDto(it).apply {
+                tablet = tabletMapper.toDto(it.tablet!!)
+            }
+        }
 }
