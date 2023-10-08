@@ -70,12 +70,15 @@ class TabletUserServiceImpl(
 
     override fun createSave(tabletUserDTO: TabletUserDTO): TabletUserDTO {
         if (tabletUserDTO.id != null) return findOne(tabletUserDTO.id!!).orElse(null)
-        val tabletUser =
-            tabletUserRepository.findByNameAndFamily(tabletUserDTO.firstName, tabletUserDTO.lastName).orElse(null)
+        val tabletUser = tabletUserRepository.findByNameAndFamily(
+            tabletUserDTO.firstName,
+            tabletUserDTO.lastName,
+            tabletUserDTO.tablet?.id!!
+        ).orElse(null)
         if (tabletUser != null) {
             val existedTabletUser = tabletUserMapper.toDto(tabletUser)
             existedTabletUser.updateTimeStamp = Instant.now()
-            return existedTabletUser
+            return save(existedTabletUser)
         }
         return save(tabletUserDTO.apply { createTimeStamp = Instant.now() })
     }
