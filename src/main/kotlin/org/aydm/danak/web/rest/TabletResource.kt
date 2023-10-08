@@ -60,6 +60,15 @@ class TabletResource(
             .body(result)
     }
 
+    @PostMapping("/tablets-fix-duplicates")
+    fun tabletsFixDuplicates() {
+       userFacade.tabletsFixDuplicates();
+    }
+    @PostMapping("/tablets-get-duplicates")
+    fun tabletsGetDuplicates():MutableList<TabletDTO> {
+       return userFacade.tabletsGetDuplicates();
+    }
+
     /**
      * {@code PUT  /tablets/:id} : Updates an existing tablet.
      *

@@ -29,6 +29,8 @@ interface UserFacade {
     fun findAllTablets(@org.springdoc.api.annotations.ParameterObject pageable: Pageable): Page<TabletDTO>
     fun findAllTabletUsers(criteria: TabletUserCriteria?, pageable: Pageable): Page<TabletUserDTO>
     fun getAllActivities(criteria: UserActivityCriteria?, pageable: Pageable): Page<UserActivityDTO>
+    fun tabletsFixDuplicates()
+    fun tabletsGetDuplicates(): MutableList<TabletDTO>
 }
 
 @Transactional
@@ -86,7 +88,45 @@ class UserFacadeImpl(
         tabletUserQueryService.findAll(criteria, pageable)
 
     override fun getAllActivities(criteria: UserActivityCriteria?, pageable: Pageable): Page<UserActivityDTO> {
-        return activityQueryService.findByCriteria(criteria,pageable)
+        return activityQueryService.findByCriteria(criteria, pageable)
+    }
+
+    override fun tabletsFixDuplicates() {
+        val duplicateTablets = tabletService.findAllDuplicates()
+            .onEach { it.numberOfUsers = tabletUserQueryService.countTabletUsers(it.id!!) }
+            .groupBy { it.name }
+        val listToDelete = mutableListOf<TabletDTO>()
+        val listToEdit = mutableListOf<TabletDTO>()
+        for (entry in duplicateTablets) {
+            val longestModel = entry.value
+                .mapNotNull { it.model } // Filter out null 'model' values
+                .maxByOrNull { it.length } // Find the max by 'model' length
+            val longestIdentifier = entry.value
+                .mapNotNull { it.identifier } // Filter out null 'identifier' values
+                .maxByOrNull { it.length } // Find the max by 'identifier' length
+            entry.value.forEach {
+                if (it.numberOfUsers == 0L) {
+                    listToDelete.add(it)
+                } else {
+                    it.model = longestModel
+                    it.identifier = longestIdentifier
+                    listToEdit.add(it)
+                }
+            }
+        }
+        tabletService.deleteAll(listToDelete)
+        tabletService.saveAll(listToEdit)
+    }
+
+    fun TabletUserQueryService.countTabletUsers(tabletId: Long): Long {
+        val criteria = TabletUserCriteria().apply {
+            this.tabletId = LongFilter().apply { equals = tabletId }
+        }
+        return this.countByCriteria(criteria)
+    }
+
+    override fun tabletsGetDuplicates(): MutableList<TabletDTO> {
+        return tabletService.findAllDuplicates()
     }
 
     override fun registerDonor(dto: DonorDTO): DonorDTO {

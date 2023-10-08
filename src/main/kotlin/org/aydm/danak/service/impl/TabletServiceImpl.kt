@@ -11,7 +11,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
-import java.util.Optional
+import java.util.*
 
 /**
  * Service Implementation for managing [Tablet].
@@ -71,6 +71,16 @@ class TabletServiceImpl(
             .map(tabletMapper::toDto)
     }
 
+    override fun deleteAll(tablets:List<TabletDTO>) {
+        log.debug("Request to delete Tablets")
+        tabletRepository.deleteAllById(tablets.map { it.id })
+    }
+
+    override fun saveAll(tablets: MutableList<TabletDTO>) {
+        log.debug("Request to edit all tablets ${tablets.joinToString { it.id.toString() }}")
+        tabletRepository.saveAll(tabletMapper.toEntity(tablets))
+    }
+
     override fun delete(id: Long) {
         log.debug("Request to delete Tablet : $id")
         tabletRepository.deleteById(id)
@@ -90,6 +100,10 @@ class TabletServiceImpl(
             tabletDTO.updateTimeStamp = null
             save(tabletDTO)
         }
+    }
+
+    override fun findAllDuplicates(): MutableList<TabletDTO> {
+        return tabletMapper.toDto(tabletRepository.findAllDuplicates())
     }
 
     @Transactional

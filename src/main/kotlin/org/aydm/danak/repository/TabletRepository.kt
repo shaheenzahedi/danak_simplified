@@ -17,4 +17,6 @@ interface TabletRepository : JpaRepository<Tablet, Long>, JpaSpecificationExecut
 //    @Query("select t.id from Tablet t where t.androidId is not null")
     @Query("select t.id from Tablet t")
     fun findAllRegistered(): List<Long>?
+    @Query("SELECT t FROM Tablet t WHERE t.name IN (SELECT name FROM Tablet GROUP BY name HAVING COUNT(name) > 1)")
+    fun findAllDuplicates(): MutableList<Tablet>
 }
