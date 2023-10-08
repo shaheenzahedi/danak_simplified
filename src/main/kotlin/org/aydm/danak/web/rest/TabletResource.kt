@@ -47,14 +47,14 @@ class TabletResource(
      */
     @PostMapping("/tablets")
     fun createTablet(@RequestBody tabletDTO: TabletDTO): ResponseEntity<TabletDTO> {
-        log.debug("REST request to save Tablet : $tabletDTO")
+        log.debug("REST request to save Tablet : {}", tabletDTO)
         if (tabletDTO.id != null) {
             throw BadRequestAlertException(
                 "A new tablet cannot already have an ID",
                 ENTITY_NAME, "idexists"
             )
         }
-        val result = tabletService.save(tabletDTO)
+        val result = tabletService.registerTablet(tabletDTO)
         return ResponseEntity.created(URI("/api/tablets/${result.id}"))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.id.toString()))
             .body(result)

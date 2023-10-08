@@ -57,4 +57,5 @@ interface TabletService {
     fun createSave(tabletName: String, tabletId: Long?): TabletDTO
     fun findAllRegistered(): List<Long>?
     fun findAll(pageable: Pageable): Page<TabletDTO>
+    fun registerTablet(tabletDTO: TabletDTO): TabletDTO
 }

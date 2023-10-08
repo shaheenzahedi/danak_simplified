@@ -77,13 +77,27 @@ class TabletServiceImpl(
     }
 
     @Transactional
+    override fun registerTablet(tabletDTO: TabletDTO): TabletDTO {
+        val tablet = tabletRepository.findByName(tabletDTO.name!!).orElse(null)
+        return if (tablet != null) {
+            val tabletToSave = tabletMapper.toDto(tablet)
+            tabletToSave.updateTimeStamp = Instant.now()
+            save(tabletToSave)
+        }else{
+            tabletDTO.createTimeStamp = Instant.now()
+            tabletDTO.updateTimeStamp = null
+            save(tabletDTO)
+        }
+    }
+
+    @Transactional
     override fun createSave(tabletName: String, tabletId: Long?): TabletDTO {
         if (tabletId != null) return findOne(tabletId).orElse(null)
         val tablet = tabletRepository.findByName(tabletName).orElse(null)
         if (tablet != null) {
             val tabletDTO = tabletMapper.toDto(tablet)
             tabletDTO.updateTimeStamp = Instant.now()
-            return tabletDTO
+            return save(tabletDTO)
         }
         return save(TabletDTO(name = tabletName, createTimeStamp = Instant.now()))
     }
