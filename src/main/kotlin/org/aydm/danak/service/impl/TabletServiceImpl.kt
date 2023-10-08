@@ -81,6 +81,8 @@ class TabletServiceImpl(
         val tablet = tabletRepository.findByName(tabletDTO.name!!).orElse(null)
         return if (tablet != null) {
             val tabletToSave = tabletMapper.toDto(tablet)
+            tabletToSave.identifier = tabletDTO.identifier
+            tabletToSave.model = tabletDTO.model
             tabletToSave.updateTimeStamp = Instant.now()
             save(tabletToSave)
         }else{
