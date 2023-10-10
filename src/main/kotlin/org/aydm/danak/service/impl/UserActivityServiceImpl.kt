@@ -175,6 +175,7 @@ class UserActivityServiceImpl(
                 firstName = tabletUser.firstName,
                 lastName = tabletUser.lastName,
                 tabletName = tablet.name,
+                tabletId = tablet.id,
                 userActivities = tabletUser.userActivities?.map {
                     AggregatedUserActivity(
                         userActivityId = it.activity?.id,
@@ -205,11 +206,13 @@ class UserActivityServiceImpl(
         return tabletUsers.map { tabletUser ->
             val activityDTOs =
                 userActivities?.filter { userActivityDTO -> userActivityDTO.userActivityId == tabletUser.id }
+            val first = tablets.first { tablet -> tablet.id == tabletUser.tablet?.id }
             OverallUserActivities(
                 tabletUserId = tabletUser.id,
                 firstName = tabletUser.firstName,
                 lastName = tabletUser.lastName,
-                tabletName = tablets.first { tablet -> tablet.id == tabletUser.tablet?.id }.name,
+                tabletName = first.name,
+                tabletId = first.id,
                 userActivities = activityDTOs?.toMutableList()
             )
         }
