@@ -1,4 +1,5 @@
 package org.aydm.danak.service
+import org.aydm.danak.domain.Tablet
 import org.aydm.danak.service.dto.TabletDTO
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -61,4 +62,5 @@ interface TabletService {
     fun findAllDuplicates():MutableList<TabletDTO>
     fun deleteAll(tablets: List<TabletDTO>)
     fun saveAll(tablets: MutableList<TabletDTO>)
+    fun findAllTabletsWithoutIdentifier():MutableList<Tablet>
 }

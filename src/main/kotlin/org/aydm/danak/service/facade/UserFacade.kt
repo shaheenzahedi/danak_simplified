@@ -1,6 +1,7 @@
 package org.aydm.danak.service.facade
 
 import org.aydm.danak.domain.Authority
+import org.aydm.danak.domain.TabletUser
 import org.aydm.danak.domain.User
 import org.aydm.danak.repository.UserRepository
 import org.aydm.danak.security.DONOR
@@ -20,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import tech.jhipster.service.filter.LongFilter
+import java.time.Instant
 import java.util.*
 
 interface UserFacade {
@@ -31,6 +33,7 @@ interface UserFacade {
     fun getAllActivities(criteria: UserActivityCriteria?, pageable: Pageable): Page<UserActivityDTO>
     fun tabletsFixDuplicates()
     fun tabletsGetDuplicates(): MutableList<TabletDTO>
+    fun fixTabletNames()
 }
 
 @Transactional
@@ -128,6 +131,34 @@ class UserFacadeImpl(
     override fun tabletsGetDuplicates(): MutableList<TabletDTO> {
         return tabletService.findAllDuplicates()
     }
+
+    override fun fixTabletNames(){
+        tabletService.findAllTabletsWithoutIdentifier()
+            .filterNot { it.tabletUsers.isNullOrEmpty() }
+            .associate { it.id to extractTabletName(it.tabletUsers!!) }
+            .filterNot { it.value==null }
+            .forEach{ tablet->
+                tabletService.findOne(tablet.key!!)
+                    .ifPresent{
+                        tabletService.save(it.apply {
+                            identifier=tablet.value
+                            updateTimeStamp = Instant.now()
+                        })
+                    }
+            }
+    }
+
+    private fun extractTabletName(tabletUsers: MutableSet<TabletUser>):String? {
+        val regex = Regex("T\\d+") // create a regex object with the pattern
+        for (user in tabletUsers) {
+            val match = regex.find(user.firstName.orEmpty()) ?: regex.find(user.lastName.orEmpty())
+            if (match != null) {
+                return match.value
+            }
+        }
+        return null
+    }
+
 
     override fun registerDonor(dto: DonorDTO): DonorDTO {
         userRepository

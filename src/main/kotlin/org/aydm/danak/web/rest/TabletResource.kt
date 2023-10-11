@@ -62,7 +62,11 @@ class TabletResource(
 
     @PostMapping("/tablets-fix-duplicates")
     fun tabletsFixDuplicates() {
-       userFacade.tabletsFixDuplicates();
+        userFacade.tabletsFixDuplicates();
+    }
+    @GetMapping("/tablets-fix-tablet-names")
+    fun findTabletNames() {
+       userFacade.fixTabletNames();
     }
     @PostMapping("/tablets-get-duplicates")
     fun tabletsGetDuplicates():MutableList<TabletDTO> {

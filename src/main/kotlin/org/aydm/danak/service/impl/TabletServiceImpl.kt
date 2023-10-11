@@ -118,6 +118,10 @@ class TabletServiceImpl(
         return save(TabletDTO(name = tabletName, createTimeStamp = Instant.now()))
     }
 
+    override fun findAllTabletsWithoutIdentifier():MutableList<Tablet> {
+        return tabletRepository.findAllTabletsWithoutIdentifier()
+    }
+
     override fun findAll(pageable: Pageable): Page<TabletDTO> {
         log.debug("Request to get all Tablets")
         return tabletRepository.findAll(pageable).map { tabletMapper.toDto(it) }
