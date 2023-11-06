@@ -176,6 +176,7 @@ class UserActivityServiceImpl(
                 lastName = tabletUser.lastName,
                 tabletName = tablet.name,
                 tabletId = tablet.id,
+                tabletIdentifier = tablet.identifier,
                 userActivities = tabletUser.userActivities?.map {
                     AggregatedUserActivity(
                         userActivityId = it.activity?.id,
@@ -213,6 +214,7 @@ class UserActivityServiceImpl(
                 lastName = tabletUser.lastName,
                 tabletName = first.name,
                 tabletId = first.id,
+                tabletIdentifier = first.identifier,
                 userActivities = activityDTOs?.toMutableList()
             )
         }
