@@ -7,6 +7,7 @@ import org.aydm.danak.repository.UserRepository
 import org.aydm.danak.security.DONOR
 import org.aydm.danak.service.*
 import org.aydm.danak.service.criteria.DonorCriteria
+import org.aydm.danak.service.criteria.TabletCriteria
 import org.aydm.danak.service.criteria.TabletUserCriteria
 import org.aydm.danak.service.criteria.UserActivityCriteria
 import org.aydm.danak.service.dto.DonorDTO
@@ -28,7 +29,7 @@ interface UserFacade {
     fun registerDonor(dto: DonorDTO): DonorDTO
     fun getDonorKeyword(): String?
     fun getDonors(pageable: Pageable): Page<DonorDTO>?
-    fun findAllTablets(@org.springdoc.api.annotations.ParameterObject pageable: Pageable): Page<TabletDTO>
+    fun findAllTablets(pageable: Pageable, criteria: TabletCriteria?): Page<TabletDTO>
     fun findAllTabletUsers(criteria: TabletUserCriteria?, pageable: Pageable): Page<TabletUserDTO>
     fun getAllActivities(criteria: UserActivityCriteria?, pageable: Pageable): Page<UserActivityDTO>
     fun tabletsFixDuplicates()
@@ -45,6 +46,7 @@ class UserFacadeImpl(
     private val userMapper: UserMapper,
     private val passwordEncoder: PasswordEncoder,
     private val tabletService: TabletService,
+    private val tabletQueryService: TabletQueryService,
     private val activityQueryService: UserActivityQueryService,
     private val tabletUserQueryService: TabletUserQueryService
 ) : UserFacade {
@@ -76,8 +78,8 @@ class UserFacadeImpl(
             }
     }
 
-    override fun findAllTablets(pageable: Pageable): Page<TabletDTO> {
-        return tabletService.findAll(pageable)
+    override fun findAllTablets(pageable: Pageable, criteria: TabletCriteria?): Page<TabletDTO> {
+        return tabletQueryService.findByCriteria(criteria,pageable)
             .onEach {
                 it.numberOfUsers = tabletUserQueryService.countByCriteria(
                     TabletUserCriteria().apply {

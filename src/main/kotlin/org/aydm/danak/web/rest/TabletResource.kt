@@ -2,6 +2,7 @@ package org.aydm.danak.web.rest
 
 import org.aydm.danak.repository.TabletRepository
 import org.aydm.danak.service.TabletService
+import org.aydm.danak.service.criteria.TabletCriteria
 import org.aydm.danak.service.dto.TabletDTO
 import org.aydm.danak.service.facade.UserFacade
 import org.aydm.danak.web.rest.errors.BadRequestAlertException
@@ -18,6 +19,7 @@ import java.net.URISyntaxException
 import java.util.Objects
 
 private const val ENTITY_NAME = "tablet"
+
 /**
  * REST controller for managing [org.aydm.danak.domain.Tablet].
  */
@@ -64,13 +66,15 @@ class TabletResource(
     fun tabletsFixDuplicates() {
         userFacade.tabletsFixDuplicates();
     }
+
     @GetMapping("/tablets-fix-tablet-names")
     fun findTabletNames() {
-       userFacade.fixTabletNames();
+        userFacade.fixTabletNames();
     }
+
     @PostMapping("/tablets-get-duplicates")
-    fun tabletsGetDuplicates():MutableList<TabletDTO> {
-       return userFacade.tabletsGetDuplicates();
+    fun tabletsGetDuplicates(): MutableList<TabletDTO> {
+        return userFacade.tabletsGetDuplicates();
     }
 
     /**
@@ -155,20 +159,24 @@ class TabletResource(
 
      * @return the [ResponseEntity] with status `200 (OK)` and the list of tablets in body.
      */
-    @GetMapping("/tablets") fun getAllTablets(): MutableList<TabletDTO> {
+    @GetMapping("/tablets")
+    fun getAllTablets(): MutableList<TabletDTO> {
 
         log.debug("REST request to get all Tablets")
 
         return tabletService.findAll()
     }
 
-    @GetMapping("/tablets-panel") fun getAllTabletsPanel(@org.springdoc.api.annotations.ParameterObject pageable: Pageable): Page<TabletDTO> {
-
+    @GetMapping("/tablets-panel")
+    fun getAllTabletsPanel(
+        criteria: TabletCriteria?,
+        @org.springdoc.api.annotations.ParameterObject pageable: Pageable
+    ): Page<TabletDTO> {
         log.debug("REST request to get all Tablets")
-
-        return userFacade.findAllTablets(pageable)
+        return userFacade.findAllTablets(pageable, criteria)
     }
-        /**
+
+    /**
      * `GET  /tablets/:id` : get the "id" tablet.
      *
      * @param id the id of the tabletDTO to retrieve.
@@ -180,6 +188,7 @@ class TabletResource(
         val tabletDTO = tabletService.findOne(id)
         return ResponseUtil.wrapOrNotFound(tabletDTO)
     }
+
     /**
      *  `DELETE  /tablets/:id` : delete the "id" tablet.
      *
