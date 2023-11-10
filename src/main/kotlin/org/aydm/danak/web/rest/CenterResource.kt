@@ -17,6 +17,7 @@ import tech.jhipster.web.util.PaginationUtil
 import tech.jhipster.web.util.ResponseUtil
 import java.net.URI
 import java.net.URISyntaxException
+import java.time.Instant
 import java.util.Objects
 
 private const val ENTITY_NAME = "center"
@@ -56,6 +57,10 @@ class CenterResource(
                 ENTITY_NAME, "idexists"
             )
         }
+        centerDTO.apply {
+            updateTimeStamp = null
+            createTimeStamp = Instant.now()
+        }
         val result = centerService.save(centerDTO)
         return ResponseEntity.created(URI("/api/centers/${result.id}"))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.id.toString()))
@@ -89,7 +94,7 @@ class CenterResource(
         if (!centerRepository.existsById(id)) {
             throw BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound")
         }
-
+        centerDTO.updateTimeStamp = Instant.now()
         val result = centerService.update(centerDTO)
         return ResponseEntity.ok()
             .headers(
@@ -153,6 +158,15 @@ class CenterResource(
     ): ResponseEntity<MutableList<CenterDTO>> {
         log.debug("REST request to get Centers by criteria: $criteria")
         val page = centerQueryService.findByCriteria(criteria, pageable)
+        val headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page)
+        return ResponseEntity.ok().headers(headers).body(page.content)
+    }
+    @GetMapping("/centers-panel") fun getAllCentersPanel(
+        criteria: CenterCriteria,
+        @org.springdoc.api.annotations.ParameterObject pageable: Pageable
+    ): ResponseEntity<MutableList<CenterDTO>> {
+        log.debug("REST request to get Centers by criteria: $criteria")
+        val page = centerQueryService.findByCriteriaPanel(criteria, pageable)
         val headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page)
         return ResponseEntity.ok().headers(headers).body(page.content)
     }

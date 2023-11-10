@@ -57,6 +57,13 @@ class CenterQueryService(
             .map(centerMapper::toDto)
     }
 
+    fun findByCriteriaPanel(criteria: CenterCriteria, page: Pageable): Page<CenterDTO> {
+        log.debug("find by criteria : $criteria, page: $page")
+        val specification = createSpecification(criteria)
+        return centerRepository.findAll(specification, page)
+            .map { centerMapper.toDto(it).apply { tabletCount = it.tablets?.size ?: 0 } }
+    }
+
     /**
      * Return the number of matching entities in the database.
      * @param criteria The object which holds all the filters, which the entities should match.
@@ -86,10 +93,12 @@ class CenterQueryService(
                 specification = specification.and(buildRangeSpecification(criteria.id, Center_.id))
             }
             if (criteria.createTimeStamp != null) {
-                specification = specification.and(buildRangeSpecification(criteria.createTimeStamp, Center_.createTimeStamp))
+                specification =
+                    specification.and(buildRangeSpecification(criteria.createTimeStamp, Center_.createTimeStamp))
             }
             if (criteria.updateTimeStamp != null) {
-                specification = specification.and(buildRangeSpecification(criteria.updateTimeStamp, Center_.updateTimeStamp))
+                specification =
+                    specification.and(buildRangeSpecification(criteria.updateTimeStamp, Center_.updateTimeStamp))
             }
             if (criteria.name != null) {
                 specification = specification.and(buildStringSpecification(criteria.name, Center_.name))

@@ -19,7 +19,8 @@ data class CenterDTO(
 
     var city: String? = null,
 
-    var country: String? = null
+    var country: String? = null,
+    var tabletCount: Int? = null,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
