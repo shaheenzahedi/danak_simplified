@@ -48,7 +48,8 @@ class UserFacadeImpl(
     private val tabletService: TabletService,
     private val tabletQueryService: TabletQueryService,
     private val activityQueryService: UserActivityQueryService,
-    private val tabletUserQueryService: TabletUserQueryService
+    private val tabletUserQueryService: TabletUserQueryService,
+    private val centerService: CenterService
 ) : UserFacade {
     private fun getCurrentUserName(): String {
         return SecurityContextHolder.getContext().authentication.name
@@ -80,10 +81,15 @@ class UserFacadeImpl(
 
     override fun findAllTablets(pageable: Pageable, criteria: TabletCriteria?): Page<TabletDTO> {
         return tabletQueryService.findByCriteria(criteria,pageable)
-            .onEach {
-                it.numberOfUsers = tabletUserQueryService.countByCriteria(
+            .onEach {tabletDTO->
+                if (tabletDTO.center!=null) {
+                    centerService.findOne(tabletDTO.center!!.id!!).ifPresent {
+                        tabletDTO.center = it
+                    }
+                }
+                tabletDTO.numberOfUsers = tabletUserQueryService.countByCriteria(
                     TabletUserCriteria().apply {
-                        this.tabletId = LongFilter().apply { equals = it.id }
+                        this.tabletId = LongFilter().apply { equals = tabletDTO.id }
                     }
                 )
             }
