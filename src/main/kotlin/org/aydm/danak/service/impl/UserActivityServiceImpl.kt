@@ -115,19 +115,15 @@ class UserActivityServiceImpl(
         inputActivities: List<SubmitActivityDTO>,
         tabletUser: TabletUserDTO
     ): List<UserActivityDTO> {
-        val existingActivities = userId?.let { userActivityRepository.findAllByActivityId(it).map(userActivityMapper::toDto) }
+        val existingActivities =
+            userId?.let { userActivityRepository.findAllByActivityId(it).map(userActivityMapper::toDto) }
         return inputActivities.map { inputActivity ->
-            val foundActivities = existingActivities?.filter { it.uniqueName == inputActivity.uniqueName }
-            val maxTotal = foundActivities?.maxByOrNull { it.completed ?: 0 }
-            val userActivityDTO = UserActivityDTO(
-                listName = inputActivity.listName,
-                uniqueName = inputActivity.uniqueName,
-                total = inputActivity.total,
-                completed = inputActivity.completed,
-                activity = tabletUser,
-                createTimeStamp = Instant.now()
-            )
-            save(maxTotal ?: userActivityDTO)
+            val foundActivities =
+                existingActivities?.filter { it.uniqueName == inputActivity.uniqueName }?.toMutableList()
+            val userActivityDTO = UserActivityDTO.fromSubmitActivity(inputActivity, tabletUser)
+            val activityWithMaxTotal =
+                foundActivities?.apply { add(userActivityDTO) }?.maxByOrNull { it.completed ?: 0 }
+            save(activityWithMaxTotal ?: userActivityDTO)
         }
     }
 
@@ -219,4 +215,18 @@ class UserActivityServiceImpl(
             )
         }
     }
+}
+
+private fun UserActivityDTO.Companion.fromSubmitActivity(
+    inputActivity: SubmitActivityDTO,
+    tabletUser: TabletUserDTO
+): UserActivityDTO {
+    return UserActivityDTO(
+        listName = inputActivity.listName,
+        uniqueName = inputActivity.uniqueName,
+        total = inputActivity.total,
+        completed = inputActivity.completed,
+        activity = tabletUser,
+        createTimeStamp = Instant.now()
+    )
 }

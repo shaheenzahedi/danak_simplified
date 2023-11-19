@@ -140,23 +140,23 @@ class UserFacadeImpl(
         return tabletService.findAllDuplicates()
     }
 
-    override fun fixTabletNames(){
+    override fun fixTabletNames() {
         tabletService.findAllTabletsWithoutIdentifier()
             .filterNot { it.tabletUsers.isNullOrEmpty() }
             .associate { it.id to extractTabletName(it.tabletUsers!!) }
-            .filterNot { it.value==null }
-            .forEach{ tablet->
+            .filterNot { it.value == null }
+            .forEach { tablet ->
                 tabletService.findOne(tablet.key!!)
-                    .ifPresent{
+                    .ifPresent {
                         tabletService.save(it.apply {
-                            identifier=tablet.value
+                            identifier = tablet.value
                             updateTimeStamp = Instant.now()
                         })
                     }
             }
     }
 
-    private fun extractTabletName(tabletUsers: MutableSet<TabletUser>):String? {
+    private fun extractTabletName(tabletUsers: MutableSet<TabletUser>): String? {
         val regex = Regex("T\\d+") // create a regex object with the pattern
         for (user in tabletUsers) {
             val match = regex.find(user.firstName.orEmpty()) ?: regex.find(user.lastName.orEmpty())

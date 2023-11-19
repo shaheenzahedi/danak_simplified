@@ -19,5 +19,8 @@
                                  constraintName="fk_tablet__donor_id"
                                  referencedColumnNames="id"
                                  referencedTableName="donor"/>
+        <addUniqueConstraint
+            columnNames="name"
+            constraintName="uc_tablet_name" tableName="tablet"/>
     </changeSet>
 </databaseChangeLog>

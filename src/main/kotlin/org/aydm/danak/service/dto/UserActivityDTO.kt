@@ -39,4 +39,6 @@ data class UserActivityDTO(
     }
 
     override fun hashCode() = Objects.hash(this.id)
+
+    companion object
 }

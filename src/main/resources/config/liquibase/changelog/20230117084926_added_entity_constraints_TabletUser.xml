@@ -13,5 +13,8 @@
                                  constraintName="fk_tablet_user__tablet_id"
                                  referencedColumnNames="id"
                                  referencedTableName="tablet"/>
+        <addUniqueConstraint
+            columnNames="first_name, last_name, tablet_id"
+            constraintName="uc_tablet_user_unique_combination" tableName="tablet_user"/>
     </changeSet>
 </databaseChangeLog>
