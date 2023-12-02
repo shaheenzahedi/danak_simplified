@@ -54,5 +54,5 @@ interface TabletUserService {
      */
     fun delete(id: Long)
 
-    fun createSave(tabletUserDTO: TabletUserDTO): TabletUserDTO
+    fun createSave(userToUpdate: TabletUserDTO): TabletUserDTO
 }

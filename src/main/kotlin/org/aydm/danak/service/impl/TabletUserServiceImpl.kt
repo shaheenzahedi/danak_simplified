@@ -68,19 +68,26 @@ class TabletUserServiceImpl(
             .mapTo(mutableListOf(), tabletUserMapper::toDto)
     }
 
-    override fun createSave(tabletUserDTO: TabletUserDTO): TabletUserDTO {
-        if (tabletUserDTO.id != null) return findOne(tabletUserDTO.id!!).orElse(null)
+    override fun createSave(userToUpdate: TabletUserDTO): TabletUserDTO {
+        if (userToUpdate.id != null) {
+            val existedUser = findOne(userToUpdate.id!!).orElse(null)
+            if (existedUser.firstName != userToUpdate.firstName ||
+                existedUser.lastName != userToUpdate.lastName) {
+                return save(userToUpdate)
+            }
+            return existedUser
+        }
         val tabletUser = tabletUserRepository.findByNameAndFamily(
-            tabletUserDTO.firstName,
-            tabletUserDTO.lastName,
-            tabletUserDTO.tablet?.id!!
+            userToUpdate.firstName,
+            userToUpdate.lastName,
+            userToUpdate.tablet?.id!!
         ).orElse(null)
         if (tabletUser != null) {
             val existedTabletUser = tabletUserMapper.toDto(tabletUser)
             existedTabletUser.updateTimeStamp = Instant.now()
             return save(existedTabletUser)
         }
-        return save(tabletUserDTO.apply { createTimeStamp = Instant.now() })
+        return save(userToUpdate.apply { createTimeStamp = Instant.now() })
     }
 
     override fun delete(id: Long) {
