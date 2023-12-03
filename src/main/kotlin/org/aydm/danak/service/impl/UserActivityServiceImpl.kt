@@ -91,7 +91,7 @@ class UserActivityServiceImpl(
                 )
             )
 
-            val activities = decideActivities(user.userId, user.activity, tabletUser)
+            val activities = decideActivities(tabletUser.id, user.activity, tabletUser)
             SubmitUserDTO(
                 tabletUser.id,
                 tabletUser.firstName!!,
@@ -123,7 +123,7 @@ class UserActivityServiceImpl(
             val userActivityDTO = UserActivityDTO.fromSubmitActivity(inputActivity, tabletUser)
             val activityWithMaxTotal =
                 foundActivities?.apply { add(userActivityDTO) }?.maxByOrNull { it.completed ?: 0 }
-            save(activityWithMaxTotal ?: userActivityDTO)
+            save(activityWithMaxTotal?.apply { updateTimeStamp = Instant.now() } ?: userActivityDTO)
         }
     }
 
