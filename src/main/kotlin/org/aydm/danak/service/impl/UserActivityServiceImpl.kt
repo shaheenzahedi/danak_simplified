@@ -123,7 +123,7 @@ class UserActivityServiceImpl(
             val userActivityDTO = UserActivityDTO.fromSubmitActivity(inputActivity, tabletUser)
             val activityWithMaxTotal =
                 foundActivities?.apply { add(userActivityDTO) }?.maxByOrNull { it.completed ?: 0 }
-            save(activityWithMaxTotal?.apply { updateTimeStamp = Instant.now() } ?: userActivityDTO)
+            save(activityWithMaxTotal?.apply { if (id!=userActivityDTO.id)updateTimeStamp = Instant.now() } ?: userActivityDTO)
         }
     }
 
