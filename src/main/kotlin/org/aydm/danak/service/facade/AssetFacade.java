@@ -43,8 +43,8 @@ public interface AssetFacade {
     UpdateResponse updateAssets(int fromVersion, int toVersion) throws IOException;
 
 
+    DownloadResponse download(int version, boolean shouldIncludeSize) throws IOException;
     DownloadResponse download(int version) throws IOException;
-
     void uploadApk(@NotNull MultipartFile file) throws IOException;
 
     List<String> checkExistence(int version) throws IOException;
@@ -396,6 +396,10 @@ class AssetFacadeImpl implements AssetFacade {
 
     @Override
     public DownloadResponse download(int version) throws IOException {
+        return download(version,false);
+    }
+    @Override
+    public DownloadResponse download(int version, boolean shouldIncludeSize) throws IOException {
         String pathname = getDownloadPathByVersion(version);
         Optional<DownloadResponse> cache = lookupCache(pathname, DownloadResponse.class);
         if (cache.isPresent()) return cache.orElseThrow();
@@ -414,7 +418,11 @@ class AssetFacadeImpl implements AssetFacade {
         long size = 0L;
         for (FileDTO file : files) {
             size = size + Long.parseLong(file.getSize());
-            fileResponses.add(new FileResponse(file.getChecksum(), file.getFtpPath(versionIdToVersion.get(file.getPlacement().getId()))));
+            fileResponses.add(new FileResponse(
+                file.getChecksum(),
+                file.getFtpPath(versionIdToVersion.get(file.getPlacement().getId())),
+                shouldIncludeSize ? file.getSize() : null
+            ));
         }
         DownloadResponse result = new DownloadResponse(
             size,
@@ -442,7 +450,7 @@ class AssetFacadeImpl implements AssetFacade {
         DownloadResponse download = download(version);
         List<String> result = new ArrayList<>();
         download.getFiles().forEach(fileResponse -> {
-            if (!Paths.get(versionsPath + fileResponse.getPath()).toFile().exists()){
+            if (!Paths.get(versionsPath + fileResponse.getPath()).toFile().exists()) {
                 result.add(fileResponse.path);
             }
         });

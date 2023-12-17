@@ -1,8 +1,11 @@
 package org.aydm.danak.service.facade;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class FileResponse {
     String checksum;
     String path;
+    String size;
 
     public FileResponse() {
     }
@@ -10,6 +13,11 @@ public class FileResponse {
     public FileResponse(String checksum, String path) {
         this.checksum = checksum;
         this.path = path;
+    }
+    public FileResponse(String checksum, String path, String size) {
+        this.checksum = checksum;
+        this.path = path;
+        this.size = size;
     }
 
     public String getChecksum() {
@@ -26,6 +34,14 @@ public class FileResponse {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
     }
 }
 

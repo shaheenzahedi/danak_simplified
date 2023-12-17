@@ -18,8 +18,10 @@ import tech.jhipster.web.util.ResponseUtil
 import java.net.URI
 import java.net.URISyntaxException
 import java.util.*
+import javax.annotation.Nullable
 
 private const val ENTITY_NAME = "file"
+
 /**
  * REST controller for managing [org.aydm.danak.domain.File].
  */
@@ -100,17 +102,23 @@ class FileResource(
             )
             .body(result)
     }
+
     @GetMapping("version-assets")
     fun versionAsset(@RequestParam tag: String) {
         assetFacade.initializeVersioning(tag)
     }
+
     @GetMapping("check-existence")
     fun checkExistence(@RequestParam version: Int): List<String> {
         return assetFacade.checkExistence(version)
     }
+
     @GetMapping("download-assets")
-    fun downloadAssets(@RequestParam version: Int): DownloadResponse? {
-        return assetFacade.download(version)
+    fun downloadAssets(
+        @RequestParam version: Int,
+        shouldIncludeSize: Boolean?
+    ): DownloadResponse? {
+        return assetFacade.download(version, shouldIncludeSize ?: false)
     }
 
     @PostMapping("/upload-apk")
@@ -119,16 +127,18 @@ class FileResource(
     ): ResponseEntity<String> {
 
         // Check if file is a valid APK
-        if (!file.originalFilename.endsWith(".apk")) {
+        if (!file.originalFilename!!.endsWith(".apk")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
         }
         assetFacade.uploadApk(file)
         return ResponseEntity.status(200).body("OK")
     }
+
     @GetMapping("update-assets")
     fun versionAsset(@RequestParam fromVersion: Int, @RequestParam toVersion: Int): UpdateResponse? {
         return assetFacade.updateAssets(fromVersion, toVersion)
     }
+
     /**
      * {@code PATCH  /files/:id} : Partial updates given fields of an existing file, field will ignore if it is null
      *
@@ -192,6 +202,7 @@ class FileResource(
         val fileDTO = fileService.findOne(id)
         return ResponseUtil.wrapOrNotFound(fileDTO)
     }
+
     /**
      *  `DELETE  /files/:id` : delete the "id" file.
      *
