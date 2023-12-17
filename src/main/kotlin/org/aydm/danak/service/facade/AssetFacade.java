@@ -44,7 +44,9 @@ public interface AssetFacade {
 
 
     DownloadResponse download(int version, boolean shouldIncludeSize) throws IOException;
+
     DownloadResponse download(int version) throws IOException;
+
     void uploadApk(@NotNull MultipartFile file) throws IOException;
 
     List<String> checkExistence(int version) throws IOException;
@@ -396,14 +398,14 @@ class AssetFacadeImpl implements AssetFacade {
 
     @Override
     public DownloadResponse download(int version) throws IOException {
-        return download(version,false);
+        return download(version, false);
     }
+
     @Override
     public DownloadResponse download(int version, boolean shouldIncludeSize) throws IOException {
         String pathname = getDownloadPathByVersion(version);
         Optional<DownloadResponse> cache = lookupCache(pathname, DownloadResponse.class);
-        if (cache.isPresent()) return cache.orElseThrow();
-
+        if (cache.isPresent()) return nullifyFileSizesIfNecessary(cache.orElseThrow(), shouldIncludeSize);
         Optional<Integer> lastVersion = getTheLastVersion();
         if (lastVersion.isEmpty())
             throw new BadRequestAlertException("download is pointless when there is no asset on the server", "asset", "");
@@ -422,7 +424,7 @@ class AssetFacadeImpl implements AssetFacade {
             fileResponses.add(new FileResponse(
                 file.getChecksum(),
                 file.getFtpPath(versionIdToVersion.get(file.getPlacement().getId())),
-                shouldIncludeSize ? longSize : null
+                longSize
             ));
         }
         DownloadResponse result = new DownloadResponse(
@@ -430,6 +432,16 @@ class AssetFacadeImpl implements AssetFacade {
             fileResponses
         );
         saveCache(pathname, result);
+        return nullifyFileSizesIfNecessary(result, shouldIncludeSize);
+    }
+
+    private DownloadResponse nullifyFileSizesIfNecessary(DownloadResponse result, boolean shouldIncludeSize) {
+        if (!shouldIncludeSize){
+            return new DownloadResponse(
+                result.getSize(),
+                result.getFiles().stream().peek(fr-> fr.setSize(null)).collect(Collectors.toList())
+            );
+        }
         return result;
     }
 
