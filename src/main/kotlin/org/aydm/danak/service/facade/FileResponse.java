@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class FileResponse {
     String checksum;
     String path;
-    String size;
+    Long size;
 
     public FileResponse() {
     }
@@ -14,7 +14,8 @@ public class FileResponse {
         this.checksum = checksum;
         this.path = path;
     }
-    public FileResponse(String checksum, String path, String size) {
+
+    public FileResponse(String checksum, String path, Long size) {
         this.checksum = checksum;
         this.path = path;
         this.size = size;
@@ -36,11 +37,11 @@ public class FileResponse {
         this.path = path;
     }
 
-    public String getSize() {
+    public Long getSize() {
         return size;
     }
 
-    public void setSize(String size) {
+    public void setSize(Long size) {
         this.size = size;
     }
 }

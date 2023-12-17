@@ -417,11 +417,12 @@ class AssetFacadeImpl implements AssetFacade {
         List<FileResponse> fileResponses = new ArrayList<>();
         long size = 0L;
         for (FileDTO file : files) {
-            size = size + Long.parseLong(file.getSize());
+            long longSize = Long.parseLong(file.getSize());
+            size = size + longSize;
             fileResponses.add(new FileResponse(
                 file.getChecksum(),
                 file.getFtpPath(versionIdToVersion.get(file.getPlacement().getId())),
-                shouldIncludeSize ? file.getSize() : null
+                shouldIncludeSize ? longSize : null
             ));
         }
         DownloadResponse result = new DownloadResponse(
