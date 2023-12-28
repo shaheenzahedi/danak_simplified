@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import tech.jhipster.service.QueryService
 import tech.jhipster.service.filter.Filter
+import tech.jhipster.service.filter.StringFilter
 import javax.persistence.criteria.JoinType
 
 /**
@@ -57,6 +58,19 @@ class TabletQueryService(
             .map(tabletMapper::toDto)
     }
 
+    fun search(search: String?, pageable: Pageable): Page<TabletDTO> {
+        if (search.isNullOrEmpty()) return findByCriteria(null, pageable)
+        val query = StringFilter().apply { contains = search }
+        return tabletRepository.findAll(
+            Specification.where(
+                buildStringSpecification(query, Tablet_.name)
+                    .or(buildStringSpecification(query, Tablet_.identifier))
+                    .or(buildStringSpecification(query, Tablet_.model))
+            ),
+            pageable
+        ).map(tabletMapper::toDto)
+    }
+
     /**
      * Return the number of matching entities in the database.
      * @param criteria The object which holds all the filters, which the entities should match.
@@ -86,10 +100,12 @@ class TabletQueryService(
                 specification = specification.and(buildRangeSpecification(criteria.id, Tablet_.id))
             }
             if (criteria.createTimeStamp != null) {
-                specification = specification.and(buildRangeSpecification(criteria.createTimeStamp, Tablet_.createTimeStamp))
+                specification =
+                    specification.and(buildRangeSpecification(criteria.createTimeStamp, Tablet_.createTimeStamp))
             }
             if (criteria.updateTimeStamp != null) {
-                specification = specification.and(buildRangeSpecification(criteria.updateTimeStamp, Tablet_.updateTimeStamp))
+                specification =
+                    specification.and(buildRangeSpecification(criteria.updateTimeStamp, Tablet_.updateTimeStamp))
             }
             if (criteria.name != null) {
                 specification = specification.and(buildStringSpecification(criteria.name, Tablet_.name))

@@ -68,7 +68,8 @@ class DonorResource(
     }
     @PostMapping("/donors/list")
     @PreAuthorize("hasAuthority(\"$ADMIN\")")
-    fun donorList(        @org.springdoc.api.annotations.ParameterObject pageable: Pageable
+    fun donorList(
+        @org.springdoc.api.annotations.ParameterObject pageable: Pageable
     ): ResponseEntity<Page<DonorDTO>> {
         log.debug("REST request to get Donors")
         val donors = userFacade.getDonors(pageable)

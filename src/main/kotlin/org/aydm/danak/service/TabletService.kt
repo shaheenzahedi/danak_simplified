@@ -59,8 +59,8 @@ interface TabletService {
     fun findAllRegistered(): List<Long>?
     fun findAll(pageable: Pageable): Page<TabletDTO>
     fun registerTablet(tabletDTO: TabletDTO): TabletDTO
-    fun findAllDuplicates():MutableList<TabletDTO>
+    fun findAllDuplicates(): MutableList<TabletDTO>
     fun deleteAll(tablets: List<TabletDTO>)
     fun saveAll(tablets: MutableList<TabletDTO>)
-    fun findAllTabletsWithoutIdentifier():MutableList<Tablet>
+    fun findAllTabletsWithoutIdentifier(): MutableList<Tablet>
 }

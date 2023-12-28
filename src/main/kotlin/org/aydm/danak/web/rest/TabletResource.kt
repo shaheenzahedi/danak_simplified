@@ -7,6 +7,7 @@ import org.aydm.danak.service.dto.TabletDTO
 import org.aydm.danak.service.facade.UserFacade
 import org.aydm.danak.web.rest.errors.BadRequestAlertException
 import org.slf4j.LoggerFactory
+import org.springdoc.api.annotations.ParameterObject
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -17,6 +18,7 @@ import tech.jhipster.web.util.ResponseUtil
 import java.net.URI
 import java.net.URISyntaxException
 import java.util.Objects
+import javax.annotation.Nullable
 
 private const val ENTITY_NAME = "tablet"
 
@@ -64,17 +66,25 @@ class TabletResource(
 
     @PostMapping("/tablets-fix-duplicates")
     fun tabletsFixDuplicates() {
-        userFacade.tabletsFixDuplicates();
+        userFacade.tabletsFixDuplicates()
+    }
+
+    @GetMapping("/tablets-search")
+    fun searchTablets(
+        @ParameterObject @Nullable search: String?,
+        @ParameterObject pageable: Pageable
+    ): Page<TabletDTO> {
+        return userFacade.searchTablets(search, pageable)
     }
 
     @GetMapping("/tablets-fix-tablet-names")
     fun findTabletNames() {
-        userFacade.fixTabletNames();
+        userFacade.fixTabletNames()
     }
 
     @PostMapping("/tablets-get-duplicates")
     fun tabletsGetDuplicates(): MutableList<TabletDTO> {
-        return userFacade.tabletsGetDuplicates();
+        return userFacade.tabletsGetDuplicates()
     }
 
     /**

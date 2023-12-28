@@ -71,7 +71,7 @@ class TabletServiceImpl(
             .map(tabletMapper::toDto)
     }
 
-    override fun deleteAll(tablets:List<TabletDTO>) {
+    override fun deleteAll(tablets: List<TabletDTO>) {
         log.debug("Request to delete Tablets")
         tabletRepository.deleteAllById(tablets.map { it.id })
     }
@@ -95,7 +95,7 @@ class TabletServiceImpl(
             tabletToSave.model = tabletDTO.model
             tabletToSave.updateTimeStamp = Instant.now()
             save(tabletToSave)
-        }else{
+        } else {
             tabletDTO.createTimeStamp = Instant.now()
             tabletDTO.updateTimeStamp = null
             save(tabletDTO)
@@ -118,7 +118,7 @@ class TabletServiceImpl(
         return save(TabletDTO(name = tabletName, createTimeStamp = Instant.now()))
     }
 
-    override fun findAllTabletsWithoutIdentifier():MutableList<Tablet> {
+    override fun findAllTabletsWithoutIdentifier(): MutableList<Tablet> {
         return tabletRepository.findAllTabletsWithoutIdentifier()
     }
 

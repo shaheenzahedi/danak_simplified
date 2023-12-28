@@ -16,7 +16,7 @@ import java.util.*
 interface TabletUserRepository : JpaRepository<TabletUser, Long>, JpaSpecificationExecutor<TabletUser> {
 
     @Query("select tu from TabletUser tu where tu.tablet.id=:tabletId AND tu.firstName=:firstName AND tu.lastName=:lastName")
-    fun findByNameAndFamily(@Param("firstName") firstName: String?,@Param("lastName")  lastName: String?,@Param("tabletId")   tabletId: Long): Optional<TabletUser>
+    fun findByNameAndFamily(@Param("firstName") firstName: String?, @Param("lastName") lastName: String?, @Param("tabletId") tabletId: Long): Optional<TabletUser>
 
     @Query("select tu from TabletUser tu group by tu.firstName, tu.lastName")
     fun findAllByFirstLastNameImplicit(): List<TabletUser>

@@ -1,6 +1,5 @@
 package org.aydm.danak.service
 
-
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.aydm.danak.service.facade.FileResponse
 import org.aydm.danak.service.facade.UpdateResponse
@@ -9,9 +8,9 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.http.RequestEntity
-import java.net.URI
 import java.io.IOException
 import java.net.HttpURLConnection
+import java.net.URI
 import java.net.URL
 data class Update(val checksum: String, var path: String)
 data class Delete(val checksum: String, var path: String)

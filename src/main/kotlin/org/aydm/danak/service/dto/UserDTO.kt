@@ -14,8 +14,6 @@ open class UserDTO(
     var lastName: String? = null
 ) {
 
-
-
     constructor(user: User) : this(user.id, user.login)
 
     override fun toString() = "UserDTO{" +

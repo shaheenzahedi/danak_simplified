@@ -72,7 +72,8 @@ class TabletUserServiceImpl(
         if (userToUpdate.id != null) {
             val existedUser = findOne(userToUpdate.id!!).orElse(null)
             if (existedUser.firstName != userToUpdate.firstName ||
-                existedUser.lastName != userToUpdate.lastName) {
+                existedUser.lastName != userToUpdate.lastName
+            ) {
                 return save(userToUpdate)
             }
             return existedUser

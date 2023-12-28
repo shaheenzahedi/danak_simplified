@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import tech.jhipster.service.QueryService
 import tech.jhipster.service.filter.Filter
-import tech.jhipster.service.filter.LongFilter
 import javax.persistence.criteria.JoinType
 
 /**

@@ -35,6 +35,7 @@ interface UserFacade {
     fun tabletsFixDuplicates()
     fun tabletsGetDuplicates(): MutableList<TabletDTO>
     fun fixTabletNames()
+    fun searchTablets(search: String?, pageable: Pageable): Page<TabletDTO>
 }
 
 @Transactional
@@ -79,22 +80,26 @@ class UserFacadeImpl(
             }
     }
 
-    override fun findAllTablets(pageable: Pageable, criteria: TabletCriteria?): Page<TabletDTO> {
-        return tabletQueryService.findByCriteria(criteria,pageable)
-            .onEach {tabletDTO->
-                if (tabletDTO.center!=null) {
-                    centerService.findOne(tabletDTO.center!!.id!!).ifPresent {
-                        tabletDTO.center = it
-                    }
-                }
-                tabletDTO.numberOfUsers = tabletUserQueryService.countByCriteria(
-                    TabletUserCriteria().apply {
-                        this.tabletId = LongFilter().apply { equals = tabletDTO.id }
-                    }
-                )
-            }
+    override fun searchTablets(search: String?, pageable: Pageable): Page<TabletDTO> {
+        return tabletQueryService.search(search, pageable)
     }
+    override fun findAllTablets(pageable: Pageable, criteria: TabletCriteria?): Page<TabletDTO> {
 
+        return tabletQueryService.findByCriteria(criteria, pageable)
+            .onEach(processEachTablet)
+    }
+    val processEachTablet: (TabletDTO) -> Unit = { tabletDTO ->
+        if (tabletDTO.center != null) {
+            centerService.findOne(tabletDTO.center!!.id!!).ifPresent {
+                tabletDTO.center = it
+            }
+        }
+        tabletDTO.numberOfUsers = tabletUserQueryService.countByCriteria(
+            TabletUserCriteria().apply {
+                this.tabletId = LongFilter().apply { equals = tabletDTO.id }
+            }
+        )
+    }
     override fun findAllTabletUsers(criteria: TabletUserCriteria?, pageable: Pageable): Page<TabletUserDTO> =
         tabletUserQueryService.findAll(criteria, pageable)
 
@@ -148,10 +153,12 @@ class UserFacadeImpl(
             .forEach { tablet ->
                 tabletService.findOne(tablet.key!!)
                     .ifPresent {
-                        tabletService.save(it.apply {
-                            identifier = tablet.value
-                            updateTimeStamp = Instant.now()
-                        })
+                        tabletService.save(
+                            it.apply {
+                                identifier = tablet.value
+                                updateTimeStamp = Instant.now()
+                            }
+                        )
                     }
             }
     }
@@ -166,7 +173,6 @@ class UserFacadeImpl(
         }
         return null
     }
-
 
     override fun registerDonor(dto: DonorDTO): DonorDTO {
         userRepository

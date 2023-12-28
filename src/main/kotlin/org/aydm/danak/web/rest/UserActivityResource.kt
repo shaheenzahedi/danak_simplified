@@ -61,8 +61,10 @@ class UserActivityResource(
         return ResponseEntity.ok().body(allActivity)
     }
     @GetMapping("activities")
-    fun getAllActivities(criteria:UserActivityCriteria?,
-        @org.springdoc.api.annotations.ParameterObject pageable: Pageable): Page<UserActivityDTO> {
+    fun getAllActivities(
+        criteria: UserActivityCriteria?,
+        @org.springdoc.api.annotations.ParameterObject pageable: Pageable
+    ): Page<UserActivityDTO> {
         return userFacade.getAllActivities(criteria, pageable)
     }
 
