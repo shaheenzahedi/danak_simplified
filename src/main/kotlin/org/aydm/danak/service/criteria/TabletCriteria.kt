@@ -22,7 +22,7 @@ data class TabletCriteria(
     var createTimeStamp: InstantFilter? = null,
     var updateTimeStamp: InstantFilter? = null,
     var name: StringFilter? = null,
-    val searchField: StringFilter? = null,
+    var searchField: StringFilter? = null,
     var identifier: StringFilter? = null,
     var model: StringFilter? = null,
     var tabletUserId: LongFilter? = null,
