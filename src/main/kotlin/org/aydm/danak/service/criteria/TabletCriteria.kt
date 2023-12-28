@@ -22,6 +22,7 @@ data class TabletCriteria(
     var createTimeStamp: InstantFilter? = null,
     var updateTimeStamp: InstantFilter? = null,
     var name: StringFilter? = null,
+    val searchField: StringFilter? = null,
     var identifier: StringFilter? = null,
     var model: StringFilter? = null,
     var tabletUserId: LongFilter? = null,
@@ -30,12 +31,14 @@ data class TabletCriteria(
     var distinct: Boolean? = null
 ) : Serializable, Criteria {
 
+
     constructor(other: TabletCriteria) :
         this(
             other.id?.copy(),
             other.createTimeStamp?.copy(),
             other.updateTimeStamp?.copy(),
             other.name?.copy(),
+            other.searchField?.copy(),
             other.identifier?.copy(),
             other.model?.copy(),
             other.tabletUserId?.copy(),

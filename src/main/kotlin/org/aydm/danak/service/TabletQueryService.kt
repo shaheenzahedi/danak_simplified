@@ -58,19 +58,6 @@ class TabletQueryService(
             .map(tabletMapper::toDto)
     }
 
-    fun search(search: String?, pageable: Pageable): Page<TabletDTO> {
-        if (search.isNullOrEmpty()) return findByCriteria(null, pageable)
-        val query = StringFilter().apply { contains = search }
-        return tabletRepository.findAll(
-            Specification.where(
-                buildStringSpecification(query, Tablet_.name)
-                    .or(buildStringSpecification(query, Tablet_.identifier))
-                    .or(buildStringSpecification(query, Tablet_.model))
-            ),
-            pageable
-        ).map(tabletMapper::toDto)
-    }
-
     /**
      * Return the number of matching entities in the database.
      * @param criteria The object which holds all the filters, which the entities should match.
@@ -135,6 +122,15 @@ class TabletQueryService(
                     buildSpecification(criteria.donorId as Filter<Long>) {
                         it.join(Tablet_.donor, JoinType.LEFT).get(Donor_.id)
                     }
+                )
+            }
+            if (criteria.searchField != null){
+                specification = specification.and(
+                    Specification.where(
+                        buildStringSpecification(criteria.searchField, Tablet_.name)
+                            .or(buildStringSpecification(criteria.searchField, Tablet_.identifier))
+                            .or(buildStringSpecification(criteria.searchField, Tablet_.model))
+                    )
                 )
             }
         }

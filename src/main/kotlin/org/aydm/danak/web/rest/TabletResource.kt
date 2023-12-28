@@ -69,14 +69,6 @@ class TabletResource(
         userFacade.tabletsFixDuplicates()
     }
 
-    @GetMapping("/tablets-search")
-    fun searchTablets(
-        @ParameterObject @Nullable search: String?,
-        @ParameterObject pageable: Pageable
-    ): Page<TabletDTO> {
-        return userFacade.searchTablets(search, pageable)
-    }
-
     @GetMapping("/tablets-fix-tablet-names")
     fun findTabletNames() {
         userFacade.fixTabletNames()

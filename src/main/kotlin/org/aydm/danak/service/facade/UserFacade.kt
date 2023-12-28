@@ -35,7 +35,6 @@ interface UserFacade {
     fun tabletsFixDuplicates()
     fun tabletsGetDuplicates(): MutableList<TabletDTO>
     fun fixTabletNames()
-    fun searchTablets(search: String?, pageable: Pageable): Page<TabletDTO>
 }
 
 @Transactional
@@ -80,9 +79,6 @@ class UserFacadeImpl(
             }
     }
 
-    override fun searchTablets(search: String?, pageable: Pageable): Page<TabletDTO> {
-        return tabletQueryService.search(search, pageable)
-    }
     override fun findAllTablets(pageable: Pageable, criteria: TabletCriteria?): Page<TabletDTO> {
 
         return tabletQueryService.findByCriteria(criteria, pageable)
