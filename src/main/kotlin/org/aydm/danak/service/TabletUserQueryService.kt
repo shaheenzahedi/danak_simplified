@@ -118,6 +118,15 @@ class TabletUserQueryService(
                     }
                 )
             }
+            if (criteria.searchField != null){
+                specification = specification.and(
+                    Specification.where(
+                        buildStringSpecification(criteria.searchField, TabletUser_.firstName)
+                            .or(buildStringSpecification(criteria.searchField, TabletUser_.lastName))
+                            .or(buildStringSpecification(criteria.searchField, TabletUser_.email))
+                    )
+                )
+            }
         }
         return specification
     }

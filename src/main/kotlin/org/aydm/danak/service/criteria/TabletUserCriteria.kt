@@ -24,6 +24,7 @@ data class TabletUserCriteria(
     var firstName: StringFilter? = null,
     var lastName: StringFilter? = null,
     var email: StringFilter? = null,
+    var searchField: StringFilter? = null,
     var userActivityId: LongFilter? = null,
     var tabletId: LongFilter? = null,
     var distinct: Boolean? = null
@@ -37,6 +38,7 @@ data class TabletUserCriteria(
             other.firstName?.copy(),
             other.lastName?.copy(),
             other.email?.copy(),
+            other.searchField?.copy(),
             other.userActivityId?.copy(),
             other.tabletId?.copy(),
             other.distinct
