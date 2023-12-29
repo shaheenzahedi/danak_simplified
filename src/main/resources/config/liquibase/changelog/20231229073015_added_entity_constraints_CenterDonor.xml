@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <!--
+        Added the constraints for entity CenterDonor.
+    -->
+    <changeSet id="20231229073015-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="center_id"
+                                 baseTableName="center_donor"
+                                 constraintName="fk_center_donor__center_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="center"/>
+
+        <addForeignKeyConstraint baseColumnNames="donor_id"
+                                 baseTableName="center_donor"
+                                 constraintName="fk_center_donor__donor_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="donor"/>
+    </changeSet>
+</databaseChangeLog>

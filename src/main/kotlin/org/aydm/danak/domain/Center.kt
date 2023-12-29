@@ -43,9 +43,28 @@ data class Center(
         allowSetters = true
     )
     var tablets: MutableSet<Tablet>? = mutableSetOf(),
+    @OneToMany(mappedBy = "center")
+    @JsonIgnoreProperties(
+        value = [
+            "center",
+            "donor",
+        ],
+        allowSetters = true
+    )
+    var centerDonors: MutableSet<CenterDonor>? = mutableSetOf()
     // jhipster-needle-entity-add-field - JHipster will add fields here
 ) : Serializable {
 
+    fun addCenterDonor(centerDonor: CenterDonor): Center {
+        this.centerDonors?.add(centerDonor)
+        centerDonor.center = this
+        return this
+    }
+    fun removeCenterDonor(centerDonor: CenterDonor): Center {
+        this.centerDonors?.remove(centerDonor)
+        centerDonor.center = null
+        return this
+    }
     fun addTablet(tablet: Tablet): Center {
         this.tablets?.add(tablet)
         tablet.center = this

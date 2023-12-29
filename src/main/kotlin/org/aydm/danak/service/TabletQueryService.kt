@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import tech.jhipster.service.QueryService
 import tech.jhipster.service.filter.Filter
-import tech.jhipster.service.filter.StringFilter
 import javax.persistence.criteria.JoinType
 
 /**
@@ -124,7 +123,7 @@ class TabletQueryService(
                     }
                 )
             }
-            if (criteria.searchField != null){
+            if (criteria.searchField != null) {
                 specification = specification.and(
                     Specification.where(
                         buildStringSpecification(criteria.searchField, Tablet_.name)

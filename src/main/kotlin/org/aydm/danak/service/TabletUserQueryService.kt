@@ -118,7 +118,7 @@ class TabletUserQueryService(
                     }
                 )
             }
-            if (criteria.searchField != null){
+            if (criteria.searchField != null) {
                 specification = specification.and(
                     Specification.where(
                         buildStringSpecification(criteria.searchField, TabletUser_.firstName)

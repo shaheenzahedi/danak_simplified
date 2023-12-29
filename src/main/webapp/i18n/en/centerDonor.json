@@ -1,0 +1,25 @@
+{
+  "danakApp": {
+    "centerDonor": {
+      "home": {
+        "title": "Center Donors",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Center Donor",
+        "createOrEditLabel": "Create or edit a Center Donor",
+        "notFound": "No Center Donors found"
+      },
+      "created": "A new Center Donor is created with identifier {{ param }}",
+      "updated": "A Center Donor is updated with identifier {{ param }}",
+      "deleted": "A Center Donor is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Center Donor {{ id }}?"
+      },
+      "detail": {
+        "title": "Center Donor"
+      },
+      "id": "ID",
+      "center": "Center",
+      "donor": "Donor"
+    }
+  }
+}

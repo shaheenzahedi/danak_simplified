@@ -10,6 +10,7 @@ import FileBelongings from './file-belongings';
 import Version from './version';
 import Donor from './donor';
 import Center from './center';
+import CenterDonor from './center-donor';
 /* jhipster-needle-add-route-import - JHipster will add routes here */
 
 export default ({ match }) => {
@@ -25,6 +26,7 @@ export default ({ match }) => {
         <ErrorBoundaryRoute path={`${match.url}version`} component={Version} />
         <ErrorBoundaryRoute path={`${match.url}donor`} component={Donor} />
         <ErrorBoundaryRoute path={`${match.url}center`} component={Center} />
+        <ErrorBoundaryRoute path={`${match.url}center-donor`} component={CenterDonor} />
         {/* jhipster-needle-add-route-path - JHipster will add routes here */}
       </Switch>
     </div>

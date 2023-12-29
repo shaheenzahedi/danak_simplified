@@ -31,7 +31,6 @@ data class TabletCriteria(
     var distinct: Boolean? = null
 ) : Serializable, Criteria {
 
-
     constructor(other: TabletCriteria) :
         this(
             other.id?.copy(),

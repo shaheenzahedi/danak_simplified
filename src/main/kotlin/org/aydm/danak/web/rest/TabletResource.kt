@@ -18,7 +18,6 @@ import tech.jhipster.web.util.ResponseUtil
 import java.net.URI
 import java.net.URISyntaxException
 import java.util.Objects
-import javax.annotation.Nullable
 
 private const val ENTITY_NAME = "tablet"
 

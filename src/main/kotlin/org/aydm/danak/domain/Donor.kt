@@ -11,6 +11,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "donor")
+@SuppressWarnings("common-java:DuplicatedBlocks")
 data class Donor(
 
     @Id
@@ -36,7 +37,6 @@ data class Donor(
     @OneToOne
     @JoinColumn(unique = true)
     var user: User? = null,
-
     @OneToMany(mappedBy = "donor")
     @JsonIgnoreProperties(
         value = [
@@ -47,6 +47,16 @@ data class Donor(
         allowSetters = true
     )
     var tablets: MutableSet<Tablet>? = mutableSetOf(),
+    @OneToMany(mappedBy = "donor")
+    @JsonIgnoreProperties(
+        value = [
+            "tabletUsers",
+            "center",
+            "donor",
+        ],
+        allowSetters = true
+    )
+    var centerDonors: MutableSet<CenterDonor>? = mutableSetOf()
     // jhipster-needle-entity-add-field - JHipster will add fields here
 ) : Serializable {
 
@@ -54,14 +64,22 @@ data class Donor(
         this.user = user
         return this
     }
+
     fun addTablet(tablet: Tablet): Donor {
         this.tablets?.add(tablet)
         tablet.donor = this
         return this
     }
-    fun removeTablet(tablet: Tablet): Donor {
-        this.tablets?.remove(tablet)
-        tablet.donor = null
+
+    fun addCenterDonor(centerDonor: CenterDonor): Donor {
+        this.centerDonors?.add(centerDonor)
+        centerDonor.donor = this
+        return this
+    }
+
+    fun removeCenterDonor(centerDonor: CenterDonor): Donor {
+        this.centerDonors?.remove(centerDonor)
+        centerDonor.donor = null
         return this
     }
 

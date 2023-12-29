@@ -6,6 +6,7 @@ import fileBelongings from 'app/entities/file-belongings/file-belongings.reducer
 import version from 'app/entities/version/version.reducer';
 import donor from 'app/entities/donor/donor.reducer';
 import center from 'app/entities/center/center.reducer';
+import centerDonor from 'app/entities/center-donor/center-donor.reducer';
 /* jhipster-needle-add-reducer-import - JHipster will add reducer here */
 
 const entitiesReducers = {
@@ -17,6 +18,7 @@ const entitiesReducers = {
   version,
   donor,
   center,
+  centerDonor,
   /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
 };
 

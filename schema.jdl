@@ -34,6 +34,39 @@ entity FileBelongings{
 entity Version{
 	version Integer
 }
+entity Center {
+    createTimeStamp  Instant
+    updateTimeStamp Instant
+    name String
+    city String
+    country String
+}
+entity Donor{
+    createTimeStamp Instant
+    updateTimeStamp Instant
+    name String
+    city String
+    country String
+}
+
+entity CenterDonor{
+
+}
+relationship OneToMany {
+    Center to CenterDonor{center}
+    Donor to CenterDonor{donor}
+}
+
+
+
+
+
+// Use Data Transfer Objects (DTO)
+dto * with mapstruct
+
+// Set service options to all except few
+service all with serviceImpl
+
 
 relationship OneToMany {
 	TabletUser to UserActivity{activity}
