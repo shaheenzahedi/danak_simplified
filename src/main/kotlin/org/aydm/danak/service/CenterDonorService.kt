@@ -52,4 +52,5 @@ interface CenterDonorService {
      * @param id the id of the entity.
      */
     fun delete(id: Long)
+    fun findAllCenterDonorsTable(): MutableList<CenterDonorDTO>
 }

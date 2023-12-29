@@ -1,10 +1,14 @@
 package org.aydm.danak.service.impl
 
+import org.aydm.danak.domain.Center
 import org.aydm.danak.domain.CenterDonor
 import org.aydm.danak.repository.CenterDonorRepository
 import org.aydm.danak.service.CenterDonorService
+import org.aydm.danak.service.dto.CenterDTO
 import org.aydm.danak.service.dto.CenterDonorDTO
 import org.aydm.danak.service.mapper.CenterDonorMapper
+import org.aydm.danak.service.mapper.CenterMapper
+import org.aydm.danak.service.mapper.DonorMapper
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -18,6 +22,8 @@ import java.util.Optional
 class CenterDonorServiceImpl(
     private val centerDonorRepository: CenterDonorRepository,
     private val centerDonorMapper: CenterDonorMapper,
+    private val centerMapper: CenterMapper,
+    private val donorMapper: DonorMapper,
 ) : CenterDonorService {
 
     private val log = LoggerFactory.getLogger(javaClass)
@@ -66,5 +72,15 @@ class CenterDonorServiceImpl(
         log.debug("Request to delete CenterDonor : $id")
 
         centerDonorRepository.deleteById(id)
+    }
+
+    override fun findAllCenterDonorsTable(): MutableList<CenterDonorDTO> {
+        return centerDonorRepository.findAll()
+            .mapTo(mutableListOf()) {
+                centerDonorMapper.toDto(it).apply {
+                    center = it.center?.let(centerMapper::toDto)
+                    donor = it.donor?.let(donorMapper::toDto)
+                }
+            }
     }
 }

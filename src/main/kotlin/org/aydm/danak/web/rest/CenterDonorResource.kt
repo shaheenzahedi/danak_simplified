@@ -146,6 +146,14 @@ class CenterDonorResource(
         return centerDonorService.findAll()
     }
 
+    @GetMapping("/center-donors-table")
+    fun getAllCenterDonorsTable(): MutableList<CenterDonorDTO> {
+
+        log.debug("REST request to get all CenterDonors")
+
+        return centerDonorService.findAllCenterDonorsTable()
+    }
+
     /**
      * `GET  /center-donors/:id` : get the "id" centerDonor.
      *
