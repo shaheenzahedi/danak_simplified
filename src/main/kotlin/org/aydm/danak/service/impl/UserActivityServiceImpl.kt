@@ -91,7 +91,7 @@ class UserActivityServiceImpl(
                 )
             )
 
-            val activities = decideActivities(tabletUser.id, user.activity, tabletUser)
+            val activities = decideActivities(user.activity, tabletUser)
             SubmitUserDTO(
                 tabletUser.id,
                 tabletUser.firstName!!,
@@ -111,23 +111,12 @@ class UserActivityServiceImpl(
     }
 
     private fun decideActivities(
-        userId: Long?,
         inputActivities: List<SubmitActivityDTO>,
         tabletUser: TabletUserDTO
-    ): List<UserActivityDTO> {
-        val existingActivities =
-            userId?.let { userActivityRepository.findAllByActivityId(it).map(userActivityMapper::toDto) }
-        return inputActivities.map { inputActivity ->
-            val foundActivities =
-                existingActivities?.filter { it.uniqueName == inputActivity.uniqueName }?.toMutableList()
-            val userActivityDTO = UserActivityDTO.fromSubmitActivity(inputActivity, tabletUser)
-            val activityWithMaxTotal =
-                foundActivities?.apply { add(userActivityDTO) }?.maxByOrNull { it.completed ?: 0 }
-            save(
-                activityWithMaxTotal?.apply { if (id != userActivityDTO.id) updateTimeStamp = Instant.now() }
-                    ?: userActivityDTO
-            )
-        }
+    ): List<UserActivityDTO> = inputActivities.map { inputActivity ->
+        save(
+            UserActivityDTO.fromSubmitActivity(inputActivity, tabletUser)
+        )
     }
 
     override fun getAllActivityByTablet(): List<SubmitDTO> {
