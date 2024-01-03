@@ -59,6 +59,7 @@ class DonorQueryService(
             .map(donorMapper::toDto)
     }
 
+    @Transactional(readOnly = true)
     fun findByCriteriaPanel(criteria: DonorCriteria, page: Pageable): Page<DonorDTO> {
         log.debug("find by criteria : $criteria, page: $page")
         val specification = createSpecification(criteria)

@@ -186,7 +186,7 @@ class DonorResource(
         return ResponseEntity.ok().headers(headers).body(page.content)
     }
 
-    @GetMapping("/donors") fun getAllDonorsPanel(
+    @GetMapping("/donors-panel") fun getAllDonorsPanel(
         criteria: DonorCriteria,
         @org.springdoc.api.annotations.ParameterObject pageable: Pageable
 
