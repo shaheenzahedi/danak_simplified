@@ -153,7 +153,7 @@ class UserActivityServiceImpl(
         pageable: Pageable?
     ): Page<OverallUserActivities?>? {
         val tabletIds = tabletServiceImpl.findAllTabletIdsByDonorId(donorId)
-        if (tabletIds.isEmpty())return Page.empty()
+        if (tabletIds.isEmpty() && donorId!=null)return Page.empty()
         return getUserData(userActivityRepository.getAllActivityByUserPageable(search,
             tabletIds,
             pageable))
