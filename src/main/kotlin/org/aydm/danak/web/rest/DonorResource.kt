@@ -186,6 +186,17 @@ class DonorResource(
         return ResponseEntity.ok().headers(headers).body(page.content)
     }
 
+    @GetMapping("/donors") fun getAllDonorsPanel(
+        criteria: DonorCriteria,
+        @org.springdoc.api.annotations.ParameterObject pageable: Pageable
+
+    ): ResponseEntity<MutableList<DonorDTO>> {
+        log.debug("REST request to get Donors by criteria: $criteria")
+        val page = donorQueryService.findByCriteriaPanel(criteria, pageable)
+        val headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page)
+        return ResponseEntity.ok().headers(headers).body(page.content)
+    }
+
     /**
      * `GET  /donors/count}` : count all the donors.
      *

@@ -6,6 +6,7 @@ import org.aydm.danak.repository.DonorRepository
 import org.aydm.danak.service.criteria.DonorCriteria
 import org.aydm.danak.service.dto.DonorDTO
 import org.aydm.danak.service.mapper.DonorMapper
+import org.aydm.danak.service.mapper.UserMapper
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -27,6 +28,7 @@ import javax.persistence.criteria.JoinType
 class DonorQueryService(
     private val donorRepository: DonorRepository,
     private val donorMapper: DonorMapper,
+    private val userMapper: UserMapper
 ) : QueryService<Donor>() {
 
     private val log = LoggerFactory.getLogger(javaClass)
@@ -55,6 +57,18 @@ class DonorQueryService(
         val specification = createSpecification(criteria)
         return donorRepository.findAll(specification, page)
             .map(donorMapper::toDto)
+    }
+
+    fun findByCriteriaPanel(criteria: DonorCriteria, page: Pageable): Page<DonorDTO> {
+        log.debug("find by criteria : $criteria, page: $page")
+        val specification = createSpecification(criteria)
+        return donorRepository.findAll(specification, page)
+            .map {
+                val dto = donorMapper.toDto(it)
+                dto.user= it.user?.let { userEntity -> userMapper.userToUserDTO(userEntity) }
+                dto
+            }
+
     }
 
     /**
