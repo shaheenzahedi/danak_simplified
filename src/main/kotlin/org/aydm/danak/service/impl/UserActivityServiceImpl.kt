@@ -49,7 +49,7 @@ class UserActivityServiceImpl(
     override fun partialUpdate(userActivityDTO: UserActivityDTO): Optional<UserActivityDTO> {
         log.debug("Request to partially update UserActivity : {}", userActivityDTO)
 
-        return userActivityRepository.findById(userActivityDTO.id)
+        return userActivityRepository.findById(userActivityDTO.id!!)
             .map {
                 userActivityMapper.partialUpdate(it, userActivityDTO)
                 it
@@ -149,9 +149,13 @@ class UserActivityServiceImpl(
 
     override fun getAllActivityByUserPageable(
         search: String?,
+        donorId: Long?,
         pageable: Pageable?
     ): Page<OverallUserActivities?>? {
-        return getUserData(userActivityRepository.getAllActivityByUserPageable(search, pageable))
+        val tabletIds = tabletServiceImpl.findAllTabletsByDonorId(donorId)
+        return getUserData(userActivityRepository.getAllActivityByUserPageable(search,
+            tabletIds,
+            pageable))
     }
 
     fun getUserData(results: Page<Array<Any?>?>?): Page<OverallUserActivities?>? {

@@ -27,7 +27,7 @@ import java.util.*
 
 interface UserFacade {
     fun registerDonor(dto: DonorDTO): DonorDTO
-    fun getDonorKeyword(): String?
+    fun getDonorId(): Long?
     fun getDonors(pageable: Pageable): Page<DonorDTO>?
     fun findAllTablets(pageable: Pageable, criteria: TabletCriteria?): Page<TabletDTO>
     fun findAllTabletUsers(criteria: TabletUserCriteria?, pageable: Pageable): Page<TabletUserDTO>
@@ -59,11 +59,11 @@ class UserFacadeImpl(
         return userRepository.findOneByLogin(getCurrentUserName())
     }
 
-    override fun getDonorKeyword(): String? {
+    override fun getDonorId(): Long? {
         val currentUser = getCurrentUser().orElse(null) ?: return null
         val criteria = DonorCriteria().apply { userId = LongFilter().apply { equals = currentUser.id } }
         val result = donorQueryService.findByCriteria(criteria)
-        return if (result.isEmpty()) null else result.first().name
+        return if (result.isEmpty()) null else result.first().id
     }
 
     override fun getDonors(pageable: Pageable): Page<DonorDTO>? {

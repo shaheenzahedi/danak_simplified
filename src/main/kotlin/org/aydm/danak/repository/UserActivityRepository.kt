@@ -1,5 +1,6 @@
 package org.aydm.danak.repository
 
+import org.aydm.danak.domain.Tablet
 import org.aydm.danak.domain.UserActivity
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -26,8 +27,13 @@ interface UserActivityRepository : JpaRepository<UserActivity, Long>, JpaSpecifi
             "LOWER(tu.firstName) LIKE CONCAT('%', LOWER(:searchString), '%') OR " +
             "LOWER(tu.lastName) LIKE CONCAT('%', LOWER(:searchString), '%') OR " +
             "LOWER(t.name) LIKE CONCAT('%', LOWER(:searchString), '%')) " +
+            "AND (:tabletIds IS EMPTY OR t.id IN :tabletIds) " +
             "GROUP BY tu.id"
     )
-    fun getAllActivityByUserPageable(@Param("searchString") searchString: String?, pageable: Pageable?): Page<Array<Any?>?>?
+    fun getAllActivityByUserPageable(
+        @Param("searchString") searchString: String?,
+        tabletIds: List<Long>,
+        pageable: Pageable?
+    ): Page<Array<Any?>?>?
     fun findAllByActivityId(activityId: Long): List<UserActivity>
 }

@@ -4,6 +4,7 @@ import org.aydm.danak.domain.Tablet
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 import java.util.*
 
@@ -22,4 +23,6 @@ interface TabletRepository : JpaRepository<Tablet, Long>, JpaSpecificationExecut
 
     @Query("SELECT t FROM Tablet t WHERE t.identifier is null OR t.identifier NOT LIKE 'T%'")
     fun findAllTabletsWithoutIdentifier(): MutableList<Tablet>
+    @Query("SELECT t.id FROM Tablet t JOIN t.center c JOIN c.centerDonors cd WHERE cd.donor.id = :donorId")
+    fun findAllTabletsByDonorId(@Param("donorId") donorId: Long): MutableList<Long>
 }

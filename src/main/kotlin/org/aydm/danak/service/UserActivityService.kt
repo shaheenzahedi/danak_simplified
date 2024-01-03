@@ -1,4 +1,5 @@
 package org.aydm.danak.service
+
 import org.aydm.danak.service.dto.OverallUserActivities
 import org.aydm.danak.service.dto.UserActivityDTO
 import org.springframework.data.domain.Page
@@ -62,5 +63,8 @@ interface UserActivityService {
     fun submit(submitDTO: SubmitDTO): SubmitDTO
     fun getAllActivityByTablet(): List<SubmitDTO>
     fun getAllActivityByUser(): List<OverallUserActivities>
-    fun getAllActivityByUserPageable(search: String?, pageable: Pageable?): Page<OverallUserActivities?>?
+    fun getAllActivityByUserPageable(
+        search: String?, donorId: Long?,
+        pageable: Pageable?
+    ): Page<OverallUserActivities?>?
 }

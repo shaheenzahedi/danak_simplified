@@ -73,8 +73,8 @@ class UserActivityResource(
         @ParameterObject @Nullable search: String?,
         @ParameterObject pageable: Pageable?
     ): ResponseEntity<Page<OverallUserActivities?>?> {
-        val keyword = userFacade.getDonorKeyword()
-        val page = userActivityService.getAllActivityByUserPageable(keyword ?: search, pageable)
+        val donorId = userFacade.getDonorId()
+        val page = userActivityService.getAllActivityByUserPageable(search, donorId, pageable)
         return ResponseEntity.ok()
             .header("X-Total-Count", page?.totalElements.toString())
             .body(page)

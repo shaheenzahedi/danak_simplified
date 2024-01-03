@@ -122,6 +122,11 @@ class TabletServiceImpl(
         return tabletRepository.findAllTabletsWithoutIdentifier()
     }
 
+    override fun findAllTabletsByDonorId(donorId: Long?): MutableList<Long> {
+        if (donorId == null) return mutableListOf()
+        return tabletRepository.findAllTabletsByDonorId(donorId)
+    }
+
     override fun findAll(pageable: Pageable): Page<TabletDTO> {
         log.debug("Request to get all Tablets")
         return tabletRepository.findAll(pageable).map { tabletMapper.toDto(it) }
