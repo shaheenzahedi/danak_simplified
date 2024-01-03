@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import tech.jhipster.service.QueryService
 import tech.jhipster.service.filter.Filter
+import tech.jhipster.service.filter.LongFilter
 import javax.persistence.criteria.JoinType
 
 /**
@@ -41,6 +42,15 @@ class TabletQueryService(
         log.debug("find by criteria : $criteria")
         val specification = createSpecification(criteria)
         return tabletMapper.toDto(tabletRepository.findAll(specification))
+    }
+
+    @Transactional(readOnly = true)
+    fun findByCriteriaByDonorId(criteria: TabletCriteria?, pageable: Pageable, donorId: Long?): Page<TabletDTO> {
+        if (donorId == null) return findByCriteria(criteria, pageable)
+        val tabletIds = tabletRepository.findAllTabletIdsByDonorId(donorId)
+        val cr = criteria ?: TabletCriteria()
+        cr.id = LongFilter().apply { `in` = tabletIds }
+        return findByCriteria(cr,pageable);
     }
 
     /**

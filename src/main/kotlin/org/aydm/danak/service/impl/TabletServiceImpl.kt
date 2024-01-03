@@ -124,7 +124,7 @@ class TabletServiceImpl(
 
     override fun findAllTabletsByDonorId(donorId: Long?): MutableList<Long> {
         if (donorId == null) return mutableListOf()
-        return tabletRepository.findAllTabletsByDonorId(donorId)
+        return tabletRepository.findAllTabletIdsByDonorId(donorId)
     }
 
     override fun findAll(pageable: Pageable): Page<TabletDTO> {

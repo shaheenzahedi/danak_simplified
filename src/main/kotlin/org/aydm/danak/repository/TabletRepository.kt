@@ -24,5 +24,7 @@ interface TabletRepository : JpaRepository<Tablet, Long>, JpaSpecificationExecut
     @Query("SELECT t FROM Tablet t WHERE t.identifier is null OR t.identifier NOT LIKE 'T%'")
     fun findAllTabletsWithoutIdentifier(): MutableList<Tablet>
     @Query("SELECT t.id FROM Tablet t JOIN t.center c JOIN c.centerDonors cd WHERE cd.donor.id = :donorId")
-    fun findAllTabletsByDonorId(@Param("donorId") donorId: Long): MutableList<Long>
+    fun findAllTabletIdsByDonorId(@Param("donorId") donorId: Long): MutableList<Long>
+    @Query("SELECT t.id FROM Tablet t JOIN t.center c JOIN c.centerDonors cd WHERE cd.donor.id = :donorId")
+    fun findAllTabletsByDonorId(@Param("donorId") donorId: Long): List<Tablet>
 }

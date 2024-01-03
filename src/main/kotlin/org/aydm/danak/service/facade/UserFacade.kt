@@ -80,8 +80,8 @@ class UserFacadeImpl(
     }
 
     override fun findAllTablets(pageable: Pageable, criteria: TabletCriteria?): Page<TabletDTO> {
-
-        return tabletQueryService.findByCriteria(criteria, pageable)
+        val donorId = getDonorId()
+        return tabletQueryService.findByCriteriaByDonorId(criteria, pageable,donorId)
             .onEach(processEachTablet)
     }
     val processEachTablet: (TabletDTO) -> Unit = { tabletDTO ->
