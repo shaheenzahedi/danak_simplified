@@ -122,7 +122,7 @@ class TabletServiceImpl(
         return tabletRepository.findAllTabletsWithoutIdentifier()
     }
 
-    override fun findAllTabletsByDonorId(donorId: Long?): MutableList<Long> {
+    override fun findAllTabletIdsByDonorId(donorId: Long?): MutableList<Long> {
         if (donorId == null) return mutableListOf()
         return tabletRepository.findAllTabletIdsByDonorId(donorId)
     }

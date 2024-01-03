@@ -96,8 +96,15 @@ class UserFacadeImpl(
             }
         )
     }
-    override fun findAllTabletUsers(criteria: TabletUserCriteria?, pageable: Pageable): Page<TabletUserDTO> =
-        tabletUserQueryService.findAll(criteria, pageable)
+    override fun findAllTabletUsers(criteria: TabletUserCriteria?, pageable: Pageable): Page<TabletUserDTO> {
+        val donorId = getDonorId()
+        if (donorId==null)return tabletUserQueryService.findAll(criteria, pageable)
+        val tabletIds = tabletService.findAllTabletIdsByDonorId(donorId)
+        if (tabletIds.isEmpty())return Page.empty()
+        val cr = criteria?: TabletUserCriteria()
+        cr.tabletId = cr.tabletId?.apply { `in` =  tabletIds} ?: LongFilter().apply { `in` =  tabletIds}
+        return tabletUserQueryService.findAll(cr, pageable)
+    }
 
     override fun getAllActivities(criteria: UserActivityCriteria?, pageable: Pageable): Page<UserActivityDTO> {
         return activityQueryService.findByCriteria(criteria, pageable)
