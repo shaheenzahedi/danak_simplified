@@ -6,6 +6,7 @@ import org.aydm.danak.repository.CenterDonorRepository
 import org.aydm.danak.service.CenterDonorService
 import org.aydm.danak.service.dto.CenterDTO
 import org.aydm.danak.service.dto.CenterDonorDTO
+import org.aydm.danak.service.dto.UserDTO
 import org.aydm.danak.service.mapper.CenterDonorMapper
 import org.aydm.danak.service.mapper.CenterMapper
 import org.aydm.danak.service.mapper.DonorMapper
@@ -79,7 +80,14 @@ class CenterDonorServiceImpl(
             .mapTo(mutableListOf()) {
                 centerDonorMapper.toDto(it).apply {
                     center = it.center?.let(centerMapper::toDto)
-                    donor = it.donor?.let(donorMapper::toDto)
+                    donor = it.donor?.let { donor ->
+                        donorMapper.toDto(donor).apply {
+                            user = UserDTO().apply {
+                                firstName = donor.user?.firstName
+                                lastName = donor.user?.lastName
+                            }
+                        }
+                    }
                 }
             }
     }
