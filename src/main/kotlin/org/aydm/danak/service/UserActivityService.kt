@@ -64,7 +64,8 @@ interface UserActivityService {
     fun getAllActivityByTablet(): List<SubmitDTO>
     fun getAllActivityByUser(): List<OverallUserActivities>
     fun getAllActivityByUserPageable(
-        search: String?, donorId: Long?,
+        search: String?,
+        donorId: Long?,
         pageable: Pageable?
     ): Page<OverallUserActivities?>?
 }

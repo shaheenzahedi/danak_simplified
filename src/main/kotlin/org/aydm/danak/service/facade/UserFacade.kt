@@ -81,7 +81,7 @@ class UserFacadeImpl(
 
     override fun findAllTablets(pageable: Pageable, criteria: TabletCriteria?): Page<TabletDTO> {
         val donorId = getDonorId()
-        return tabletQueryService.findByCriteriaByDonorId(criteria, pageable,donorId)
+        return tabletQueryService.findByCriteriaByDonorId(criteria, pageable, donorId)
             .onEach(processEachTablet)
     }
     val processEachTablet: (TabletDTO) -> Unit = { tabletDTO ->
@@ -100,8 +100,8 @@ class UserFacadeImpl(
         val donorId = getDonorId() ?: return tabletUserQueryService.findAll(criteria, pageable)
         val tabletIds = tabletService.findAllTabletIdsByDonorId(donorId)
         if (tabletIds.isEmpty())return Page.empty()
-        val cr = criteria?: TabletUserCriteria()
-        cr.tabletId = cr.tabletId?.apply { `in` =  tabletIds} ?: LongFilter().apply { `in` =  tabletIds}
+        val cr = criteria ?: TabletUserCriteria()
+        cr.tabletId = cr.tabletId?.apply { `in` = tabletIds } ?: LongFilter().apply { `in` = tabletIds }
         return tabletUserQueryService.findAll(cr, pageable)
     }
 

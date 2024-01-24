@@ -1,10 +1,8 @@
 package org.aydm.danak.service.impl
 
-import org.aydm.danak.domain.Center
 import org.aydm.danak.domain.CenterDonor
 import org.aydm.danak.repository.CenterDonorRepository
 import org.aydm.danak.service.CenterDonorService
-import org.aydm.danak.service.dto.CenterDTO
 import org.aydm.danak.service.dto.CenterDonorDTO
 import org.aydm.danak.service.dto.UserDTO
 import org.aydm.danak.service.mapper.CenterDonorMapper

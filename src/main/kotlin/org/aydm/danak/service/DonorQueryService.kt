@@ -66,10 +66,9 @@ class DonorQueryService(
         return donorRepository.findAll(specification, page)
             .map {
                 val dto = donorMapper.toDto(it)
-                dto.user= it.user?.let { userEntity -> userMapper.userToUserDTO(userEntity) }
+                dto.user = it.user?.let { userEntity -> userMapper.userToUserDTO(userEntity) }
                 dto
             }
-
     }
 
     /**

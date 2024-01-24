@@ -50,7 +50,7 @@ class TabletQueryService(
         val tabletIds = tabletRepository.findAllTabletIdsByDonorId(donorId)
         val cr = criteria ?: TabletCriteria()
         cr.id = LongFilter().apply { `in` = tabletIds }
-        return findByCriteria(cr,pageable);
+        return findByCriteria(cr, pageable)
     }
 
     /**

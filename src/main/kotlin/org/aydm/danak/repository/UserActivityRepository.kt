@@ -1,6 +1,5 @@
 package org.aydm.danak.repository
 
-import org.aydm.danak.domain.Tablet
 import org.aydm.danak.domain.UserActivity
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
