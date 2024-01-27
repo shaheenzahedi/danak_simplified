@@ -162,10 +162,10 @@ class UserFacadeImpl(
     }
 
     override fun getDashboard(): DashboardDTO {
-        val numberOfTablets = 0L/*tabletQueryService.countByCriteria(TabletCriteria())*/
+        val numberOfTablets = tabletQueryService.countByCriteria(TabletCriteria())
         val numberOfCenters = centerQueryService.countByCriteria(CenterCriteria())
         val numberOfUsers = tabletUserQueryService.countByCriteria(TabletUserCriteria())
-        val numberOfReports = activityQueryService.countByCriteria(UserActivityCriteria())
+        val numberOfReports = 0L/*activityQueryService.countByCriteria(UserActivityCriteria())*/
         return DashboardDTO(
             numberOfTablets = numberOfTablets,
             numberOfUsers = numberOfUsers,
