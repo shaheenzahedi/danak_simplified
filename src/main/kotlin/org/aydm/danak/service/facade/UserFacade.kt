@@ -6,10 +6,7 @@ import org.aydm.danak.domain.User
 import org.aydm.danak.repository.UserRepository
 import org.aydm.danak.security.DONOR
 import org.aydm.danak.service.*
-import org.aydm.danak.service.criteria.DonorCriteria
-import org.aydm.danak.service.criteria.TabletCriteria
-import org.aydm.danak.service.criteria.TabletUserCriteria
-import org.aydm.danak.service.criteria.UserActivityCriteria
+import org.aydm.danak.service.criteria.*
 import org.aydm.danak.service.dto.*
 import org.aydm.danak.service.mapper.UserMapper
 import org.springframework.data.domain.Page
@@ -47,7 +44,8 @@ class UserFacadeImpl(
     private val tabletQueryService: TabletQueryService,
     private val activityQueryService: UserActivityQueryService,
     private val tabletUserQueryService: TabletUserQueryService,
-    private val centerService: CenterService
+    private val centerService: CenterService,
+    private val centerQueryService: CenterQueryService
 ) : UserFacade {
     private fun getCurrentUserName(): String {
         return SecurityContextHolder.getContext().authentication.name
@@ -164,11 +162,15 @@ class UserFacadeImpl(
     }
 
     override fun getDashboard(): DashboardDTO {
-        val numberOfTablets = tabletQueryService.countByCriteria(TabletCriteria())
+        val numberOfTablets = 0L/*tabletQueryService.countByCriteria(TabletCriteria())*/
+        val numberOfCenters = centerQueryService.countByCriteria(CenterCriteria())
         val numberOfUsers = tabletUserQueryService.countByCriteria(TabletUserCriteria())
         val numberOfReports = activityQueryService.countByCriteria(UserActivityCriteria())
         return DashboardDTO(
-            numberOfTablets,numberOfUsers,numberOfReports
+            numberOfTablets = numberOfTablets,
+            numberOfUsers = numberOfUsers,
+            numberOfReports = numberOfReports,
+            numberOfCenters = numberOfCenters
         )
     }
 
