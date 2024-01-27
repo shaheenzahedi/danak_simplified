@@ -1,8 +1,10 @@
 package org.aydm.danak.web.rest
 
 import org.aydm.danak.repository.UserActivityRepository
+import org.aydm.danak.security.ADMIN
 import org.aydm.danak.service.UserActivityService
 import org.aydm.danak.service.criteria.UserActivityCriteria
+import org.aydm.danak.service.dto.DashboardDTO
 import org.aydm.danak.service.dto.OverallUserActivities
 import org.aydm.danak.service.dto.UserActivityDTO
 import org.aydm.danak.service.facade.UserFacade
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import org.web.danak.service.dto.SubmitDTO
 import tech.jhipster.web.util.HeaderUtil
@@ -47,6 +50,11 @@ class UserActivityResource(
     @PostMapping("submit-activity")
     fun submitActivity(@RequestBody submitDTO: SubmitDTO): ResponseEntity<SubmitDTO> {
         return ResponseEntity.ok(userActivityService.submit(submitDTO))
+    }
+    @GetMapping("/dashboard")
+    @PreAuthorize("hasAuthority(\"$ADMIN\")")
+    fun getDashboard(): DashboardDTO {
+        return userFacade.getDashboard()
     }
 
     @GetMapping("all-activities-by-tablet")

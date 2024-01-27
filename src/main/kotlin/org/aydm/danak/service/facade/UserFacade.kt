@@ -10,10 +10,7 @@ import org.aydm.danak.service.criteria.DonorCriteria
 import org.aydm.danak.service.criteria.TabletCriteria
 import org.aydm.danak.service.criteria.TabletUserCriteria
 import org.aydm.danak.service.criteria.UserActivityCriteria
-import org.aydm.danak.service.dto.DonorDTO
-import org.aydm.danak.service.dto.TabletDTO
-import org.aydm.danak.service.dto.TabletUserDTO
-import org.aydm.danak.service.dto.UserActivityDTO
+import org.aydm.danak.service.dto.*
 import org.aydm.danak.service.mapper.UserMapper
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -35,6 +32,7 @@ interface UserFacade {
     fun tabletsFixDuplicates()
     fun tabletsGetDuplicates(): MutableList<TabletDTO>
     fun fixTabletNames()
+    fun getDashboard():DashboardDTO
 }
 
 @Transactional
@@ -163,6 +161,15 @@ class UserFacadeImpl(
                         )
                     }
             }
+    }
+
+    override fun getDashboard(): DashboardDTO {
+        val numberOfTablets = tabletQueryService.countByCriteria(TabletCriteria())
+        val numberOfUsers = tabletUserQueryService.countByCriteria(TabletUserCriteria())
+        val numberOfReports = activityQueryService.countByCriteria(UserActivityCriteria())
+        return DashboardDTO(
+            numberOfTablets,numberOfUsers,numberOfReports
+        )
     }
 
     private fun extractTabletName(tabletUsers: MutableSet<TabletUser>): String? {
