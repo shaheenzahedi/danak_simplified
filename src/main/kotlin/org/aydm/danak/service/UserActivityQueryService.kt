@@ -81,9 +81,9 @@ class UserActivityQueryService(
         val cb = em.criteriaBuilder
         val cq = cb.createQuery(UserActivityDTO::class.java)
         val userActivityRoot = cq.from(UserActivity::class.java)
-        val tabletUserJoin = userActivityRoot.join<UserActivity, TabletUser>("tabletUser")
-        val tabletJoin = tabletUserJoin.join<TabletUser, Tablet>("tablet")
-        val centerJoin = tabletJoin.join<Tablet, Center>("center")
+        val tabletUserJoin = userActivityRoot.join(UserActivity_.activity)
+        val tabletJoin = tabletUserJoin.join(TabletUser_.tablet)
+        val centerJoin = tabletJoin.join(Tablet_.center)
 
         val predicates = mutableListOf<Predicate>()
 
@@ -93,10 +93,8 @@ class UserActivityQueryService(
 
         if (days != null) {
             val cutoffDate = LocalDate.now().minusDays(days.toLong())
-            predicates.add(cb.greaterThanOrEqualTo(userActivityRoot.get<Instant>("createTimeStamp"), cutoffDate.atStartOfDay().toInstant(ZoneOffset.UTC)))
+            predicates.add(cb.greaterThanOrEqualTo(userActivityRoot.get(UserActivity_.createTimeStamp), cutoffDate.atStartOfDay().toInstant(ZoneOffset.UTC)))
         }
-
-        cq.select(cb.construct(UserActivityDTO::class.java, userActivityRoot.get<String>("activityProperty1"), userActivityRoot.get<String>("activityProperty2"))) // Replace activityProperty1 and activityProperty2 with actual properties
 
         if (predicates.isNotEmpty()) {
             cq.where(*predicates.toTypedArray())
