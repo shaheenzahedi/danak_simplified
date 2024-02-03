@@ -53,8 +53,8 @@ class UserActivityResource(
     }
     @GetMapping("/dashboard")
     @PreAuthorize("hasAuthority(\"$ADMIN\")")
-    fun getDashboard(): DashboardDTO {
-        return userFacade.getDashboard()
+    fun getDashboard(centerId:Long?,days:Int?): DashboardDTO {
+        return userFacade.getDashboard(centerId,days)
     }
 
     @GetMapping("all-activities-by-tablet")

@@ -7,6 +7,7 @@ import org.aydm.danak.service.criteria.UserActivityCriteria
 import org.aydm.danak.service.dto.UserActivityDTO
 import org.aydm.danak.service.mapper.UserActivityMapper
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
@@ -14,7 +15,12 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import tech.jhipster.service.QueryService
 import tech.jhipster.service.filter.Filter
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneOffset
+import javax.persistence.EntityManager
 import javax.persistence.criteria.JoinType
+import javax.persistence.criteria.Predicate
 
 /**
  * Service for executing complex queries for [UserActivity] entities in the database.
@@ -69,6 +75,36 @@ class UserActivityQueryService(
         return userActivityRepository.count(specification)
     }
 
+    @Autowired
+    private lateinit var em: EntityManager
+    fun findByCenterId(centerId: Long?, days: Int?): List<UserActivityDTO> {
+        val cb = em.criteriaBuilder
+        val cq = cb.createQuery(UserActivityDTO::class.java)
+        val userActivityRoot = cq.from(UserActivity::class.java)
+        val tabletUserJoin = userActivityRoot.join<UserActivity, TabletUser>("tabletUser")
+        val tabletJoin = tabletUserJoin.join<TabletUser, Tablet>("tablet")
+        val centerJoin = tabletJoin.join<Tablet, Center>("center")
+
+        val predicates = mutableListOf<Predicate>()
+
+        if (centerId != null) {
+            predicates.add(cb.equal(centerJoin.get<Long>("id"), centerId))
+        }
+
+        if (days != null) {
+            val cutoffDate = LocalDate.now().minusDays(days.toLong())
+            predicates.add(cb.greaterThanOrEqualTo(userActivityRoot.get<Instant>("createTimeStamp"), cutoffDate.atStartOfDay().toInstant(ZoneOffset.UTC)))
+        }
+
+        cq.select(cb.construct(UserActivityDTO::class.java, userActivityRoot.get<String>("activityProperty1"), userActivityRoot.get<String>("activityProperty2"))) // Replace activityProperty1 and activityProperty2 with actual properties
+
+        if (predicates.isNotEmpty()) {
+            cq.where(*predicates.toTypedArray())
+        }
+
+        val query = em.createQuery(cq)
+        return query.resultList
+    }
     /**
      * Function to convert [UserActivityCriteria] to a [Specification].
      * @param criteria The object which holds all the filters, which the entities should match.

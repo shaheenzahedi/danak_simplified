@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import tech.jhipster.service.filter.LongFilter
 import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.*
 
 interface UserFacade {
@@ -29,7 +31,7 @@ interface UserFacade {
     fun tabletsFixDuplicates()
     fun tabletsGetDuplicates(): MutableList<TabletDTO>
     fun fixTabletNames()
-    fun getDashboard():DashboardDTO
+    fun getDashboard(centerId: Long?, days: Int?):DashboardDTO
 }
 
 @Transactional
@@ -161,16 +163,22 @@ class UserFacadeImpl(
             }
     }
 
-    override fun getDashboard(): DashboardDTO {
+    override fun getDashboard(centerId: Long?, days: Int?): DashboardDTO {
         val numberOfTablets = tabletQueryService.countByCriteria(TabletCriteria())
         val numberOfCenters = centerQueryService.countByCriteria(CenterCriteria())
         val numberOfUsers = tabletUserQueryService.countByCriteria(TabletUserCriteria())
         val numberOfReports = 0L/*activityQueryService.countByCriteria(UserActivityCriteria())*/
+        val reports = activityQueryService.findByCenterId(centerId,days).groupBy {
+            LocalDateTime.ofInstant(it.createTimeStamp, ZoneId.systemDefault()).toLocalDate()
+        }.mapValues { (_, items) ->
+            items.size.toLong()
+        }
         return DashboardDTO(
             numberOfTablets = numberOfTablets,
             numberOfUsers = numberOfUsers,
             numberOfReports = numberOfReports,
-            numberOfCenters = numberOfCenters
+            numberOfCenters = numberOfCenters,
+            reports = reports
         )
     }
 
