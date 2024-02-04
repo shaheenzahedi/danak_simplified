@@ -7,5 +7,6 @@ data class DashboardDTO(
     val numberOfUsers: Long = 0,
     val numberOfCenters: Long = 0,
     val numberOfReports: Long = 0,
-    val reports: Map<LocalDate, Long>
+    val reports: Map<LocalDate, Long>,
+    val centers: MutableList<CenterDTO>
 )

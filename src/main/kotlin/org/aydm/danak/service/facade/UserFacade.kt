@@ -174,11 +174,13 @@ class UserFacadeImpl(
         }.mapValues { (_, items) ->
             items.size.toLong()
         }
+        val centers = centerQueryService.findByCriteria(CenterCriteria())
         return DashboardDTO(
             numberOfTablets = numberOfTablets,
             numberOfUsers = numberOfUsers,
             numberOfReports = numberOfReports,
             numberOfCenters = numberOfCenters,
+            centers = centers,
             reports = reports
         )
     }
