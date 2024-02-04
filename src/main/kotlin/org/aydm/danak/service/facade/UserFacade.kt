@@ -168,7 +168,9 @@ class UserFacadeImpl(
         val numberOfCenters = centerQueryService.countByCriteria(CenterCriteria())
         val numberOfUsers = tabletUserQueryService.countByCriteria(TabletUserCriteria())
         val numberOfReports = 0L/*activityQueryService.countByCriteria(UserActivityCriteria())*/
-        val reports = activityQueryService.findByCenterId(centerId, days).groupBy {
+        val reports = activityQueryService.findByCenterId(centerId, days)
+            .filterNot { it.createTimeStamp == null }
+            .groupBy {
             LocalDateTime.ofInstant(it.createTimeStamp, ZoneId.systemDefault()).toLocalDate()
         }.mapValues { (_, items) ->
             items.size.toLong()

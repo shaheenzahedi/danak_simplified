@@ -53,7 +53,7 @@ class UserActivityResource(
     }
     @GetMapping("/dashboard")
     @PreAuthorize("hasAuthority(\"$ADMIN\")")
-    fun getDashboard(centerId: Long?, days: Int?): DashboardDTO {
+    fun getDashboard(centerId: Long?, days: Int?=30): DashboardDTO {
         return userFacade.getDashboard(centerId, days)
     }
 
