@@ -95,6 +95,8 @@ class UserActivityQueryService(
             predicates.add(cb.greaterThanOrEqualTo(userActivityRoot.get(UserActivity_.createTimeStamp), cutoffDate.atStartOfDay().toInstant(ZoneOffset.UTC)))
         }
 
+        predicates.add(cb.isNotNull(userActivityRoot.get(UserActivity_.createTimeStamp)))
+
         cq.where(*predicates.toTypedArray())
 
         val query = em.createQuery(cq)
