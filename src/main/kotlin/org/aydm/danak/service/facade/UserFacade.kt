@@ -31,7 +31,7 @@ interface UserFacade {
     fun tabletsFixDuplicates()
     fun tabletsGetDuplicates(): MutableList<TabletDTO>
     fun fixTabletNames()
-    fun getDashboard(centerId: Long?, days: Int?):DashboardDTO
+    fun getDashboard(centerId: Long?, days: Int?): DashboardDTO
 }
 
 @Transactional
@@ -168,7 +168,7 @@ class UserFacadeImpl(
         val numberOfCenters = centerQueryService.countByCriteria(CenterCriteria())
         val numberOfUsers = tabletUserQueryService.countByCriteria(TabletUserCriteria())
         val numberOfReports = 0L/*activityQueryService.countByCriteria(UserActivityCriteria())*/
-        val reports = activityQueryService.findByCenterId(centerId,days).groupBy {
+        val reports = activityQueryService.findByCenterId(centerId, days).groupBy {
             LocalDateTime.ofInstant(it.createTimeStamp, ZoneId.systemDefault()).toLocalDate()
         }.mapValues { (_, items) ->
             items.size.toLong()

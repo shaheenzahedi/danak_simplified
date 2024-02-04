@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import tech.jhipster.service.QueryService
 import tech.jhipster.service.filter.Filter
-import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
 import javax.persistence.EntityManager
@@ -77,9 +76,9 @@ class UserActivityQueryService(
 
     @Autowired
     private lateinit var em: EntityManager
-    fun findByCenterId(centerId: Long?, days: Int?): List<UserActivityDTO> {
+    fun findByCenterId(centerId: Long?, days: Int?): List<UserActivity> {
         val cb = em.criteriaBuilder
-        val cq = cb.createQuery(UserActivityDTO::class.java)
+        val cq = cb.createQuery(UserActivity::class.java)
         val userActivityRoot = cq.from(UserActivity::class.java)
         val tabletUserJoin = userActivityRoot.join(UserActivity_.activity)
         val tabletJoin = tabletUserJoin.join(TabletUser_.tablet)
@@ -96,9 +95,7 @@ class UserActivityQueryService(
             predicates.add(cb.greaterThanOrEqualTo(userActivityRoot.get(UserActivity_.createTimeStamp), cutoffDate.atStartOfDay().toInstant(ZoneOffset.UTC)))
         }
 
-        if (predicates.isNotEmpty()) {
-            cq.where(*predicates.toTypedArray())
-        }
+        cq.where(*predicates.toTypedArray())
 
         val query = em.createQuery(cq)
         return query.resultList
