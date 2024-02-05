@@ -176,7 +176,7 @@ class UserFacadeImpl(
             }.mapValues { (_, userActivities) ->
                 DashboardReport(
                     count = userActivities.size.toLong(),
-                    completed = userActivities.maxByOrNull { userActivity -> userActivity.total!! }?.completed ?: 0,
+                    completed = userActivities.maxByOrNull { userActivity -> userActivity.completed!! }?.completed ?: 0,
                     children = userActivities.map { userActivity -> userActivity.activity?.id }.toSet().size
                 )
             }
