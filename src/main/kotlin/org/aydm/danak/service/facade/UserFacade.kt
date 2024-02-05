@@ -82,6 +82,7 @@ class UserFacadeImpl(
         return tabletQueryService.findByCriteriaByDonorId(criteria, pageable, donorId)
             .onEach(processEachTablet)
     }
+
     val processEachTablet: (TabletDTO) -> Unit = { tabletDTO ->
         if (tabletDTO.center != null) {
             centerService.findOne(tabletDTO.center!!.id!!).ifPresent {
@@ -94,10 +95,11 @@ class UserFacadeImpl(
             }
         )
     }
+
     override fun findAllTabletUsers(criteria: TabletUserCriteria?, pageable: Pageable): Page<TabletUserDTO> {
         val donorId = getDonorId() ?: return tabletUserQueryService.findAll(criteria, pageable)
         val tabletIds = tabletService.findAllTabletIdsByDonorId(donorId)
-        if (tabletIds.isEmpty())return Page.empty()
+        if (tabletIds.isEmpty()) return Page.empty()
         val cr = criteria ?: TabletUserCriteria()
         cr.tabletId = cr.tabletId?.apply { `in` = tabletIds } ?: LongFilter().apply { `in` = tabletIds }
         return tabletUserQueryService.findAll(cr, pageable)
@@ -170,10 +172,14 @@ class UserFacadeImpl(
         val numberOfReports = 0L/*activityQueryService.countByCriteria(UserActivityCriteria())*/
         val reports = activityQueryService.findByCenterId(centerId, days)
             .groupBy {
-            LocalDateTime.ofInstant(it.createTimeStamp, ZoneId.systemDefault()).toLocalDate()
-        }.mapValues { (_, items) ->
-            items.size.toLong()
-        }
+                LocalDateTime.ofInstant(it.createTimeStamp, ZoneId.systemDefault()).toLocalDate()
+            }.mapValues { (_, userActivities) ->
+                DashboardReport(
+                    count = userActivities.size.toLong(),
+                    completed = userActivities.maxByOrNull { userActivity -> userActivity.total!! }?.completed ?: 0,
+                    children = userActivities.map { userActivity -> userActivity.activity?.id }.toSet().size
+                )
+            }
         val centers = centerQueryService.findByCriteria(CenterCriteria())
         return DashboardDTO(
             numberOfTablets = numberOfTablets,
