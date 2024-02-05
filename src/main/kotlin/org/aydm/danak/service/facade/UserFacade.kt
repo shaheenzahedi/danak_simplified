@@ -19,6 +19,7 @@ import tech.jhipster.service.filter.LongFilter
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.temporal.TemporalUnit
 import java.util.*
 
 interface UserFacade {
@@ -174,9 +175,15 @@ class UserFacadeImpl(
             .groupBy {
                 LocalDateTime.ofInstant(it.createTimeStamp, ZoneId.systemDefault()).toLocalDate()
             }.mapValues { (_, userActivities) ->
+                // each user activity has different uniqueName field, I want all the activities with
+                // same uniqueName to be grouped together and take the one with the greatest out of it
+                val progressWithHighestId = userActivities.groupBy { it.uniqueName }
+                    .mapValues { (_, activitiesWithSameUniqueName) ->
+                        activitiesWithSameUniqueName.maxByOrNull { it.id!! }
+                    }
                 DashboardReport(
-                    count = userActivities.size.toLong(),
-                    completed = userActivities.maxByOrNull { userActivity -> userActivity.completed!! }?.completed ?: 0,
+                    count = userActivities.size / progressWithHighestId.size,
+                    completed = progressWithHighestId.values.sumOf { it?.completed!! },
                     children = userActivities.map { userActivity -> userActivity.activity?.id }.toSet().size
                 )
             }

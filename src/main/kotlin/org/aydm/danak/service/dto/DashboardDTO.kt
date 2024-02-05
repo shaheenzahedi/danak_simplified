@@ -12,7 +12,7 @@ data class DashboardDTO(
 )
 
 data class DashboardReport(
-    val count: Long = 0,
+    val count: Int = 0,
     val completed: Long = 0,
     val children: Int = 0
 )
