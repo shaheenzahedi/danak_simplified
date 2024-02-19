@@ -1,5 +1,6 @@
 package org.aydm.danak.service.impl
 
+import org.aydm.danak.domain.Center
 import org.aydm.danak.domain.Tablet
 import org.aydm.danak.domain.TabletUser
 import org.aydm.danak.domain.UserActivity
@@ -149,16 +150,18 @@ class UserActivityServiceImpl(
 
     override fun getAllActivityByUserPageable(
         search: String?,
+        centerId: Long?,
         donorId: Long?,
         pageable: Pageable?
     ): Page<OverallUserActivities?>? {
         val tabletIds = tabletServiceImpl.findAllTabletIdsByDonorId(donorId)
-        if (tabletIds.isEmpty() && donorId != null)return Page.empty()
+        if (tabletIds.isEmpty() && donorId != null) return Page.empty()
         return getUserData(
             userActivityRepository.getAllActivityByUserPageable(
-                search,
-                tabletIds,
-                pageable
+                searchString = search,
+                centerId = centerId,
+                tabletIds = tabletIds,
+                pageable = pageable
             )
         )
     }
@@ -167,6 +170,7 @@ class UserActivityServiceImpl(
         return results?.filterNotNull()?.map { result ->
             val tabletUser = result[0] as TabletUser
             val tablet = result[1] as Tablet
+            val center = result[2] as? Center
             OverallUserActivities(
                 tabletUserId = tabletUser.id,
                 firstName = tabletUser.firstName,
@@ -174,6 +178,7 @@ class UserActivityServiceImpl(
                 tabletName = tablet.name,
                 tabletId = tablet.id,
                 tabletIdentifier = tablet.identifier,
+                centerName = if (center != null) "${center.name} - ${center.country} - ${center.city}" else "",
                 userActivities = tabletUser.userActivities?.map {
                     AggregatedUserActivity(
                         userActivityId = it.activity?.id,
@@ -212,6 +217,7 @@ class UserActivityServiceImpl(
                 tabletName = first.name,
                 tabletId = first.id,
                 tabletIdentifier = first.identifier,
+                centerName = null,
                 userActivities = activityDTOs?.toMutableList()
             )
         }

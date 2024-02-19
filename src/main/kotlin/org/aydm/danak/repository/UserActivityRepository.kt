@@ -19,20 +19,24 @@ interface UserActivityRepository : JpaRepository<UserActivity, Long>, JpaSpecifi
     fun findAllDistinctActivityIdSummary(): List<UserActivity>?
 
     @Query(
-        "SELECT tu, t FROM TabletUser tu " +
+        "SELECT tu, t, c FROM TabletUser tu " +
             "JOIN tu.tablet t " +
+            "LEFT JOIN tu.tablet.center c " +
             "LEFT JOIN tu.userActivities ua " +
             "WHERE (:searchString IS NULL OR " +
             "LOWER(tu.firstName) LIKE CONCAT('%', LOWER(:searchString), '%') OR " +
             "LOWER(tu.lastName) LIKE CONCAT('%', LOWER(:searchString), '%') OR " +
             "LOWER(t.name) LIKE CONCAT('%', LOWER(:searchString), '%')) " +
             "AND (COALESCE(:tabletIds, NULL) IS NULL OR t.id IN :tabletIds) " +
+            "AND (:centerId IS NULL OR c.id = :centerId) " +
             "GROUP BY tu.id"
     )
     fun getAllActivityByUserPageable(
         @Param("searchString") searchString: String?,
+        @Param("centerId") centerId: Long?,
         @Param("tabletIds") tabletIds: List<Long>,
         pageable: Pageable?
     ): Page<Array<Any?>?>?
+
     fun findAllByActivityId(activityId: Long): List<UserActivity>
 }

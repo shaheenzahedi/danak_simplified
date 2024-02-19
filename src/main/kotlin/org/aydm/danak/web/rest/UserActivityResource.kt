@@ -71,7 +71,7 @@ class UserActivityResource(
     @GetMapping("activities")
     fun getAllActivities(
         criteria: UserActivityCriteria?,
-        @org.springdoc.api.annotations.ParameterObject pageable: Pageable
+        @ParameterObject pageable: Pageable
     ): Page<UserActivityDTO> {
         return userFacade.getAllActivities(criteria, pageable)
     }
@@ -79,10 +79,11 @@ class UserActivityResource(
     @GetMapping("all-activities-page")
     fun getAllActivityPageable(
         @ParameterObject @Nullable search: String?,
+        @ParameterObject @Nullable centerId: Long?,
         @ParameterObject pageable: Pageable?
     ): ResponseEntity<Page<OverallUserActivities?>?> {
         val donorId = userFacade.getDonorId()
-        val page = userActivityService.getAllActivityByUserPageable(search, donorId, pageable)
+        val page = userActivityService.getAllActivityByUserPageable(search,centerId, donorId, pageable)
         return ResponseEntity.ok()
             .header("X-Total-Count", page?.totalElements.toString())
             .body(page)

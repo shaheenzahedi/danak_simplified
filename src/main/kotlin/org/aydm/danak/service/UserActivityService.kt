@@ -65,6 +65,7 @@ interface UserActivityService {
     fun getAllActivityByUser(): List<OverallUserActivities>
     fun getAllActivityByUserPageable(
         search: String?,
+        centerId: Long?,
         donorId: Long?,
         pageable: Pageable?
     ): Page<OverallUserActivities?>?
