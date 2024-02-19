@@ -51,9 +51,10 @@ class UserActivityResource(
     fun submitActivity(@RequestBody submitDTO: SubmitDTO): ResponseEntity<SubmitDTO> {
         return ResponseEntity.ok(userActivityService.submit(submitDTO))
     }
+
     @GetMapping("/dashboard")
     @PreAuthorize("hasAuthority(\"$ADMIN\")")
-    fun getDashboard(centerId: Long?, days: Int?=30): DashboardDTO {
+    fun getDashboard(centerId: Long?, days: Int? = 30): DashboardDTO {
         return userFacade.getDashboard(centerId, days)
     }
 
@@ -68,6 +69,7 @@ class UserActivityResource(
         val allActivity = userActivityService.getAllActivityByUser()
         return ResponseEntity.ok().body(allActivity)
     }
+
     @GetMapping("activities")
     fun getAllActivities(
         criteria: UserActivityCriteria?,
@@ -80,10 +82,17 @@ class UserActivityResource(
     fun getAllActivityPageable(
         @ParameterObject @Nullable search: String?,
         @ParameterObject @Nullable centerId: Long?,
+        @ParameterObject @Nullable days: Int = 30,
         @ParameterObject pageable: Pageable?
     ): ResponseEntity<Page<OverallUserActivities?>?> {
         val donorId = userFacade.getDonorId()
-        val page = userActivityService.getAllActivityByUserPageable(search,centerId, donorId, pageable)
+        val page = userActivityService.getAllActivityByUserPageable(
+            search,
+            centerId,
+            donorId,
+            if (days > 30) 30 else days,
+            pageable
+        )
         return ResponseEntity.ok()
             .header("X-Total-Count", page?.totalElements.toString())
             .body(page)

@@ -67,6 +67,7 @@ interface UserActivityService {
         search: String?,
         centerId: Long?,
         donorId: Long?,
+        days: Int,
         pageable: Pageable?
     ): Page<OverallUserActivities?>?
 }

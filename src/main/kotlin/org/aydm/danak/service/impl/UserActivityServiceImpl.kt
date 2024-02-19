@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional
 import org.web.danak.service.dto.SubmitDTO
 import org.web.danak.service.dto.SubmitUserDTO
 import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
 import java.util.*
 
 /**
@@ -152,15 +154,20 @@ class UserActivityServiceImpl(
         search: String?,
         centerId: Long?,
         donorId: Long?,
+        days: Int,
         pageable: Pageable?
     ): Page<OverallUserActivities?>? {
         val tabletIds = tabletServiceImpl.findAllTabletIdsByDonorId(donorId)
         if (tabletIds.isEmpty() && donorId != null) return Page.empty()
+        val startDate = LocalDate.now().minusDays(days.toLong()).atStartOfDay(ZoneId.systemDefault()).toInstant()
+        val endDate = Instant.now()
         return getUserData(
             userActivityRepository.getAllActivityByUserPageable(
                 searchString = search,
                 centerId = centerId,
                 tabletIds = tabletIds,
+                startDay = startDate,
+                endDay = endDate,
                 pageable = pageable
             )
         )

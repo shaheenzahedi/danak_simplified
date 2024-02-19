@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
+import java.time.Instant
 
 /**
  * Spring Data SQL repository for the [UserActivity] entity.
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Repository
 interface UserActivityRepository : JpaRepository<UserActivity, Long>, JpaSpecificationExecutor<UserActivity> {
     @Query("SELECT ua FROM UserActivity ua WHERE ua.id IN (SELECT MAX(ua2.id) FROM UserActivity ua2 GROUP BY ua2.uniqueName,ua2.activity.id)")
     fun findAllDistinctActivityIdSummary(): List<UserActivity>?
+
 
     @Query(
         "SELECT tu, t, c FROM TabletUser tu " +
@@ -29,12 +31,15 @@ interface UserActivityRepository : JpaRepository<UserActivity, Long>, JpaSpecifi
             "LOWER(t.name) LIKE CONCAT('%', LOWER(:searchString), '%')) " +
             "AND (COALESCE(:tabletIds, NULL) IS NULL OR t.id IN :tabletIds) " +
             "AND (:centerId IS NULL OR c.id = :centerId) " +
+            "AND (ua.createTimeStamp BETWEEN :startDay AND :endDay) " + // Add this line for filtering by start and end day
             "GROUP BY tu.id"
     )
     fun getAllActivityByUserPageable(
         @Param("searchString") searchString: String?,
         @Param("centerId") centerId: Long?,
         @Param("tabletIds") tabletIds: List<Long>,
+        @Param("startDay") startDay: Instant, // Add start day parameter
+        @Param("endDay") endDay: Instant,     // Add end day parameter
         pageable: Pageable?
     ): Page<Array<Any?>?>?
 
