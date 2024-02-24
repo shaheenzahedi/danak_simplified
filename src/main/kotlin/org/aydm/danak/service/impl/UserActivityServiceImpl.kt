@@ -193,13 +193,7 @@ class UserActivityServiceImpl(
                         activities.maxByOrNull { it.activity?.id ?: 0 }  // Select the item with the highest id
                     }?.filterNotNull()
                     ?.map {
-                        AggregatedUserActivity(
-                            userActivityId = it.activity?.id,
-                            displayListName = it.listName,
-                            listName = it.uniqueName,
-                            totals = it.total,
-                            completes = it.completed
-                        )
+                        userActivityMapper.toDto(it)
                     }
             )
         }?.let { PageImpl(it, results.pageable, results.totalElements) }
@@ -231,7 +225,7 @@ class UserActivityServiceImpl(
                 tabletId = first.id,
                 tabletIdentifier = first.identifier,
                 center = null,
-                userActivities = activityDTOs?.toMutableList()
+                userActivities = null
             )
         }
     }
