@@ -186,15 +186,19 @@ class UserActivityServiceImpl(
                 tabletId = tablet.id,
                 tabletIdentifier = tablet.identifier,
                 centerName = if (center != null) "${center.name} - ${center.country} - ${center.city}" else "",
-                userActivities = tabletUser.userActivities?.map {
-                    AggregatedUserActivity(
-                        userActivityId = it.activity?.id,
-                        displayListName = it.listName,
-                        listName = it.uniqueName,
-                        totals = it.total,
-                        completes = it.completed
-                    )
-                }
+                userActivities = tabletUser.userActivities?.groupBy { it.uniqueName }  // Group by uniqueName
+                    ?.map { (_, activities) ->  // For each group
+                        activities.maxByOrNull { it.activity?.id ?: 0 }  // Select the item with the highest id
+                    }?.filterNotNull()
+                    ?.map {
+                        AggregatedUserActivity(
+                            userActivityId = it.activity?.id,
+                            displayListName = it.listName,
+                            listName = it.uniqueName,
+                            totals = it.total,
+                            completes = it.completed
+                        )
+                    }
             )
         }?.let { PageImpl(it, results.pageable, results.totalElements) }
     }
