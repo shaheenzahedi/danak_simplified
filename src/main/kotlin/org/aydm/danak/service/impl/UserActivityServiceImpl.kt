@@ -7,6 +7,7 @@ import org.aydm.danak.domain.UserActivity
 import org.aydm.danak.repository.UserActivityRepository
 import org.aydm.danak.service.UserActivityService
 import org.aydm.danak.service.dto.*
+import org.aydm.danak.service.mapper.CenterMapper
 import org.aydm.danak.service.mapper.UserActivityMapper
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
@@ -30,6 +31,7 @@ class UserActivityServiceImpl(
     private val userActivityRepository: UserActivityRepository,
     private val userActivityMapper: UserActivityMapper,
     private val tabletServiceImpl: TabletServiceImpl,
+    private val centerMapper: CenterMapper,
     private val tabletUserServiceImpl: TabletUserServiceImpl
 ) : UserActivityService {
 
@@ -185,7 +187,7 @@ class UserActivityServiceImpl(
                 tabletName = tablet.name,
                 tabletId = tablet.id,
                 tabletIdentifier = tablet.identifier,
-                centerName = if (center != null) "${center.name} - ${center.country} - ${center.city}" else "",
+                center = center?.let { centerMapper.toDto(it) },
                 userActivities = tabletUser.userActivities?.groupBy { it.uniqueName }  // Group by uniqueName
                     ?.map { (_, activities) ->  // For each group
                         activities.maxByOrNull { it.activity?.id ?: 0 }  // Select the item with the highest id
@@ -228,7 +230,7 @@ class UserActivityServiceImpl(
                 tabletName = first.name,
                 tabletId = first.id,
                 tabletIdentifier = first.identifier,
-                centerName = null,
+                center = null,
                 userActivities = activityDTOs?.toMutableList()
             )
         }
