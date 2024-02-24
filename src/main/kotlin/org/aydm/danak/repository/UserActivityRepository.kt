@@ -20,22 +20,20 @@ interface UserActivityRepository : JpaRepository<UserActivity, Long>, JpaSpecifi
     fun findAllDistinctActivityIdSummary(): List<UserActivity>?
 
     @Query(
-        "SELECT tu, t, c FROM TabletUser tu " +
+        "SELECT tu, t, c, MAX(ua.id) " +
+            "FROM TabletUser tu " +
             "JOIN tu.tablet t " +
             "LEFT JOIN tu.tablet.center c " +
             "LEFT JOIN tu.userActivities ua " +
+            "LEFT JOIN tu.userActivities ua2 ON ua.uniqueName = ua2.uniqueName AND ua.id < ua2.id " +
             "WHERE (:searchString IS NULL OR " +
             "LOWER(tu.firstName) LIKE CONCAT('%', LOWER(:searchString), '%') OR " +
             "LOWER(tu.lastName) LIKE CONCAT('%', LOWER(:searchString), '%') OR " +
             "LOWER(t.name) LIKE CONCAT('%', LOWER(:searchString), '%')) " +
             "AND (COALESCE(:tabletIds, NULL) IS NULL OR t.id IN :tabletIds) " +
             "AND (:centerId IS NULL OR c.id = :centerId) " +
+            "AND (ua2.id IS NULL) " +
             "AND (ua.createTimeStamp BETWEEN :startDay AND :endDay) " + // Add this line for filtering by start and end day
-            "AND ua.id IN (" +
-            "SELECT MAX(subua.id) FROM UserActivity subua " +
-            "WHERE subua.uniqueName = ua.uniqueName " +
-            "GROUP BY subua.uniqueName" +
-            ") " +
             "GROUP BY tu.id"
     )
     fun getAllActivityByUserPageable(
