@@ -19,7 +19,6 @@ import tech.jhipster.service.filter.LongFilter
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.temporal.TemporalUnit
 import java.util.*
 
 interface UserFacade {

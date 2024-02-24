@@ -19,7 +19,6 @@ interface UserActivityRepository : JpaRepository<UserActivity, Long>, JpaSpecifi
     @Query("SELECT ua FROM UserActivity ua WHERE ua.id IN (SELECT MAX(ua2.id) FROM UserActivity ua2 GROUP BY ua2.uniqueName,ua2.activity.id)")
     fun findAllDistinctActivityIdSummary(): List<UserActivity>?
 
-
     @Query(
         "SELECT tu, t, c FROM TabletUser tu " +
             "JOIN tu.tablet t " +
@@ -32,6 +31,11 @@ interface UserActivityRepository : JpaRepository<UserActivity, Long>, JpaSpecifi
             "AND (COALESCE(:tabletIds, NULL) IS NULL OR t.id IN :tabletIds) " +
             "AND (:centerId IS NULL OR c.id = :centerId) " +
             "AND (ua.createTimeStamp BETWEEN :startDay AND :endDay) " + // Add this line for filtering by start and end day
+            "AND ua.id IN (" +
+            "SELECT MAX(subua.id) FROM UserActivity subua " +
+            "WHERE subua.uniqueName = ua.uniqueName " +
+            "GROUP BY subua.uniqueName" +
+            ") " +
             "GROUP BY tu.id"
     )
     fun getAllActivityByUserPageable(
@@ -39,7 +43,7 @@ interface UserActivityRepository : JpaRepository<UserActivity, Long>, JpaSpecifi
         @Param("centerId") centerId: Long?,
         @Param("tabletIds") tabletIds: List<Long>,
         @Param("startDay") startDay: Instant, // Add start day parameter
-        @Param("endDay") endDay: Instant,     // Add end day parameter
+        @Param("endDay") endDay: Instant, // Add end day parameter
         pageable: Pageable?
     ): Page<Array<Any?>?>?
 
