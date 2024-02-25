@@ -192,11 +192,21 @@ class UserActivityServiceImpl(
                 userActivities = tabletUser.userActivities
                     ?.groupBy { it.uniqueName }
                     ?.map { (_, activities) ->
-                        val sortedActivities = activities.sortedByDescending { it.id }
-                        userActivityMapper.toDto(sortedActivities.first())
-                            .apply {
-                                lastChange = (completed?.minus(sortedActivities.getOrNull(1)?.completed ?: 0) ?: 0)
+                        var maxActivity: UserActivity? = null
+                        var secondMaxActivity: UserActivity? = null
+
+                        for (activity in activities) {
+                            if (maxActivity == null || activity.id!! > maxActivity.id!!) {
+                                secondMaxActivity = maxActivity
+                                maxActivity = activity
+                            } else if (secondMaxActivity == null || activity.id!! > secondMaxActivity.id!!) {
+                                secondMaxActivity = activity
                             }
+                        }
+
+                        userActivityMapper.toDto(maxActivity!!).apply {
+                            lastChange = completed!! - (secondMaxActivity?.completed ?: 0)
+                        }
                     }
             )
         }?.let { PageImpl(it, results.pageable, results.totalElements) }
