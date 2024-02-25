@@ -20,6 +20,7 @@ import org.web.danak.service.dto.SubmitUserDTO
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 import java.util.*
 
 /**
@@ -161,15 +162,15 @@ class UserActivityServiceImpl(
     ): Page<OverallUserActivities?>? {
         val tabletIds = tabletServiceImpl.findAllTabletIdsByDonorId(donorId)
         if (tabletIds.isEmpty() && donorId != null) return Page.empty()
-        val startDate = LocalDate.now().minusDays(days.toLong()).atStartOfDay(ZoneId.systemDefault()).toInstant()
-        val endDate = Instant.now()
+        val now = Instant.now().truncatedTo(ChronoUnit.DAYS)
+        val startDate = now.minus(days.toLong(),ChronoUnit.DAYS)
         return getUserData(
             userActivityRepository.getAllActivityByUserPageable(
                 searchString = search,
                 centerId = centerId,
                 tabletIds = tabletIds,
                 startDay = startDate,
-                endDay = endDate,
+                endDay = now,
                 pageable = pageable
             )
         )
@@ -188,13 +189,9 @@ class UserActivityServiceImpl(
                 tabletId = tablet.id,
                 tabletIdentifier = tablet.identifier,
                 center = center?.let { centerMapper.toDto(it) },
-                userActivities = tabletUser.userActivities?.groupBy { it.uniqueName }  // Group by uniqueName
-                    ?.map { (_, activities) ->  // For each group
-                        activities.maxByOrNull { it.activity?.id ?: 0 }  // Select the item with the highest id
-                    }?.filterNotNull()
-                    ?.map {
-                        userActivityMapper.toDto(it)
-                    }
+                userActivities = tabletUser.userActivities
+                    ?.groupBy { it.uniqueName }
+                    ?.map { (_, activities) -> userActivityMapper.toDto(activities.maxByOrNull { it.id!! }!!) }
             )
         }?.let { PageImpl(it, results.pageable, results.totalElements) }
     }
