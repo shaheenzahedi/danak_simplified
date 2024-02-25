@@ -163,7 +163,7 @@ class UserActivityServiceImpl(
         val tabletIds = tabletServiceImpl.findAllTabletIdsByDonorId(donorId)
         if (tabletIds.isEmpty() && donorId != null) return Page.empty()
         val now = Instant.now().truncatedTo(ChronoUnit.DAYS)
-        val startDate = now.minus(days.toLong(),ChronoUnit.DAYS)
+        val startDate = now.minus(days.toLong(), ChronoUnit.DAYS)
         return getUserData(
             userActivityRepository.getAllActivityByUserPageable(
                 searchString = search,
@@ -191,7 +191,13 @@ class UserActivityServiceImpl(
                 center = center?.let { centerMapper.toDto(it) },
                 userActivities = tabletUser.userActivities
                     ?.groupBy { it.uniqueName }
-                    ?.map { (_, activities) -> userActivityMapper.toDto(activities.maxByOrNull { it.id!! }!!) }
+                    ?.map { (_, activities) ->
+                        val sortedActivities = activities.sortedByDescending { it.id }
+                        userActivityMapper.toDto(sortedActivities.first())
+                            .apply {
+                                lastChange = (completed?.minus(sortedActivities.getOrNull(1)?.completed ?: 0) ?: 0)
+                            }
+                    }
             )
         }?.let { PageImpl(it, results.pageable, results.totalElements) }
     }

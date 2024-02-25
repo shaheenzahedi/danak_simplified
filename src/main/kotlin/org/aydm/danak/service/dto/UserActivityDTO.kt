@@ -24,6 +24,7 @@ data class UserActivityDTO(
     var completed: Long? = null,
 
     var uniqueName: String? = null,
+    var lastChange: Long? = null,
 
     var activity: TabletUserDTO? = null
 ) : Serializable {
