@@ -20,22 +20,19 @@ interface UserActivityRepository : JpaRepository<UserActivity, Long>, JpaSpecifi
     fun findAllDistinctActivityIdSummary(): List<UserActivity>?
 
     @Query(
-        "SELECT tu, t, c " +
-            "FROM TabletUser tu " +
+        "SELECT tu, t, c FROM TabletUser tu " +
             "JOIN tu.tablet t " +
             "LEFT JOIN tu.tablet.center c " +
             "LEFT JOIN tu.userActivities ua " +
-            "WHERE " +
-            "   (:searchString IS NULL OR " +
-            "   LOWER(tu.firstName) LIKE CONCAT('%', LOWER(:searchString), '%') OR " +
-            "   LOWER(tu.lastName) LIKE CONCAT('%', LOWER(:searchString), '%') OR " +
-            "   LOWER(t.name) LIKE CONCAT('%', LOWER(:searchString), '%')) " +
-            "   AND (:centerId IS NULL OR c.id = :centerId) " +
-            "   AND (COALESCE(:tabletIds, NULL) IS NULL OR t.id IN :tabletIds) " +
-            "   AND ua.id IN (SELECT ua2.id FROM UserActivity ua2 " +
-            "                 WHERE ua2.createTimeStamp BETWEEN :startDay AND :endDay " +
-            "                 ORDER BY ua2.id) " +
-            "GROUP BY tu.id"
+            "WHERE (:searchString IS NULL OR " +
+            "LOWER(tu.firstName) LIKE CONCAT('%', LOWER(:searchString), '%') OR " +
+            "LOWER(tu.lastName) LIKE CONCAT('%', LOWER(:searchString), '%') OR " +
+            "LOWER(t.name) LIKE CONCAT('%', LOWER(:searchString), '%')) " +
+            "AND (COALESCE(:tabletIds, NULL) IS NULL OR t.id IN :tabletIds) " +
+            "AND (:centerId IS NULL OR c.id = :centerId) " +
+            "AND (ua.createTimeStamp BETWEEN :startDay AND :endDay) " +
+            "GROUP BY tu.id " +
+            "ORDER BY ua.id"
     )
     fun getAllActivityByUserPageable(
         @Param("searchString") searchString: String?,
@@ -45,7 +42,6 @@ interface UserActivityRepository : JpaRepository<UserActivity, Long>, JpaSpecifi
         @Param("endDay") endDay: Instant,
         pageable: Pageable?
     ): Page<Array<Any?>?>?
-
 
     fun findAllByActivityId(activityId: Long): List<UserActivity>
 }
