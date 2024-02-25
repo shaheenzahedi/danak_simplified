@@ -31,8 +31,7 @@ interface UserActivityRepository : JpaRepository<UserActivity, Long>, JpaSpecifi
             "AND (COALESCE(:tabletIds, NULL) IS NULL OR t.id IN :tabletIds) " +
             "AND (:centerId IS NULL OR c.id = :centerId) " +
             "AND (ua.createTimeStamp BETWEEN :startDay AND :endDay) " +
-            "GROUP BY tu.id " +
-            "ORDER BY ua.id"
+            "GROUP BY tu.id "
     )
     fun getAllActivityByUserPageable(
         @Param("searchString") searchString: String?,
