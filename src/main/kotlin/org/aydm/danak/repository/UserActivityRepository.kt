@@ -20,26 +20,30 @@ interface UserActivityRepository : JpaRepository<UserActivity, Long>, JpaSpecifi
     fun findAllDistinctActivityIdSummary(): List<UserActivity>?
 
     @Query(
-        "SELECT tu, t, c FROM TabletUser tu " +
+        "SELECT tu, t, c, (SELECT MAX(ua.id) FROM tu.userActivities ua) AS max_ua_id " +
+            "FROM TabletUser tu " +
             "JOIN tu.tablet t " +
             "LEFT JOIN tu.tablet.center c " +
-            "LEFT JOIN tu.userActivities ua " +
             "WHERE (:searchString IS NULL OR " +
             "LOWER(tu.firstName) LIKE CONCAT('%', LOWER(:searchString), '%') OR " +
-            "LOWER(tu.lastName) LIKE CONCAT('%', LOWER(:searchString), '%') OR " +
-            "LOWER(t.name) LIKE CONCAT('%', LOWER(:searchString), '%')) " +
+            "LOWER(tu.lastName) LIKE CONCAT('%', LOWER(:searchString), '%')) " +
             "AND (COALESCE(:tabletIds, NULL) IS NULL OR t.id IN :tabletIds) " +
             "AND (:centerId IS NULL OR c.id = :centerId) " +
-            "AND (ua.createTimeStamp BETWEEN :startDay AND :endDay) " + // Add this line for filtering by start and end day
-            "GROUP BY tu.id"
+            "AND EXISTS (" +
+            "SELECT 1 FROM tu.userActivities ua " +
+            "WHERE ua.createTimeStamp BETWEEN :startDay AND :endDay" +
+            ") " +
+            "GROUP BY tu.id " +
+            "ORDER BY COALESCE(max_ua_id, 0) DESC"
     )
     fun getAllActivityByUserPageable(
         @Param("searchString") searchString: String?,
         @Param("centerId") centerId: Long?,
         @Param("tabletIds") tabletIds: List<Long>,
-        @Param("startDay") startDay: Instant, // Add start day parameter
-        @Param("endDay") endDay: Instant,     // Add end day parameter
+        @Param("startDay") startDay: Instant,
+        @Param("endDay") endDay: Instant,
         pageable: Pageable?
     ): Page<Array<Any?>?>?
+
     fun findAllByActivityId(activityId: Long): List<UserActivity>
 }
