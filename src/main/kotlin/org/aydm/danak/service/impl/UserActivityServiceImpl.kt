@@ -10,16 +10,12 @@ import org.aydm.danak.service.dto.*
 import org.aydm.danak.service.mapper.CenterMapper
 import org.aydm.danak.service.mapper.UserActivityMapper
 import org.slf4j.LoggerFactory
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.*
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.web.danak.service.dto.SubmitDTO
 import org.web.danak.service.dto.SubmitUserDTO
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
+import java.time.*
 import java.time.temporal.ChronoUnit
 import java.util.*
 
@@ -174,6 +170,68 @@ class UserActivityServiceImpl(
                 pageable = pageable
             )
         )
+    }
+
+
+    override fun cleanUpUserActivity(): Boolean {
+        try {
+            var totalRowsProcessed = 0
+            var totalRowsDeleted = 0
+
+            val pageSize = 1000
+            val earliestTimeStamp = userActivityRepository.findEarliestTimeStamp() ?: return true
+            val latestTimeStamp = userActivityRepository.findLatestTimeStamp() ?: return true
+            log.info("Starting cleanup process...")
+            log.info("Earliest timestamp: $earliestTimeStamp")
+            log.info("Latest timestamp: $latestTimeStamp")
+            var currentDate = earliestTimeStamp.atZone(ZoneId.systemDefault()).toLocalDate()
+            while (!currentDate.isAfter(latestTimeStamp.atZone(ZoneId.systemDefault()).toLocalDate())) {
+                val startOfDay = currentDate.atStartOfDay().toInstant(ZoneOffset.UTC)
+                val endOfDay = currentDate.plusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC)
+
+                log.info("Processing data for date: $currentDate")
+                var page = 0
+                var hasNextPage = true
+                while (hasNextPage) {
+                    val pageable = PageRequest.of(page++, pageSize, Sort.by(Sort.Direction.ASC, "createTimeStamp"))
+                    val userActivityPage = userActivityRepository.findByCreateTimeStampBetweenAndCreateTimeStampNotNull(
+                        startOfDay,
+                        endOfDay,
+                        pageable
+                    )
+                    val userActivityData = userActivityPage.content
+
+                    if (userActivityData.isEmpty()) {
+                        hasNextPage = false
+                        continue
+                    }
+
+                    val groups = userActivityData.groupBy { it.activity?.id to it.uniqueName }
+                    val rowsToKeep = mutableListOf<UserActivity>()
+
+                    for ((_, group) in groups) {
+                        val latestByDay =
+                            group.filter { it.createTimeStamp != null }.maxByOrNull { it.createTimeStamp!! }
+                        latestByDay?.let { rowsToKeep.add(it) }
+                    }
+
+                    val rowsToDelete = userActivityData - rowsToKeep.toSet()
+                    userActivityRepository.deleteAll(rowsToDelete)
+                    totalRowsProcessed += userActivityData.size
+                    totalRowsDeleted += rowsToDelete.size
+                    hasNextPage = userActivityPage.hasNext()
+                    log.info("Processed ${userActivityData.size} records. Rows deleted: ${rowsToDelete.size}.")
+                }
+
+                currentDate = currentDate.plusDays(1)
+            }
+
+            log.info("Cleanup completed. Total rows processed: $totalRowsProcessed, Rows deleted: $totalRowsDeleted")
+            return true
+        } catch (e: Exception) {
+            log.error("Error occurred during cleanup: ${e.message}")
+            return false
+        }
     }
 
     fun getUserData(results: Page<Array<Any?>?>?): Page<OverallUserActivities?>? {

@@ -19,6 +19,13 @@ interface UserActivityRepository : JpaRepository<UserActivity, Long>, JpaSpecifi
     @Query("SELECT ua FROM UserActivity ua WHERE ua.id IN (SELECT MAX(ua2.id) FROM UserActivity ua2 GROUP BY ua2.uniqueName,ua2.activity.id)")
     fun findAllDistinctActivityIdSummary(): List<UserActivity>?
 
+    @Query("SELECT MIN(u.createTimeStamp) FROM UserActivity u")
+    fun findEarliestTimeStamp(): Instant?
+
+    @Query("SELECT MAX(u.createTimeStamp) FROM UserActivity u")
+    fun findLatestTimeStamp(): Instant?
+
+    fun findByCreateTimeStampBetweenAndCreateTimeStampNotNull(start: Instant, end: Instant, pageable: Pageable): Page<UserActivity>
     @Query(
         "SELECT tu, t, c FROM TabletUser tu " +
             "JOIN tu.tablet t " +

@@ -78,6 +78,10 @@ class UserActivityResource(
         return userFacade.getAllActivities(criteria, pageable)
     }
 
+    @GetMapping("trigger-cleanup")
+    fun cleanUpTrigger() : ResponseEntity<Boolean>{
+        return ResponseEntity.ok(userActivityService.cleanUpUserActivity())
+    }
     @GetMapping("all-activities-page")
     fun getAllActivityPageable(
         @ParameterObject @Nullable search: String?,

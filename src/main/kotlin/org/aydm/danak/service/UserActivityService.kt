@@ -70,4 +70,6 @@ interface UserActivityService {
         days: Int,
         pageable: Pageable?
     ): Page<OverallUserActivities?>?
+
+    fun cleanUpUserActivity(): Boolean
 }
