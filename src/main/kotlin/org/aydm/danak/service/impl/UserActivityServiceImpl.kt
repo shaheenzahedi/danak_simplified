@@ -198,9 +198,11 @@ class UserActivityServiceImpl(
 
         val pageSize = 1000 // Set your desired page size
         var pageNumber = 0
-        var isLastPage = false
 
-        while (!isLastPage) {
+        val todayDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        val fileName = "$todayDate - ${UUID.randomUUID()}.csv"
+
+        while (true) {
             val pageable = PageRequest.of(pageNumber, pageSize)
             val allActivityByUserPageable = userActivityRepository.exportReports(
                 startDay = earliestTimeStamp,
@@ -213,19 +215,23 @@ class UserActivityServiceImpl(
             }
 
             val userData = getUserData(userDataPage)
-            val todayDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-            val fileName = "$todayDate - ${UUID.randomUUID()}.csv"
-            log.info("Saving data to file: $fileName")
-            saveToCSVFile(userData, apkBasePath, fileName)
+            log.info("Saving data for page $pageNumber to file: $fileName")
+            saveToCSVFile(userData, apkBasePath, fileName, pageNumber == 0)
 
+            if (!userDataPage.hasNext()) {
+                break
+            }
             pageNumber++
-            isLastPage = !userDataPage.hasNext()
         }
 
         log.info("Excel export process completed")
     }
 
-    private fun saveToCSVFile(userData: Page<OverallUserActivities?>?, basePath: String, fileName: String, delimiter: Char = ';') {
+    private fun saveToCSVFile(userData: Page<OverallUserActivities?>?,
+                              basePath: String,
+                              fileName: String,
+                              isFirstPage: Boolean,
+                              delimiter: Char = ';') {
         if (userData == null) {
             log.warn("No user data provided, aborting save")
             return
@@ -234,16 +240,21 @@ class UserActivityServiceImpl(
         val outputFile = File("$basePath/$fileName")
 
         try {
-            BufferedWriter(FileWriter(outputFile, Charset.defaultCharset())).use { writer ->
-
-                // Write headers
-                val headers = "شماره یکتای تبلت${delimiter}نام${delimiter}نام خانوادگی" +
-                    "${delimiter}شناسه اندروید${delimiter}شناسه تبلت${delimiter}" +
-                    "شناسه داخلی تبلت${delimiter}نام مرکز${delimiter}" +
-                    "شهر یا روستای مرکز${delimiter}استان مرکز${delimiter}" +
-                    "${userData.first()?.getTitle(delimiter)}" +
-                    "${delimiter}تاریخ دقیق دریافت گزارش\n"
-                writer.write(headers)
+            BufferedWriter(FileWriter(outputFile, Charset.defaultCharset(), !isFirstPage)).use { writer ->
+                // Write headers only for the first page
+                if (isFirstPage) {
+                    val headers = "شماره یکتای تبلت${delimiter}نام" +
+                        "${delimiter}نام خانوادگی" +
+                        "${delimiter}شناسه اندروید" +
+                        "${delimiter}شناسه تبلت" +
+                        "${delimiter}شناسه داخلی تبلت" +
+                        "${delimiter}نام مرکز" +
+                        "${delimiter}شهر یا روستای مرکز" +
+                        "${delimiter}استان مرکز" +
+                        "${delimiter}${userData.first()?.getTitle(delimiter)}" +
+                        "${delimiter}تاریخ دقیق دریافت گزارش\n"
+                    writer.write(headers)
+                }
 
                 // Write data
                 for (user in userData) {
@@ -252,10 +263,17 @@ class UserActivityServiceImpl(
                         continue
                     }
 
-                    val userDataString = "${user.tabletUserId}$delimiter${user.firstName}$delimiter${user.lastName}" +
-                        "$delimiter${user.tabletName}$delimiter${user.tabletId}$delimiter${user.tabletIdentifier}" +
-                        "$delimiter${user.center?.name ?: ""}$delimiter${user.center?.city ?: ""}$delimiter${user.center?.country ?: ""}" +
-                        "$delimiter${user.getActivitiesAsCSVLine(delimiter)}$delimiter${user.getActivitiesTimeStamp()}\n"
+                    val userDataString = "${user.tabletUserId}" +
+                        "$delimiter${user.firstName}" +
+                        "$delimiter${user.lastName}" +
+                        "$delimiter${user.tabletName}" +
+                        "$delimiter${user.tabletId}" +
+                        "$delimiter${user.tabletIdentifier}" +
+                        "$delimiter${user.center?.name ?: ""}" +
+                        "$delimiter${user.center?.city ?: ""}" +
+                        "$delimiter${user.center?.country ?: ""}" +
+                        "$delimiter${user.getActivitiesAsCSVLine(delimiter)}" +
+                        "$delimiter${user.getActivitiesTimeStamp()}\n"
                     writer.write(userDataString)
                 }
             }
