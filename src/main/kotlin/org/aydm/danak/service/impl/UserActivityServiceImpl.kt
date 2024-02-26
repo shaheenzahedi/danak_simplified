@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.web.danak.service.dto.SubmitDTO
 import org.web.danak.service.dto.SubmitUserDTO
 import java.io.*
+import java.nio.charset.Charset
 import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -233,7 +234,7 @@ class UserActivityServiceImpl(
         val outputFile = File("$basePath/$fileName")
 
         try {
-            BufferedWriter(FileWriter(outputFile)).use { writer ->
+            BufferedWriter(FileWriter(outputFile, Charset.defaultCharset())).use { writer ->
 
                 // Write headers
                 val headers = "شماره یکتای تبلت${delimiter}نام${delimiter}نام خانوادگی" +
