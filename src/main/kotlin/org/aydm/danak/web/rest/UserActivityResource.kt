@@ -82,6 +82,11 @@ class UserActivityResource(
     fun cleanUpTrigger() : ResponseEntity<Boolean>{
         return ResponseEntity.ok(userActivityService.cleanUpUserActivity())
     }
+    @GetMapping("trigger-excel-export")
+    fun excelExportTrigger() : ResponseEntity<Boolean>{
+        userActivityService.doExcelExport()
+        return ResponseEntity.ok().build()
+    }
     @GetMapping("all-activities-page")
     fun getAllActivityPageable(
         @ParameterObject @Nullable search: String?,

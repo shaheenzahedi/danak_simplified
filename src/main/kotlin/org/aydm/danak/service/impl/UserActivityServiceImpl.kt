@@ -10,12 +10,16 @@ import org.aydm.danak.service.dto.*
 import org.aydm.danak.service.mapper.CenterMapper
 import org.aydm.danak.service.mapper.UserActivityMapper
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.*
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.web.danak.service.dto.SubmitDTO
 import org.web.danak.service.dto.SubmitUserDTO
+import java.io.*
 import java.time.*
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.*
 
@@ -29,7 +33,8 @@ class UserActivityServiceImpl(
     private val userActivityMapper: UserActivityMapper,
     private val tabletServiceImpl: TabletServiceImpl,
     private val centerMapper: CenterMapper,
-    private val tabletUserServiceImpl: TabletUserServiceImpl
+    private val tabletUserServiceImpl: TabletUserServiceImpl,
+    @Value("\${asset.apk.base}") private val apkBasePath: String,
 ) : UserActivityService {
 
     private val log = LoggerFactory.getLogger(javaClass)
@@ -172,6 +177,93 @@ class UserActivityServiceImpl(
         )
     }
 
+    @Scheduled(cron = "0 0 1 * * *") // Execute at 1 AM every day
+    fun midnightCron() {
+        cleanUpUserActivity()
+    }
+
+    override fun doExcelExport() {
+        log.info("Starting Excel export process")
+
+        val earliestTimeStamp = userActivityRepository.findEarliestTimeStamp() ?: run {
+            log.warn("Earliest timestamp not found, aborting export")
+            return
+        }
+
+        val latestTimeStamp = userActivityRepository.findLatestTimeStamp() ?: run {
+            log.warn("Latest timestamp not found, aborting export")
+            return
+        }
+
+        val pageSize = 1000 // Set your desired page size
+        var pageNumber = 0
+        var isLastPage = false
+
+        while (!isLastPage) {
+            val pageable = PageRequest.of(pageNumber, pageSize)
+            val allActivityByUserPageable = userActivityRepository.exportReports(
+                startDay = earliestTimeStamp,
+                endDay = latestTimeStamp,
+                pageable = pageable
+            )
+            val userDataPage = if (allActivityByUserPageable != null) allActivityByUserPageable else {
+                log.warn("No data found for page number $pageNumber, exiting loop")
+                continue;
+            }
+
+            val userData = getUserData(userDataPage)
+            val todayDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+            val fileName = "$todayDate - ${UUID.randomUUID()}.csv"
+            log.info("Saving data to file: $fileName")
+            saveToCSVFile(userData, apkBasePath, fileName)
+
+            pageNumber++
+            isLastPage = !userDataPage.hasNext()
+        }
+
+        log.info("Excel export process completed")
+    }
+
+    private fun saveToCSVFile(userData: Page<OverallUserActivities?>?, basePath: String, fileName: String, delimiter: Char = ';') {
+        if (userData == null) {
+            log.warn("No user data provided, aborting save")
+            return
+        }
+
+        val outputFile = File("$basePath/$fileName")
+
+        try {
+            BufferedWriter(FileWriter(outputFile)).use { writer ->
+
+                // Write headers
+                val headers = "شماره یکتای تبلت${delimiter}نام${delimiter}نام خانوادگی" +
+                    "${delimiter}شناسه اندروید${delimiter}شناسه تبلت${delimiter}" +
+                    "شناسه داخلی تبلت${delimiter}نام مرکز${delimiter}" +
+                    "شهر یا روستای مرکز${delimiter}استان مرکز${delimiter}" +
+                    "${userData.first()?.getTitle(delimiter)}" +
+                    "${delimiter}تاریخ دقیق دریافت گزارش\n"
+                writer.write(headers)
+
+                // Write data
+                for (user in userData) {
+                    if (user == null) {
+                        log.warn("Null user found, skipping")
+                        continue
+                    }
+
+                    val userDataString = "${user.tabletUserId}$delimiter${user.firstName}$delimiter${user.lastName}" +
+                        "$delimiter${user.tabletName}$delimiter${user.tabletId}$delimiter${user.tabletIdentifier}" +
+                        "$delimiter${user.center?.name ?: ""}$delimiter${user.center?.city ?: ""}$delimiter${user.center?.country ?: ""}" +
+                        "$delimiter${user.getActivitiesAsCSVLine(delimiter)}$delimiter${user.getActivitiesTimeStamp()}\n"
+                    writer.write(userDataString)
+                }
+            }
+            log.info("Data saved to file: $outputFile")
+        } catch (e: IOException) {
+            log.error("Error occurred while saving data to file", e)
+        }
+    }
+
 
     override fun cleanUpUserActivity(): Boolean {
         try {
@@ -210,8 +302,8 @@ class UserActivityServiceImpl(
                     val rowsToKeep = mutableListOf<UserActivity>()
 
                     for ((_, group) in groups) {
-                        val latestByDay =
-                            group.filter { it.createTimeStamp != null }.maxByOrNull { it.createTimeStamp!! }
+                        val latestByDay = group.filter { it.createTimeStamp != null }
+                            .maxByOrNull { it.createTimeStamp!! }
                         latestByDay?.let { rowsToKeep.add(it) }
                     }
 

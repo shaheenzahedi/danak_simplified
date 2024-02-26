@@ -1,5 +1,7 @@
 package org.aydm.danak.service.dto
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+
 data class OverallUserActivities(
     val tabletUserId: Long?,
     val firstName: String?,
@@ -9,7 +11,25 @@ data class OverallUserActivities(
     val tabletIdentifier: String?,
     val center: CenterDTO?,
     val userActivities: List<UserActivityDTO>?
-)
+) {
+    @JsonIgnore
+    fun getTitle(delimiter: Char): String {
+        if (userActivities.isNullOrEmpty()) return ""
+        return userActivities.joinToString(separator = delimiter.toString()) { "${it.listName} (${it.total})" }
+    }
+
+    @JsonIgnore
+    fun getActivitiesAsCSVLine(delimiter: Char): String {
+        if (userActivities.isNullOrEmpty()) return ""
+        return userActivities.joinToString(separator = delimiter.toString()) { "${it.completed}" }
+    }
+
+    @JsonIgnore
+    fun getActivitiesTimeStamp(): String {
+        if (userActivities.isNullOrEmpty()) return ""
+        return (userActivities.first().createTimeStamp ?:"").toString()
+    }
+}
 
 data class AggregatedUserActivity(
     val userActivityId: Long?,

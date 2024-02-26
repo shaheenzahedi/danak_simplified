@@ -48,6 +48,19 @@ interface UserActivityRepository : JpaRepository<UserActivity, Long>, JpaSpecifi
         @Param("endDay") endDay: Instant,
         pageable: Pageable?
     ): Page<Array<Any?>?>?
+    @Query(
+        "SELECT tu, t, c FROM TabletUser tu " +
+            "JOIN tu.tablet t " +
+            "LEFT JOIN tu.tablet.center c " +
+            "LEFT JOIN tu.userActivities ua " +
+            "WHERE (ua.createTimeStamp BETWEEN :startDay AND :endDay) " +
+            "GROUP BY tu.id "
+    )
+    fun exportReports(
+        @Param("startDay") startDay: Instant,
+        @Param("endDay") endDay: Instant,
+        pageable: Pageable?
+    ): Page<Array<Any?>?>?
 
     fun findAllByActivityId(activityId: Long): List<UserActivity>
 }

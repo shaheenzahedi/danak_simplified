@@ -72,4 +72,5 @@ interface UserActivityService {
     ): Page<OverallUserActivities?>?
 
     fun cleanUpUserActivity(): Boolean
+    fun doExcelExport()
 }
