@@ -30,7 +30,7 @@ services:
       MYSQL_PASSWORD: ${MYSQL_ADMIN_USER}
       # Password for root access
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-    command: mysqld --sql_mode="" --character-set-server=utf8 --collation-server=utf8_slovenian_ci --init-connect='SET NAMES UTF8;' --innodb-flush-log-at-trx-commit=0 --innodb-default-row-format=DYNAMIC --innodb-redo-log-capacity=4G
+    command: mysqld --sql_mode="" --character-set-server=utf8 --collation-server=utf8_slovenian_ci --init-connect='SET NAMES UTF8;' --innodb-flush-log-at-trx-commit=0 --innodb-default-row-format=DYNAMIC
     ports:
       - 3306:3306
     volumes:
