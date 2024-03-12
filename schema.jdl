@@ -1,6 +1,8 @@
 entity Tablet {
     createTimeStamp Instant
     updateTimeStamp Instant
+    identifier Instant
+    tag Instant
     name String
     androidId String
     macId String
@@ -107,6 +109,7 @@ entity FileBelongings {
 
 entity Version {
     version Integer
+    tag String
 }
 
 entity Center {
@@ -172,9 +175,12 @@ relationship OneToMany {
     Center to CenterDonor{center}
     Center to CenterImage{center}
     Center to CenterWatchList{center}
+    Center to CenterWatchList{center}
+    Center to Tablet{center}
     Donor to CenterDonor{donor}
     Donor to DonorImage{donor}
     Donor to DonorWatchList{donor}
+    Donor to Tablet{donor}
     Tablet to TabletLog{tablet}
     Tablet to TabletUser{tablet}
     Tablet to TabletWatchList{tablet}
@@ -187,6 +193,7 @@ relationship OneToMany {
     User to Center{createdBy}
     User to Center{modifiedBy}
     User to DonorWatchList{user}
+    User to Donor{user}
     User to Donor{archivedBy}
     User to Donor{createdBy}
     User to Donor{modifiedBy}
