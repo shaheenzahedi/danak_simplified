@@ -29,7 +29,7 @@
             <column name="email" type="varchar(255)">
                 <constraints nullable="true"/>
             </column>
-            <column name="description" type="varchar(255)">
+            <column name="description" type="varchar(5000)">
                 <constraints nullable="true"/>
             </column>
             <column name="recovery_phrase" type="varchar(255)">
