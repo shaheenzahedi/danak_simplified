@@ -1,14 +1,15 @@
 package org.aydm.danak.service.facade;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class FileResponse {
+
     String checksum;
     String path;
     Long size;
 
-    public FileResponse() {
-    }
+    public FileResponse() {}
 
     public FileResponse(String checksum, String path) {
         this.checksum = checksum;
@@ -45,4 +46,3 @@ public class FileResponse {
         this.size = size;
     }
 }
-

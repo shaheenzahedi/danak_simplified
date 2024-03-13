@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { createAsyncThunk, isFulfilled, isPending, isRejected } from '@reduxjs/toolkit';
+import { createAsyncThunk, isFulfilled, isPending } from '@reduxjs/toolkit';
 
 import { cleanEntity } from 'app/shared/util/entity-utils';
-import { IQueryParams, createEntitySlice, EntityState, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
-import { IFileBelongings, defaultValue } from 'app/shared/model/file-belongings.model';
+import { createEntitySlice, EntityState, IQueryParams, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
+import { defaultValue, IFileBelongings } from 'app/shared/model/file-belongings.model';
 
 const initialState: EntityState<IFileBelongings> = {
   loading: false,

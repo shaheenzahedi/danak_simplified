@@ -1,19 +1,21 @@
 import React, { useEffect } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Row, Col } from 'reactstrap';
-import { Translate, TextFormat } from 'react-jhipster';
+import { Link, useParams } from 'react-router-dom';
+import { Button, Col, Row } from 'reactstrap';
+import { TextFormat, Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { APP_DATE_FORMAT } from 'app/config/constants';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
 import { getEntity } from './tablet-user.reducer';
 
-export const TabletUserDetail = (props: RouteComponentProps<{ id: string }>) => {
+export const TabletUserDetail = () => {
   const dispatch = useAppDispatch();
 
+  const { id } = useParams<'id'>();
+
   useEffect(() => {
-    dispatch(getEntity(props.match.params.id));
+    dispatch(getEntity(id));
   }, []);
 
   const tabletUserEntity = useAppSelector(state => state.tabletUser.entity);
@@ -69,9 +71,35 @@ export const TabletUserDetail = (props: RouteComponentProps<{ id: string }>) => 
           </dt>
           <dd>{tabletUserEntity.email}</dd>
           <dt>
+            <span id="description">
+              <Translate contentKey="danakApp.tabletUser.description">Description</Translate>
+            </span>
+          </dt>
+          <dd>{tabletUserEntity.description}</dd>
+          <dt>
+            <span id="recoveryPhrase">
+              <Translate contentKey="danakApp.tabletUser.recoveryPhrase">Recovery Phrase</Translate>
+            </span>
+          </dt>
+          <dd>{tabletUserEntity.recoveryPhrase}</dd>
+          <dt>
+            <span id="archived">
+              <Translate contentKey="danakApp.tabletUser.archived">Archived</Translate>
+            </span>
+          </dt>
+          <dd>{tabletUserEntity.archived ? 'true' : 'false'}</dd>
+          <dt>
             <Translate contentKey="danakApp.tabletUser.tablet">Tablet</Translate>
           </dt>
           <dd>{tabletUserEntity.tablet ? tabletUserEntity.tablet.id : ''}</dd>
+          <dt>
+            <Translate contentKey="danakApp.tabletUser.archivedBy">Archived By</Translate>
+          </dt>
+          <dd>{tabletUserEntity.archivedBy ? tabletUserEntity.archivedBy.id : ''}</dd>
+          <dt>
+            <Translate contentKey="danakApp.tabletUser.modifiedBy">Modified By</Translate>
+          </dt>
+          <dd>{tabletUserEntity.modifiedBy ? tabletUserEntity.modifiedBy.id : ''}</dd>
         </dl>
         <Button tag={Link} to="/tablet-user" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" />{' '}

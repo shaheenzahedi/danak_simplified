@@ -104,6 +104,31 @@ class TabletUserQueryService(
             if (criteria.email != null) {
                 specification = specification.and(buildStringSpecification(criteria.email, TabletUser_.email))
             }
+            if (criteria.description != null) {
+                specification =
+                    specification.and(buildStringSpecification(criteria.description, TabletUser_.description))
+            }
+            if (criteria.recoveryPhrase != null) {
+                specification =
+                    specification.and(buildStringSpecification(criteria.recoveryPhrase, TabletUser_.recoveryPhrase))
+            }
+            if (criteria.archived != null) {
+                specification = specification.and(buildSpecification(criteria.archived, TabletUser_.archived))
+            }
+            if (criteria.tabletUserImageId != null) {
+                specification = specification.and(
+                    buildSpecification(criteria.tabletUserImageId as Filter<Long>) {
+                        it.join(TabletUser_.tabletUserImages, JoinType.LEFT).get(TabletUserImage_.id)
+                    }
+                )
+            }
+            if (criteria.tabletUserWatchListId != null) {
+                specification = specification.and(
+                    buildSpecification(criteria.tabletUserWatchListId as Filter<Long>) {
+                        it.join(TabletUser_.tabletUserWatchLists, JoinType.LEFT).get(TabletUserWatchList_.id)
+                    }
+                )
+            }
             if (criteria.userActivityId != null) {
                 specification = specification.and(
                     buildSpecification(criteria.userActivityId as Filter<Long>) {
@@ -115,6 +140,20 @@ class TabletUserQueryService(
                 specification = specification.and(
                     buildSpecification(criteria.tabletId as Filter<Long>) {
                         it.join(TabletUser_.tablet, JoinType.LEFT).get(Tablet_.id)
+                    }
+                )
+            }
+            if (criteria.archivedById != null) {
+                specification = specification.and(
+                    buildSpecification(criteria.archivedById as Filter<Long>) {
+                        it.join(TabletUser_.archivedBy, JoinType.LEFT).get(User_.id)
+                    }
+                )
+            }
+            if (criteria.modifiedById != null) {
+                specification = specification.and(
+                    buildSpecification(criteria.modifiedById as Filter<Long>) {
+                        it.join(TabletUser_.modifiedBy, JoinType.LEFT).get(User_.id)
                     }
                 )
             }

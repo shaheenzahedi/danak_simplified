@@ -1,17 +1,73 @@
 entity Tablet {
     createTimeStamp Instant
     updateTimeStamp Instant
+    identifier String
+    tag String
     name String
     androidId String
-    macId String
     model String
+    description String
+    archived Boolean
 }
+
 entity TabletUser {
     createTimeStamp Instant
     updateTimeStamp Instant
     firstName String
     lastName String
     email String
+    description String
+    recoveryPhrase String
+    archived Boolean
+}
+
+entity PanelLog {
+    createTimeStamp Instant
+    panelLogType PanelLogType
+}
+enum PanelLogType {
+    DELETE
+    MODIFY
+    CREATE
+    ENTER
+}
+entity TabletLog {
+    createTimeStamp Instant
+}
+entity TabletUserImage {
+    tabletUserImageType TabletUserImageType
+}
+
+enum TabletUserImageType {
+    TABLET
+    GALLERY
+    PROFILE
+}
+entity DonorImage {
+    donorImageType DonorImageType
+}
+enum DonorImageType {
+    DOCUMENT
+    PROFILE
+}
+entity CenterImage {
+    centerImageType CenterImageType
+}
+enum CenterImageType {
+    GALLERY
+    PROFILE
+}
+entity TabletUserWatchList {
+
+}
+entity TabletWatchList {
+
+}
+entity CenterWatchList {
+
+}
+entity DonorWatchList {
+
 }
 entity UserActivity {
     createTimeStamp Instant
@@ -21,66 +77,149 @@ entity UserActivity {
     total Long
     completed Long
     uniqueName String
+    version String
+    description String
 }
-entity File{
-	name String
+
+entity UploadedFile {
+    createTimeStamp Instant
+    deleteTimeStamp Instant
+    isPublic Boolean
+    name String
+    path String
+    updateTimeStamp Instant
+}
+
+entity FileShare {
+
+}
+
+
+entity File {
+    name String
     checksum String
     path String
     size String
 }
-entity FileBelongings{
+
+entity FileBelongings {
 
 }
-entity Version{
-	version Integer
+
+entity Version {
+    version Integer
+    tag String
 }
+
 entity Center {
-    createTimeStamp  Instant
-    updateTimeStamp Instant
-    name String
-    city String
-    country String
-}
-entity Donor{
     createTimeStamp Instant
     updateTimeStamp Instant
     name String
     city String
     country String
+    archived Boolean
+    centerType CenterType
+    latitude Long
+    longitude Long
+}
+enum CenterType {
+    SCHOOL
+    HOME
+    LIBRARY
+    MOSQUE
+    CHARITY
+    OTHER
 }
 
-entity CenterDonor{
-
+entity Donor {
+    createTimeStamp Instant
+    updateTimeStamp Instant
+    name String
+    city String
+    country String
+    nationalCode String
+    educationType EducationType
+    education String
+    occupation String
+    workPlace String
+    workPlacePhone String
+    archived Boolean
+    otpPhoneCode Long
+    otpPhoneEnable Boolean
+    otpPhoneSentTimeStamp Instant
+    latitude Long
+    longitude Long
+    uid String
 }
+
+enum EducationType {
+    SCHOOL
+    HIGH_SCHOOL
+    DIPLOMA
+    MASTERS
+    PHD
+}
+
+entity CenterDonor {
+    joinedTimeStamp Instant
+    donorType DonorType
+}
+
+enum DonorType {
+    MANAGER
+    FACILITATOR
+}
+
 relationship OneToMany {
     Center to CenterDonor{center}
+    Center to CenterImage{center}
+    Center to CenterWatchList{center}
+    Center to CenterWatchList{center}
+    Center to Tablet{center}
     Donor to CenterDonor{donor}
-}
+    Donor to DonorImage{donor}
+    Donor to DonorWatchList{donor}
+    Donor to Tablet{donor}
+    Tablet to TabletLog{tablet}
+    Tablet to TabletUser{tablet}
+    Tablet to TabletWatchList{tablet}
+    TabletUser to TabletUserImage{tabletUser}
+    TabletUser to TabletUserWatchList{tabletUser}
+    TabletUser to UserActivity{activity}
+    UploadedFile to FileShare{file}
+    User to CenterWatchList{user}
+    User to Center{archivedBy}
+    User to Center{createdBy}
+    User to Center{modifiedBy}
+    User to DonorWatchList{user}
+    User to Donor{user}
+    User to Donor{archivedBy}
+    User to Donor{createdBy}
+    User to Donor{modifiedBy}
+    User to FileShare{user}
+    User to PanelLog{user}
+    User to TabletUserWatchList{user}
+    User to TabletUser{archivedBy}
+    User to TabletUser{modifiedBy}
+    User to TabletWatchList{user}
+    User to Tablet{archivedBy}
+    User to Tablet{modifiedBy}
 
-
-
-
-
-// Use Data Transfer Objects (DTO)
-dto * with mapstruct
-
-// Set service options to all except few
-service all with serviceImpl
-
-
-relationship OneToMany {
-	TabletUser to UserActivity{activity}
-   	Tablet to TabletUser{tablet}
     File to FileBelongings{file}
     Version to FileBelongings{version}
     Version to File{placement}
 }
 
-
+relationship OneToOne {
+    CenterImage{file} to UploadedFile
+    DonorImage{file} to UploadedFile
+    TabletUserImage{file} to UploadedFile
+}
 
 // Use Data Transfer Objects (DTO)
 dto * with mapstruct
 
 // Set service options to all except few
 service all with serviceImpl
-
+paginate all with pagination
+filter all

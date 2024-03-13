@@ -1,18 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-import { getEntity, deleteEntity } from './version.reducer';
+import { deleteEntity, getEntity } from './version.reducer';
 
-export const VersionDeleteDialog = (props: RouteComponentProps<{ id: string }>) => {
-  const [loadModal, setLoadModal] = useState(false);
+export const VersionDeleteDialog = () => {
   const dispatch = useAppDispatch();
 
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { id } = useParams<'id'>();
+
+  const [loadModal, setLoadModal] = useState(false);
+
   useEffect(() => {
-    dispatch(getEntity(props.match.params.id));
+    dispatch(getEntity(id));
     setLoadModal(true);
   }, []);
 
@@ -20,7 +25,7 @@ export const VersionDeleteDialog = (props: RouteComponentProps<{ id: string }>) 
   const updateSuccess = useAppSelector(state => state.version.updateSuccess);
 
   const handleClose = () => {
-    props.history.push('/version' + props.location.search);
+    navigate('/version' + location.search);
   };
 
   useEffect(() => {

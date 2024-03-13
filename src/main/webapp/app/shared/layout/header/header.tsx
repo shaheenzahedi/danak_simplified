@@ -1,13 +1,13 @@
 import './header.scss';
 
-import React, { useState, useEffect } from 'react';
-import { Translate, Storage } from 'react-jhipster';
-import { Navbar, Nav, NavbarToggler, Collapse } from 'reactstrap';
+import React, { useEffect, useState } from 'react';
+import { Storage, Translate } from 'react-jhipster';
+import { Collapse, Nav, Navbar, NavbarToggler } from 'reactstrap';
 import LoadingBar from 'react-redux-loading-bar';
 
 import { isRTL } from 'app/config/translation';
-import { Home, Brand } from './header-components';
-import { AdminMenu, EntitiesMenu, AccountMenu, LocaleMenu } from '../menus';
+import { Brand, Home } from './header-components';
+import { AccountMenu, AdminMenu, EntitiesMenu, LocaleMenu } from '../menus';
 import { useAppDispatch } from 'app/config/store';
 import { setLocale } from 'app/shared/reducers/locale';
 
@@ -50,7 +50,7 @@ const Header = (props: IHeaderProps) => {
     <div id="app-header">
       {renderDevRibbon()}
       <LoadingBar className="loading-bar" />
-      <Navbar data-cy="navbar" dark expand="md" fixed="top" className="jh-navbar">
+      <Navbar data-cy="navbar" dark expand="md" fixed="top" className="bg-dark">
         <NavbarToggler aria-label="Menu" onClick={toggleMenu} />
         <Brand />
         <Collapse isOpen={menuOpen} navbar>

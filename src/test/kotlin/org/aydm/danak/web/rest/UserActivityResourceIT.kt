@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.Validator
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import java.util.Random
+import java.util.*
 import java.util.concurrent.atomic.AtomicLong
 import javax.persistence.EntityManager
 import kotlin.test.assertNotNull
@@ -396,6 +396,7 @@ class UserActivityResourceIT {
         // Get all the userActivityList where listName is null
         defaultUserActivityShouldNotBeFound("listName.specified=false")
     }
+
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -703,6 +704,7 @@ class UserActivityResourceIT {
         // Get all the userActivityList where uniqueName is null
         defaultUserActivityShouldNotBeFound("uniqueName.specified=false")
     }
+
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -800,6 +802,7 @@ class UserActivityResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().string("0"))
     }
+
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -808,6 +811,7 @@ class UserActivityResourceIT {
         restUserActivityMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE))
             .andExpect(status().isNotFound)
     }
+
     @Test
     @Transactional
     fun putNewUserActivity() {

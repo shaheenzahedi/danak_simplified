@@ -10,12 +10,16 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "file_belongings")
+@SuppressWarnings("common-java:DuplicatedBlocks")
 data class FileBelongings(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     var id: Long? = null,
+
+    // jhipster-needle-entity-add-field - JHipster will add fields here
+) : Serializable {
 
     @ManyToOne
     @JsonIgnoreProperties(
@@ -25,7 +29,7 @@ data class FileBelongings(
         ],
         allowSetters = true
     )
-    var file: File? = null,
+    var file: File? = null
 
     @ManyToOne
     @JsonIgnoreProperties(
@@ -35,14 +39,13 @@ data class FileBelongings(
         ],
         allowSetters = true
     )
-    var version: Version? = null,
-    // jhipster-needle-entity-add-field - JHipster will add fields here
-) : Serializable {
+    var version: Version? = null
 
     fun file(file: File?): FileBelongings {
         this.file = file
         return this
     }
+
     fun version(version: Version?): FileBelongings {
         this.version = version
         return this
@@ -60,7 +63,6 @@ data class FileBelongings(
         return id != null && other.id != null && id == other.id
     }
 
-    @Override
     override fun toString(): String {
         return "FileBelongings{" +
             "id=" + id +

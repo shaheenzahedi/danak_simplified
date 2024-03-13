@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional
 import tech.jhipster.security.RandomUtil
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import java.util.Optional
+import java.util.*
 
 /**
  * Service class for managing users.
@@ -179,6 +179,7 @@ class UserService(
             log.debug("Deleted User: $user")
         }
     }
+
     /**
      * Update basic information (first name, last name, email, language) for the current user.
      *

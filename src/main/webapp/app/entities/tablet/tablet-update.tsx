@@ -1,44 +1,46 @@
-import React, { useState, useEffect } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Row, Col, FormText } from 'reactstrap';
-import { isNumber, Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
+import React, { useEffect } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Button, Col, Row } from 'reactstrap';
+import { Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
-import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-
-import { ICenter } from 'app/shared/model/center.model';
 import { getEntities as getCenters } from 'app/entities/center/center.reducer';
-import { IDonor } from 'app/shared/model/donor.model';
 import { getEntities as getDonors } from 'app/entities/donor/donor.reducer';
-import { ITablet } from 'app/shared/model/tablet.model';
-import { getEntity, updateEntity, createEntity, reset } from './tablet.reducer';
+import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
+import { createEntity, getEntity, reset, updateEntity } from './tablet.reducer';
 
-export const TabletUpdate = (props: RouteComponentProps<{ id: string }>) => {
+export const TabletUpdate = () => {
   const dispatch = useAppDispatch();
 
-  const [isNew] = useState(!props.match.params || !props.match.params.id);
+  const navigate = useNavigate();
+
+  const { id } = useParams<'id'>();
+  const isNew = id === undefined;
 
   const centers = useAppSelector(state => state.center.entities);
   const donors = useAppSelector(state => state.donor.entities);
+  const users = useAppSelector(state => state.userManagement.users);
   const tabletEntity = useAppSelector(state => state.tablet.entity);
   const loading = useAppSelector(state => state.tablet.loading);
   const updating = useAppSelector(state => state.tablet.updating);
   const updateSuccess = useAppSelector(state => state.tablet.updateSuccess);
+
   const handleClose = () => {
-    props.history.push('/tablet' + props.location.search);
+    navigate('/tablet' + location.search);
   };
 
   useEffect(() => {
     if (isNew) {
       dispatch(reset());
     } else {
-      dispatch(getEntity(props.match.params.id));
+      dispatch(getEntity(id));
     }
 
     dispatch(getCenters({}));
     dispatch(getDonors({}));
+    dispatch(getUsers({}));
   }, []);
 
   useEffect(() => {
@@ -50,12 +52,16 @@ export const TabletUpdate = (props: RouteComponentProps<{ id: string }>) => {
   const saveEntity = values => {
     values.createTimeStamp = convertDateTimeToServer(values.createTimeStamp);
     values.updateTimeStamp = convertDateTimeToServer(values.updateTimeStamp);
+    values.identifier = convertDateTimeToServer(values.identifier);
+    values.tag = convertDateTimeToServer(values.tag);
 
     const entity = {
       ...tabletEntity,
       ...values,
       center: centers.find(it => it.id.toString() === values.center.toString()),
       donor: donors.find(it => it.id.toString() === values.donor.toString()),
+      archivedBy: users.find(it => it.id.toString() === values.archivedBy.toString()),
+      modifiedBy: users.find(it => it.id.toString() === values.modifiedBy.toString()),
     };
 
     if (isNew) {
@@ -70,13 +76,19 @@ export const TabletUpdate = (props: RouteComponentProps<{ id: string }>) => {
       ? {
           createTimeStamp: displayDefaultDateTime(),
           updateTimeStamp: displayDefaultDateTime(),
+          identifier: displayDefaultDateTime(),
+          tag: displayDefaultDateTime(),
         }
       : {
           ...tabletEntity,
           createTimeStamp: convertDateTimeFromServer(tabletEntity.createTimeStamp),
           updateTimeStamp: convertDateTimeFromServer(tabletEntity.updateTimeStamp),
+          identifier: convertDateTimeFromServer(tabletEntity.identifier),
+          tag: convertDateTimeFromServer(tabletEntity.tag),
           center: tabletEntity?.center?.id,
           donor: tabletEntity?.donor?.id,
+          archivedBy: tabletEntity?.archivedBy?.id,
+          modifiedBy: tabletEntity?.modifiedBy?.id,
         };
 
   return (
@@ -120,15 +132,47 @@ export const TabletUpdate = (props: RouteComponentProps<{ id: string }>) => {
                 type="datetime-local"
                 placeholder="YYYY-MM-DD HH:mm"
               />
-              <ValidatedField label={translate('danakApp.tablet.name')} id="tablet-name" name="name" data-cy="name" type="text" />
               <ValidatedField
                 label={translate('danakApp.tablet.identifier')}
                 id="tablet-identifier"
                 name="identifier"
                 data-cy="identifier"
+                type="datetime-local"
+                placeholder="YYYY-MM-DD HH:mm"
+              />
+              <ValidatedField
+                label={translate('danakApp.tablet.tag')}
+                id="tablet-tag"
+                name="tag"
+                data-cy="tag"
+                type="datetime-local"
+                placeholder="YYYY-MM-DD HH:mm"
+              />
+              <ValidatedField label={translate('danakApp.tablet.name')} id="tablet-name" name="name" data-cy="name" type="text" />
+              <ValidatedField
+                label={translate('danakApp.tablet.androidId')}
+                id="tablet-androidId"
+                name="androidId"
+                data-cy="androidId"
                 type="text"
               />
+              <ValidatedField label={translate('danakApp.tablet.macId')} id="tablet-macId" name="macId" data-cy="macId" type="text" />
               <ValidatedField label={translate('danakApp.tablet.model')} id="tablet-model" name="model" data-cy="model" type="text" />
+              <ValidatedField
+                label={translate('danakApp.tablet.description')}
+                id="tablet-description"
+                name="description"
+                data-cy="description"
+                type="text"
+              />
+              <ValidatedField
+                label={translate('danakApp.tablet.archived')}
+                id="tablet-archived"
+                name="archived"
+                data-cy="archived"
+                check
+                type="checkbox"
+              />
               <ValidatedField id="tablet-center" name="center" data-cy="center" label={translate('danakApp.tablet.center')} type="select">
                 <option value="" key="0" />
                 {centers
@@ -143,6 +187,38 @@ export const TabletUpdate = (props: RouteComponentProps<{ id: string }>) => {
                 <option value="" key="0" />
                 {donors
                   ? donors.map(otherEntity => (
+                      <option value={otherEntity.id} key={otherEntity.id}>
+                        {otherEntity.id}
+                      </option>
+                    ))
+                  : null}
+              </ValidatedField>
+              <ValidatedField
+                id="tablet-archivedBy"
+                name="archivedBy"
+                data-cy="archivedBy"
+                label={translate('danakApp.tablet.archivedBy')}
+                type="select"
+              >
+                <option value="" key="0" />
+                {users
+                  ? users.map(otherEntity => (
+                      <option value={otherEntity.id} key={otherEntity.id}>
+                        {otherEntity.id}
+                      </option>
+                    ))
+                  : null}
+              </ValidatedField>
+              <ValidatedField
+                id="tablet-modifiedBy"
+                name="modifiedBy"
+                data-cy="modifiedBy"
+                label={translate('danakApp.tablet.modifiedBy')}
+                type="select"
+              >
+                <option value="" key="0" />
+                {users
+                  ? users.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
                         {otherEntity.id}
                       </option>

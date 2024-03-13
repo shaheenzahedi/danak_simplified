@@ -1,37 +1,37 @@
-import React, { useState, useEffect } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Row, Col, FormText } from 'reactstrap';
-import { isNumber, Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
+import React, { useEffect } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Button, Col, Row } from 'reactstrap';
+import { Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
-import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-
-import { ITabletUser } from 'app/shared/model/tablet-user.model';
 import { getEntities as getTabletUsers } from 'app/entities/tablet-user/tablet-user.reducer';
-import { IUserActivity } from 'app/shared/model/user-activity.model';
-import { getEntity, updateEntity, createEntity, reset } from './user-activity.reducer';
+import { createEntity, getEntity, reset, updateEntity } from './user-activity.reducer';
 
-export const UserActivityUpdate = (props: RouteComponentProps<{ id: string }>) => {
+export const UserActivityUpdate = () => {
   const dispatch = useAppDispatch();
 
-  const [isNew] = useState(!props.match.params || !props.match.params.id);
+  const navigate = useNavigate();
+
+  const { id } = useParams<'id'>();
+  const isNew = id === undefined;
 
   const tabletUsers = useAppSelector(state => state.tabletUser.entities);
   const userActivityEntity = useAppSelector(state => state.userActivity.entity);
   const loading = useAppSelector(state => state.userActivity.loading);
   const updating = useAppSelector(state => state.userActivity.updating);
   const updateSuccess = useAppSelector(state => state.userActivity.updateSuccess);
+
   const handleClose = () => {
-    props.history.push('/user-activity' + props.location.search);
+    navigate('/user-activity' + location.search);
   };
 
   useEffect(() => {
     if (isNew) {
       dispatch(reset());
     } else {
-      dispatch(getEntity(props.match.params.id));
+      dispatch(getEntity(id));
     }
 
     dispatch(getTabletUsers({}));
@@ -151,6 +151,20 @@ export const UserActivityUpdate = (props: RouteComponentProps<{ id: string }>) =
                 id="user-activity-uniqueName"
                 name="uniqueName"
                 data-cy="uniqueName"
+                type="text"
+              />
+              <ValidatedField
+                label={translate('danakApp.userActivity.version')}
+                id="user-activity-version"
+                name="version"
+                data-cy="version"
+                type="text"
+              />
+              <ValidatedField
+                label={translate('danakApp.userActivity.description')}
+                id="user-activity-description"
+                name="description"
+                data-cy="description"
                 type="text"
               />
               <ValidatedField

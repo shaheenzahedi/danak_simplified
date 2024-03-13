@@ -1,6 +1,9 @@
 package org.aydm.danak.service
+
 import org.aydm.danak.service.dto.VersionDTO
-import java.util.Optional
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import java.util.*
 
 /**
  * Service Interface for managing [org.aydm.danak.domain.Version].
@@ -34,9 +37,10 @@ interface VersionService {
     /**
      * Get all the versions.
      *
+     * @param pageable the pagination information.
      * @return the list of entities.
      */
-    fun findAll(): MutableList<VersionDTO>
+    fun findAll(pageable: Pageable): Page<VersionDTO>
 
     /**
      * Get the "id" version.

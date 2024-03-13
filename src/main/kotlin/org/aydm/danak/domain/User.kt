@@ -5,15 +5,7 @@ import org.aydm.danak.config.LOGIN_REGEX
 import org.hibernate.annotations.BatchSize
 import java.io.Serializable
 import java.time.Instant
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
-import javax.persistence.JoinColumn
-import javax.persistence.JoinTable
-import javax.persistence.ManyToMany
-import javax.persistence.Table
+import javax.persistence.*
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Pattern
@@ -28,7 +20,7 @@ class User(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null,
+    override var id: Long? = null,
 
     @field:NotNull
     @field:Pattern(regexp = LOGIN_REGEX)
@@ -94,7 +86,7 @@ class User(
     createdDate: Instant? = Instant.now(),
     lastModifiedBy: String? = null,
     lastModifiedDate: Instant? = Instant.now()
-) : AbstractAuditingEntity(createdBy, createdDate, lastModifiedBy, lastModifiedDate), Serializable {
+) : AbstractAuditingEntity<Long>(createdBy, createdDate, lastModifiedBy, lastModifiedDate), Serializable {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

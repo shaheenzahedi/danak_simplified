@@ -10,7 +10,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.Optional
+import java.util.*
 
 /**
  * Service Implementation for managing [Center].
@@ -32,7 +32,7 @@ class CenterServiceImpl(
     }
 
     override fun update(centerDTO: CenterDTO): CenterDTO {
-        log.debug("Request to save Center : {}", centerDTO)
+        log.debug("Request to update Center : {}", centerDTO)
         var center = centerMapper.toEntity(centerDTO)
         center = centerRepository.save(center)
         return centerMapper.toDto(center)

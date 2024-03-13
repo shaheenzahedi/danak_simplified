@@ -1,19 +1,21 @@
 import React, { useEffect } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Row, Col } from 'reactstrap';
-import { Translate, TextFormat } from 'react-jhipster';
+import { Link, useParams } from 'react-router-dom';
+import { Button, Col, Row } from 'reactstrap';
+import { TextFormat, Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { APP_DATE_FORMAT } from 'app/config/constants';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
 import { getEntity } from './tablet.reducer';
 
-export const TabletDetail = (props: RouteComponentProps<{ id: string }>) => {
+export const TabletDetail = () => {
   const dispatch = useAppDispatch();
 
+  const { id } = useParams<'id'>();
+
   useEffect(() => {
-    dispatch(getEntity(props.match.params.id));
+    dispatch(getEntity(id));
   }, []);
 
   const tabletEntity = useAppSelector(state => state.tablet.entity);
@@ -47,23 +49,53 @@ export const TabletDetail = (props: RouteComponentProps<{ id: string }>) => {
             {tabletEntity.updateTimeStamp ? <TextFormat value={tabletEntity.updateTimeStamp} type="date" format={APP_DATE_FORMAT} /> : null}
           </dd>
           <dt>
+            <span id="identifier">
+              <Translate contentKey="danakApp.tablet.identifier">Identifier</Translate>
+            </span>
+          </dt>
+          <dd>{tabletEntity.identifier ? <TextFormat value={tabletEntity.identifier} type="date" format={APP_DATE_FORMAT} /> : null}</dd>
+          <dt>
+            <span id="tag">
+              <Translate contentKey="danakApp.tablet.tag">Tag</Translate>
+            </span>
+          </dt>
+          <dd>{tabletEntity.tag ? <TextFormat value={tabletEntity.tag} type="date" format={APP_DATE_FORMAT} /> : null}</dd>
+          <dt>
             <span id="name">
               <Translate contentKey="danakApp.tablet.name">Name</Translate>
             </span>
           </dt>
           <dd>{tabletEntity.name}</dd>
           <dt>
-            <span id="identifier">
-              <Translate contentKey="danakApp.tablet.identifier">Identifier</Translate>
+            <span id="androidId">
+              <Translate contentKey="danakApp.tablet.androidId">Android Id</Translate>
             </span>
           </dt>
-          <dd>{tabletEntity.identifier}</dd>
+          <dd>{tabletEntity.androidId}</dd>
+          <dt>
+            <span id="macId">
+              <Translate contentKey="danakApp.tablet.macId">Mac Id</Translate>
+            </span>
+          </dt>
+          <dd>{tabletEntity.macId}</dd>
           <dt>
             <span id="model">
               <Translate contentKey="danakApp.tablet.model">Model</Translate>
             </span>
           </dt>
           <dd>{tabletEntity.model}</dd>
+          <dt>
+            <span id="description">
+              <Translate contentKey="danakApp.tablet.description">Description</Translate>
+            </span>
+          </dt>
+          <dd>{tabletEntity.description}</dd>
+          <dt>
+            <span id="archived">
+              <Translate contentKey="danakApp.tablet.archived">Archived</Translate>
+            </span>
+          </dt>
+          <dd>{tabletEntity.archived ? 'true' : 'false'}</dd>
           <dt>
             <Translate contentKey="danakApp.tablet.center">Center</Translate>
           </dt>
@@ -72,6 +104,14 @@ export const TabletDetail = (props: RouteComponentProps<{ id: string }>) => {
             <Translate contentKey="danakApp.tablet.donor">Donor</Translate>
           </dt>
           <dd>{tabletEntity.donor ? tabletEntity.donor.id : ''}</dd>
+          <dt>
+            <Translate contentKey="danakApp.tablet.archivedBy">Archived By</Translate>
+          </dt>
+          <dd>{tabletEntity.archivedBy ? tabletEntity.archivedBy.id : ''}</dd>
+          <dt>
+            <Translate contentKey="danakApp.tablet.modifiedBy">Modified By</Translate>
+          </dt>
+          <dd>{tabletEntity.modifiedBy ? tabletEntity.modifiedBy.id : ''}</dd>
         </dl>
         <Button tag={Link} to="/tablet" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" />{' '}

@@ -1,24 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Row, Col, FormText } from 'reactstrap';
-import { isNumber, Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
+import React, { useEffect } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Button, Col, Row } from 'reactstrap';
+import { Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
-import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-
-import { IFile } from 'app/shared/model/file.model';
 import { getEntities as getFiles } from 'app/entities/file/file.reducer';
-import { IVersion } from 'app/shared/model/version.model';
 import { getEntities as getVersions } from 'app/entities/version/version.reducer';
-import { IFileBelongings } from 'app/shared/model/file-belongings.model';
-import { getEntity, updateEntity, createEntity, reset } from './file-belongings.reducer';
+import { createEntity, getEntity, reset, updateEntity } from './file-belongings.reducer';
 
-export const FileBelongingsUpdate = (props: RouteComponentProps<{ id: string }>) => {
+export const FileBelongingsUpdate = () => {
   const dispatch = useAppDispatch();
 
-  const [isNew] = useState(!props.match.params || !props.match.params.id);
+  const navigate = useNavigate();
+
+  const { id } = useParams<'id'>();
+  const isNew = id === undefined;
 
   const files = useAppSelector(state => state.file.entities);
   const versions = useAppSelector(state => state.version.entities);
@@ -26,15 +22,16 @@ export const FileBelongingsUpdate = (props: RouteComponentProps<{ id: string }>)
   const loading = useAppSelector(state => state.fileBelongings.loading);
   const updating = useAppSelector(state => state.fileBelongings.updating);
   const updateSuccess = useAppSelector(state => state.fileBelongings.updateSuccess);
+
   const handleClose = () => {
-    props.history.push('/file-belongings' + props.location.search);
+    navigate('/file-belongings' + location.search);
   };
 
   useEffect(() => {
     if (isNew) {
       dispatch(reset());
     } else {
-      dispatch(getEntity(props.match.params.id));
+      dispatch(getEntity(id));
     }
 
     dispatch(getFiles({}));

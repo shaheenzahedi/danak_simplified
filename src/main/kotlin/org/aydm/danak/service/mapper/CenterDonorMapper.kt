@@ -16,16 +16,8 @@ interface CenterDonorMapper :
     EntityMapper<CenterDonorDTO, CenterDonor> {
 
     @Mappings(
-        Mapping(
-            target = "center",
-            source = "center",
-            qualifiedByName = ["centerId"]
-        ),
-        Mapping(
-            target = "donor",
-            source = "donor",
-            qualifiedByName = ["donorId"]
-        )
+        Mapping(target = "center", source = "center", qualifiedByName = ["centerId"]),
+        Mapping(target = "donor", source = "donor", qualifiedByName = ["donorId"])
     )
     override fun toDto(s: CenterDonor): CenterDonorDTO
 

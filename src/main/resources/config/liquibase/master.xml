@@ -3,35 +3,58 @@
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
-
-    <property name="now" value="now()" dbms="h2"/>
-    <property name="now" value="now()" dbms="mysql, mariadb"/>
-    <property name="floatType" value="float4" dbms="postgresql, h2"/>
-    <property name="floatType" value="float" dbms="mysql, oracle, mssql, mariadb"/>
+    <property name="blobType" value="blob" dbms="h2"/>
+    <property name="blobType" value="longblob" dbms="mysql"/>
     <property name="clobType" value="clob" dbms="h2"/>
-    <property name="clobType" value="clob" dbms="mysql, oracle, mssql, mariadb, postgresql"/>
-    <property name="uuidType" value="varchar(36)" dbms="h2, mysql, mariadb"/>
-    <property name="datetimeType" value="datetime(6)" dbms="mysql, mariadb"/>
-    <property name="datetimeType" value="datetime" dbms="oracle, mssql, postgresql, h2"/>
+    <property name="clobType" value="clob" dbms="mysql"/>
+    <property name="datetimeType" value="datetime" dbms="h2"/>
+    <property name="datetimeType" value="datetime(6)" dbms="mysql"/>
+    <property name="floatType" value="float" dbms="mysql"/>
+    <property name="floatType" value="float4" dbms="h2"/>
+    <property name="now" value="now()" dbms="h2"/>
+    <property name="now" value="now()" dbms="mysql"/>
+    <property name="uuidType" value="varchar(36)" dbms="h2"/>
+    <property name="uuidType" value="varchar(36)" dbms="mysql"/>
+
 
     <include file="config/liquibase/changelog/00000000000000_initial_schema.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20230117084925_added_entity_Tablet.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20230117084926_added_entity_TabletUser.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20230117084927_added_entity_UserActivity.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20230430110856_added_entity_File.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20230430110857_added_entity_FileBelongings.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20230430110858_added_entity_Version.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20230903102538_added_entity_Center.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20230903102537_added_entity_Donor.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20231229073015_added_entity_CenterDonor.xml" relativeToChangelogFile="false"/>
-    <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20230117084926_added_entity_constraints_TabletUser.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20230117084927_added_entity_UserActivity.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20230117084927_added_entity_constraints_UserActivity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20230430110856_added_entity_File.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20230430110856_added_entity_constraints_File.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20230430110857_added_entity_FileBelongings.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20230430110857_added_entity_constraints_FileBelongings.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20230430110858_added_entity_Version.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20230903102531_added_entity_constraints_Tablet.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20230903102537_added_entity_Donor.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20230903102537_added_entity_constraints_Donor.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20230903102538_added_entity_Center.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20231229073015_added_entity_CenterDonor.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20231229073015_added_entity_constraints_CenterDonor.xml" relativeToChangelogFile="false"/>
-    <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
-    <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
+    <include file="config/liquibase/changelog/20240312202319_added_entity_PanelLog.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240312202319_added_entity_constraints_PanelLog.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240312202320_added_entity_TabletLog.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240312202320_added_entity_constraints_TabletLog.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240312202321_added_entity_TabletUserImage.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240312202321_added_entity_constraints_TabletUserImage.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240312202322_added_entity_DonorImage.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240312202322_added_entity_constraints_DonorImage.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240312202323_added_entity_CenterImage.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240312202323_added_entity_constraints_CenterImage.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240312202324_added_entity_TabletUserWatchList.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240312202324_added_entity_constraints_TabletUserWatchList.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240312202325_added_entity_TabletWatchList.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240312202325_added_entity_constraints_TabletWatchList.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240312202326_added_entity_CenterWatchList.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240312202326_added_entity_constraints_CenterWatchList.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240312202327_added_entity_DonorWatchList.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240312202327_added_entity_constraints_DonorWatchList.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240312202329_added_entity_UploadedFile.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240312202330_added_entity_FileShare.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240312202330_added_entity_constraints_FileShare.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240312202334_added_entity_constraints_Center.xml" relativeToChangelogFile="false"/>
+
 </databaseChangeLog>

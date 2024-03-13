@@ -6,6 +6,8 @@ import org.aydm.danak.service.dto.FileBelongingsDTO
 import org.aydm.danak.web.rest.errors.BadRequestAlertException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import tech.jhipster.web.util.HeaderUtil
@@ -138,11 +140,11 @@ class FileBelongingsResource(
 
      * @return the [ResponseEntity] with status `200 (OK)` and the list of fileBelongings in body.
      */
-    @GetMapping("/file-belongings") fun getAllFileBelongings(): MutableList<FileBelongingsDTO> {
+    @GetMapping("/file-belongings") fun getAllFileBelongings(): Page<FileBelongingsDTO> {
 
         log.debug("REST request to get all FileBelongings")
 
-        return fileBelongingsService.findAll()
+        return fileBelongingsService.findAll(Pageable.unpaged())
     }
 
     /**

@@ -12,7 +12,7 @@ import org.thymeleaf.context.Context
 import org.thymeleaf.spring5.SpringTemplateEngine
 import tech.jhipster.config.JHipsterProperties
 import java.nio.charset.StandardCharsets
-import java.util.Locale
+import java.util.*
 import javax.mail.MessagingException
 
 private const val USER = "user"

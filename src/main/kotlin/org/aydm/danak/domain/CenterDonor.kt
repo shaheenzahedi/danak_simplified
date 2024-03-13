@@ -1,7 +1,9 @@
 package org.aydm.danak.domain
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import org.aydm.danak.domain.enumeration.DonorType
 import java.io.Serializable
+import java.time.Instant
 import javax.persistence.*
 
 /**
@@ -18,6 +20,13 @@ data class CenterDonor(
     @Column(name = "id")
     var id: Long? = null,
 
+    @Column(name = "joined_time_stamp")
+    var joinedTimeStamp: Instant? = null,
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "donor_type")
+    var donorType: DonorType? = null,
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
 ) : Serializable {
 
@@ -25,6 +34,12 @@ data class CenterDonor(
     @JsonIgnoreProperties(
         value = [
             "centerDonors",
+            "centerImages",
+            "centerWatchLists",
+            "tablets",
+            "archivedBy",
+            "createdBy",
+            "modifiedBy",
         ],
         allowSetters = true
     )
@@ -34,6 +49,13 @@ data class CenterDonor(
     @JsonIgnoreProperties(
         value = [
             "centerDonors",
+            "donorImages",
+            "donorWatchLists",
+            "tablets",
+            "user",
+            "archivedBy",
+            "createdBy",
+            "modifiedBy",
         ],
         allowSetters = true
     )
@@ -43,6 +65,7 @@ data class CenterDonor(
         this.center = center
         return this
     }
+
     fun donor(donor: Donor?): CenterDonor {
         this.donor = donor
         return this
@@ -63,6 +86,8 @@ data class CenterDonor(
     override fun toString(): String {
         return "CenterDonor{" +
             "id=" + id +
+            ", joinedTimeStamp='" + joinedTimeStamp + "'" +
+            ", donorType='" + donorType + "'" +
             "}"
     }
 

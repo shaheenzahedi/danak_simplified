@@ -15,22 +15,37 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="create_time_stamp" type="${datetimeType}">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
             </column>
             <column name="update_time_stamp" type="${datetimeType}">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
             </column>
             <column name="first_name" type="varchar(255)">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
             </column>
             <column name="last_name" type="varchar(255)">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
             </column>
             <column name="email" type="varchar(255)">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
+            </column>
+            <column name="description" type="varchar(5000)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="recovery_phrase" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="archived" type="boolean">
+                <constraints nullable="true"/>
             </column>
             <column name="tablet_id" type="bigint">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
+            </column>
+            <column name="archived_by_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="modified_by_id" type="bigint">
+                <constraints nullable="true"/>
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
@@ -60,6 +75,9 @@
             <column name="first_name" type="string"/>
             <column name="last_name" type="string"/>
             <column name="email" type="string"/>
+            <column name="description" type="string"/>
+            <column name="recovery_phrase" type="string"/>
+            <column name="archived" type="boolean"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>
     </changeSet>

@@ -1,23 +1,23 @@
 import React from 'react';
-import { Switch } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 
-import ErrorBoundaryRoute from 'app/shared/error/error-boundary-route';
+import ErrorBoundaryRoutes from 'app/shared/error/error-boundary-routes';
 
 import Tablet from './tablet';
 import TabletDetail from './tablet-detail';
 import TabletUpdate from './tablet-update';
 import TabletDeleteDialog from './tablet-delete-dialog';
 
-const Routes = ({ match }) => (
-  <>
-    <Switch>
-      <ErrorBoundaryRoute exact path={`${match.url}/new`} component={TabletUpdate} />
-      <ErrorBoundaryRoute exact path={`${match.url}/:id/edit`} component={TabletUpdate} />
-      <ErrorBoundaryRoute exact path={`${match.url}/:id`} component={TabletDetail} />
-      <ErrorBoundaryRoute path={match.url} component={Tablet} />
-    </Switch>
-    <ErrorBoundaryRoute exact path={`${match.url}/:id/delete`} component={TabletDeleteDialog} />
-  </>
+const TabletRoutes = () => (
+  <ErrorBoundaryRoutes>
+    <Route index element={<Tablet />} />
+    <Route path="new" element={<TabletUpdate />} />
+    <Route path=":id">
+      <Route index element={<TabletDetail />} />
+      <Route path="edit" element={<TabletUpdate />} />
+      <Route path="delete" element={<TabletDeleteDialog />} />
+    </Route>
+  </ErrorBoundaryRoutes>
 );
 
-export default Routes;
+export default TabletRoutes;

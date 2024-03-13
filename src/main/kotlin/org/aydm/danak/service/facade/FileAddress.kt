@@ -18,6 +18,7 @@ data class FileAddress(
                 size = values[3]
             )
         }
+
         fun fromDiffLine(version: Int, line: String): FileAddress {
             val values = line.substring(2).split(',')
             return FileAddress(

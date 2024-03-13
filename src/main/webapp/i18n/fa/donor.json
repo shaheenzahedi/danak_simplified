@@ -23,8 +23,27 @@
       "name": "Name",
       "city": "City",
       "country": "Country",
+      "nationalCode": "National Code",
+      "educationType": "Education Type",
+      "education": "Education",
+      "occupation": "Occupation",
+      "workPlace": "Work Place",
+      "workPlacePhone": "Work Place Phone",
+      "archived": "Archived",
+      "otpPhoneCode": "Otp Phone Code",
+      "otpPhoneEnable": "Otp Phone Enable",
+      "otpPhoneSentTimeStamp": "Otp Phone Sent Time Stamp",
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      "uid": "Uid",
+      "centerDonor": "Center Donor",
+      "donorImage": "Donor Image",
+      "donorWatchList": "Donor Watch List",
+      "tablet": "Tablet",
       "user": "User",
-      "tablet": "Tablet"
+      "archivedBy": "Archived By",
+      "createdBy": "Created By",
+      "modifiedBy": "Modified By"
     }
   }
 }

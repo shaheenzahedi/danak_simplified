@@ -1,6 +1,5 @@
 export const AUTHORITIES = {
   ADMIN: 'ROLE_ADMIN',
-  DONOR: 'ROLE_DONOR',
   USER: 'ROLE_USER',
 };
 

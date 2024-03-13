@@ -9,9 +9,7 @@ import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
 /**
  * Integration tests [ExceptionTranslator] controller advice.
@@ -36,7 +34,9 @@ class ExceptionTranslatorIT {
     @Test
     @Throws(Exception::class)
     fun testMethodArgumentNotValid() {
-        mockMvc.perform(post("/api/exception-translator-test/method-argument").content("{}").contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(
+            post("/api/exception-translator-test/method-argument").content("{}").contentType(MediaType.APPLICATION_JSON)
+        )
             .andExpect(status().isBadRequest)
             .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
             .andExpect(jsonPath("\$.message").value(ERR_VALIDATION))

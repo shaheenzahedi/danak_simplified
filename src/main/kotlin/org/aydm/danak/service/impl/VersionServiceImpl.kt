@@ -6,9 +6,11 @@ import org.aydm.danak.service.VersionService
 import org.aydm.danak.service.dto.VersionDTO
 import org.aydm.danak.service.mapper.VersionMapper
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.Optional
+import java.util.*
 
 /**
  * Service Implementation for managing [Version].
@@ -30,7 +32,7 @@ class VersionServiceImpl(
     }
 
     override fun update(versionDTO: VersionDTO): VersionDTO {
-        log.debug("Request to save Version : {}", versionDTO)
+        log.debug("Request to update Version : {}", versionDTO)
         var version = versionMapper.toEntity(versionDTO)
         version = versionRepository.save(version)
         return versionMapper.toDto(version)
@@ -49,10 +51,10 @@ class VersionServiceImpl(
     }
 
     @Transactional(readOnly = true)
-    override fun findAll(): MutableList<VersionDTO> {
+    override fun findAll(pageable: Pageable): Page<VersionDTO> {
         log.debug("Request to get all Versions")
-        return versionRepository.findAll()
-            .mapTo(mutableListOf(), versionMapper::toDto)
+        return versionRepository.findAll(pageable)
+            .map(versionMapper::toDto)
     }
 
     @Transactional(readOnly = true)

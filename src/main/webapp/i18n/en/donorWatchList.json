@@ -1,0 +1,25 @@
+{
+  "danakApp": {
+    "donorWatchList": {
+      "home": {
+        "title": "Donor Watch Lists",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Donor Watch List",
+        "createOrEditLabel": "Create or edit a Donor Watch List",
+        "notFound": "No Donor Watch Lists found"
+      },
+      "created": "A new Donor Watch List is created with identifier {{ param }}",
+      "updated": "A Donor Watch List is updated with identifier {{ param }}",
+      "deleted": "A Donor Watch List is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Donor Watch List {{ id }}?"
+      },
+      "detail": {
+        "title": "Donor Watch List"
+      },
+      "id": "ID",
+      "donor": "Donor",
+      "user": "User"
+    }
+  }
+}

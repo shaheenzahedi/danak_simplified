@@ -9,12 +9,12 @@ import reducer, {
   deleteEntity,
   getEntities,
   getEntity,
-  updateEntity,
   partialUpdateEntity,
   reset,
+  updateEntity,
 } from './user-activity.reducer';
 import { EntityState } from 'app/shared/reducers/reducer.utils';
-import { IUserActivity, defaultValue } from 'app/shared/model/user-activity.model';
+import { defaultValue, IUserActivity } from 'app/shared/model/user-activity.model';
 
 describe('Entities reducer tests', () => {
   function isEmpty(element): boolean {

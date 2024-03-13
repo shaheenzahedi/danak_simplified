@@ -1,6 +1,6 @@
 package org.aydm.danak.domain
 
-import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedBy
@@ -18,29 +18,26 @@ import javax.persistence.MappedSuperclass
  */
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener::class)
-abstract class AbstractAuditingEntity(
-
+@JsonIgnoreProperties(value = ["createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate"], allowGetters = true)
+abstract class AbstractAuditingEntity<T>(
     @CreatedBy
     @Column(name = "created_by", nullable = false, length = 50, updatable = false)
-    @JsonIgnore
-    var createdBy: String? = null,
+    open var createdBy: String? = null,
 
     @CreatedDate
     @Column(name = "created_date", updatable = false)
-    @JsonIgnore
-    var createdDate: Instant? = Instant.now(),
+    open var createdDate: Instant? = Instant.now(),
 
     @LastModifiedBy
     @Column(name = "last_modified_by", length = 50)
-    @JsonIgnore
-    var lastModifiedBy: String? = null,
+    open var lastModifiedBy: String? = null,
 
     @LastModifiedDate
     @Column(name = "last_modified_date")
-    @JsonIgnore
-    var lastModifiedDate: Instant? = Instant.now()
-
+    open var lastModifiedDate: Instant? = Instant.now()
 ) : Serializable {
+
+    abstract val id: T?
 
     companion object {
         private const val serialVersionUID = 1L

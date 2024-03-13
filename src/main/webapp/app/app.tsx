@@ -4,13 +4,12 @@ import 'app/config/dayjs.ts';
 
 import React, { useEffect } from 'react';
 import { Card } from 'reactstrap';
-import { BrowserRouter as Router } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
+import { BrowserRouter } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
 
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { getSession } from 'app/shared/reducers/authentication';
 import { getProfile } from 'app/shared/reducers/application-profile';
-import { setLocale } from 'app/shared/reducers/locale';
 import Header from 'app/shared/layout/header/header';
 import Footer from 'app/shared/layout/footer/footer';
 import { hasAnyAuthority } from 'app/shared/auth/private-route';
@@ -37,7 +36,7 @@ export const App = () => {
 
   const paddingTop = '60px';
   return (
-    <Router basename={baseHref}>
+    <BrowserRouter basename={baseHref}>
       <div className="app-container" style={{ paddingTop }}>
         <ToastContainer position={toast.POSITION.TOP_LEFT} className="toastify-container" toastClassName="toastify-toast" />
         <ErrorBoundary>
@@ -59,7 +58,7 @@ export const App = () => {
           <Footer />
         </div>
       </div>
-    </Router>
+    </BrowserRouter>
   );
 };
 

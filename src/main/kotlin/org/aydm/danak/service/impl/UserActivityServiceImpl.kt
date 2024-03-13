@@ -48,7 +48,7 @@ class UserActivityServiceImpl(
     }
 
     override fun update(userActivityDTO: UserActivityDTO): UserActivityDTO {
-        log.debug("Request to save UserActivity : {}", userActivityDTO)
+        log.debug("Request to update UserActivity : {}", userActivityDTO)
         var userActivity = userActivityMapper.toEntity(userActivityDTO)
         userActivity = userActivityRepository.save(userActivity)
         return userActivityMapper.toDto(userActivity)
@@ -57,7 +57,7 @@ class UserActivityServiceImpl(
     override fun partialUpdate(userActivityDTO: UserActivityDTO): Optional<UserActivityDTO> {
         log.debug("Request to partially update UserActivity : {}", userActivityDTO)
 
-        return userActivityRepository.findById(userActivityDTO.id!!)
+        return userActivityRepository.findById(userActivityDTO.id)
             .map {
                 userActivityMapper.partialUpdate(it, userActivityDTO)
                 it
@@ -67,10 +67,10 @@ class UserActivityServiceImpl(
     }
 
     @Transactional(readOnly = true)
-    override fun findAll(): MutableList<UserActivityDTO> {
+    override fun findAll(pageable: Pageable): Page<UserActivityDTO> {
         log.debug("Request to get all UserActivities")
-        return userActivityRepository.findAll()
-            .mapTo(mutableListOf(), userActivityMapper::toDto)
+        return userActivityRepository.findAll(pageable)
+            .map(userActivityMapper::toDto)
     }
 
     @Transactional(readOnly = true)
@@ -82,6 +82,7 @@ class UserActivityServiceImpl(
 
     override fun delete(id: Long) {
         log.debug("Request to delete UserActivity : $id")
+
         userActivityRepository.deleteById(id)
     }
 
@@ -128,18 +129,18 @@ class UserActivityServiceImpl(
     }
 
     override fun getAllActivityByTablet(): List<SubmitDTO> {
-        val tablets = tabletServiceImpl.findAll()
-        val tabletUsers = tabletUserServiceImpl.findAll()
-        val userActivities = userActivityRepository.findAll()
-        return tablets.map { tablet ->
+        val tablets = tabletServiceImpl.findAll(Pageable.unpaged())
+        val tabletUsers = tabletUserServiceImpl.findAll(Pageable.unpaged())
+        val userActivities = userActivityRepository.findAll(Pageable.unpaged())
+        return tablets.content.map { tablet ->
             SubmitDTO(
                 tablet = tablet.name!!,
-                users = tabletUsers.filter { it.tablet?.id == tablet.id }
+                users = tabletUsers.content.filter { it.tablet?.id == tablet.id }
                     .map { tabletUser ->
                         SubmitUserDTO(
                             firstName = tabletUser.firstName!!,
                             lastName = tabletUser.lastName!!,
-                            activity = userActivities.filter { it.activity?.tablet?.id == tabletUser.tablet?.id }
+                            activity = userActivities.content.filter { it.activity?.tablet?.id == tabletUser.tablet?.id }
                                 .map { userActivity ->
                                     SubmitActivityDTO(
                                         id = userActivity.id,
@@ -211,7 +212,7 @@ class UserActivityServiceImpl(
             )
             val userDataPage = if (allActivityByUserPageable != null) allActivityByUserPageable else {
                 log.warn("No data found for page number $pageNumber, exiting loop")
-                continue;
+                continue
             }
 
             val userData = getUserData(userDataPage)
@@ -227,11 +228,13 @@ class UserActivityServiceImpl(
         log.info("Excel export process completed")
     }
 
-    private fun saveToCSVFile(userData: Page<OverallUserActivities?>?,
-                              basePath: String,
-                              fileName: String,
-                              isFirstPage: Boolean,
-                              delimiter: Char = ';') {
+    private fun saveToCSVFile(
+        userData: Page<OverallUserActivities?>?,
+        basePath: String,
+        fileName: String,
+        isFirstPage: Boolean,
+        delimiter: Char = ';'
+    ) {
         if (userData == null) {
             log.warn("No user data provided, aborting save")
             return
@@ -282,7 +285,6 @@ class UserActivityServiceImpl(
             log.error("Error occurred while saving data to file", e)
         }
     }
-
 
     override fun cleanUpUserActivity(): Boolean {
         try {
@@ -382,7 +384,7 @@ class UserActivityServiceImpl(
     }
 
     override fun getAllActivityByUser(): List<OverallUserActivities> {
-        val tablets = tabletServiceImpl.findAll()
+        val tablets = tabletServiceImpl.findAll(Pageable.unpaged())
         val tabletUsers = tabletUserServiceImpl.findAllByFirstLastNameImplicit()
             .filter { tablets.any { tablet -> it.tablet?.id == tablet.id } }
         val userActivities = userActivityRepository.findAllDistinctActivityIdSummary()

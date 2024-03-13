@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-import { getEntity, deleteEntity } from './center-donor.reducer';
-import {RouteComponentProps} from "react-router-dom";
+import { deleteEntity, getEntity } from './center-donor.reducer';
 
-export const CenterDonorDeleteDialog = (props: RouteComponentProps<{ id: string }>) => {
+export const CenterDonorDeleteDialog = () => {
   const dispatch = useAppDispatch();
 
   const location = useLocation();
+  const navigate = useNavigate();
+  const { id } = useParams<'id'>();
 
   const [loadModal, setLoadModal] = useState(false);
 
   useEffect(() => {
-    dispatch(getEntity(props.match.params.id));
+    dispatch(getEntity(id));
     setLoadModal(true);
   }, []);
 
@@ -24,7 +25,7 @@ export const CenterDonorDeleteDialog = (props: RouteComponentProps<{ id: string 
   const updateSuccess = useAppSelector(state => state.centerDonor.updateSuccess);
 
   const handleClose = () => {
-    props.history.push('/center-donor' + props.location.search);
+    navigate('/center-donor' + location.search);
   };
 
   useEffect(() => {

@@ -1,11 +1,11 @@
-id;create_time_stamp;update_time_stamp;name;city;country
-1;2023-09-03T00:11:02;2023-09-03T04:02:30;Maine Unbranded;Bertashire;Rwanda
-2;2023-09-03T07:05:22;2023-09-02T11:47:56;partnerships copy;Nelschester;Bahamas
-3;2023-09-03T01:40:08;2023-09-02T13:23:13;Portugal Cayman;South Berylport;China
-4;2023-09-03T03:11:08;2023-09-03T01:21:58;reboot maximize;South Allymouth;Morocco
-5;2023-09-02T18:50:18;2023-09-03T07:27:29;mobile Web;New Dillan;United States Minor Outlying Islands
-6;2023-09-03T06:41:44;2023-09-02T17:10:14;Electronics Steel;New Annamarie;Montenegro
-7;2023-09-02T22:10:50;2023-09-03T09:01:25;generating Practical;Plymouth;Jordan
-8;2023-09-02T16:45:22;2023-09-03T03:10:27;fault-tolerant;Vincenzaview;Estonia
-9;2023-09-02T18:38:03;2023-09-02T23:03:38;Sausages paradigms;South Opheliashire;Vanuatu
-10;2023-09-03T03:20:05;2023-09-03T03:54:30;seamless;Lake Laurettamouth;Spain
+id;create_time_stamp;update_time_stamp;name;city;country;national_code;education_type;education;occupation;work_place;work_place_phone;archived;otp_phone_code;otp_phone_enable;otp_phone_sent_time_stamp;latitude;longitude;uid
+1;2024-03-12T10:09:00;2024-03-12T14:00:28;Maine Unbranded;Bertashire;Rwanda;Infrastructure;SCHOOL;copy;input user-centric;bandwidth Table;Granite function;true;92893;true;2024-03-12T11:13:40;61482;89533;Camp
+2;2024-03-12T06:01:09;2024-03-12T04:48:16;solutions;Wesley Chapel;Nicaragua;Profit-focused Marketing deposit;HIGH_SCHOOL;Alabama;plum Montana;generating Practical;system collaboration whiteboard;true;46930;false;2024-03-12T04:36:01;47358;57090;Optimization
+3;2024-03-12T19:09:51;2024-03-12T07:08:09;Marino;Erie;Ethiopia;seamless;SCHOOL;Account EXE Cambridgeshire;Liberia Supervisor Forward;Malta;Gardens set;true;6638;false;2024-03-12T12:07:45;71026;49969;encompassing schemas
+4;2024-03-12T14:33:09;2024-03-12T12:08:47;Account parsing;Nathanaelburgh;Chad;Card integrated;DIPLOMA;Sports up Rustic;Account Forge;interfaces bypassing Greenland;invoice Swedish Comoros;false;19760;true;2024-03-12T05:07:31;5326;22249;system experiences
+5;2024-03-12T08:49:33;2024-03-12T14:00:59;white Legacy;Terryville;India;Streets;SCHOOL;New Soft Computers;alarm Savings Dynamic;gold copy;Wyoming connect Bike;true;3080;false;2024-03-11T20:27:03;60890;72332;harness Chief alarm
+6;2024-03-12T09:27:41;2024-03-11T20:28:18;Borders;Theoport;Mongolia;Senior Fish;SCHOOL;Bacon panel Account;synthesize copying neural;Handmade analyzing;bi-directional;false;20366;false;2024-03-12T04:28:06;42157;11079;Utah Reunion
+7;2024-03-12T06:17:25;2024-03-12T03:10:12;Cotton;Dundalk;Swaziland;deposit virtual;DIPLOMA;paradigms Cotton payment;interface;hybrid pink Buckinghamshire;Lats Cuba Poland;false;69302;false;2024-03-12T07:50:09;30309;40949;Gorgeous
+8;2024-03-12T11:05:15;2024-03-12T15:37:06;scale platforms;North Earnestineton;Cocos (Keeling) Islands;collaboration SMTP virtual;SCHOOL;optical;Multi-channelled JSON Practical;overriding web;Soft Meadows;false;84140;true;2024-03-12T16:52:10;12101;45102;Investor
+9;2024-03-12T16:42:53;2024-03-12T01:14:53;Fresh Illinois;Port Zachary;Moldova;Games Seychelles pixel;MASTERS;partnerships deposit;Buckinghamshire Land;impactful Clothing;Bike Granite;false;95038;false;2024-03-12T17:59:55;35629;77622;value-added
+10;2024-03-12T17:03:50;2024-03-12T16:44:20;Freeway Sports;Deltona;Palau;Fords index;SCHOOL;salmon;expedite bandwidth solutions;Accounts quantify Chief;Virgin;false;42448;true;2024-03-12T09:43:51;87803;1545;deposit

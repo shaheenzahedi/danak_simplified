@@ -11,11 +11,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.context.request.NativeWebRequest
-import org.zalando.problem.DefaultProblem
-import org.zalando.problem.Problem
-import org.zalando.problem.ProblemBuilder
-import org.zalando.problem.Status
-import org.zalando.problem.StatusType
+import org.zalando.problem.*
 import org.zalando.problem.spring.web.advice.ProblemHandling
 import org.zalando.problem.spring.web.advice.security.SecurityAdviceTrait
 import org.zalando.problem.violations.ConstraintViolationProblem
@@ -83,7 +79,9 @@ class ExceptionTranslator(private val env: Environment) : ProblemHandling, Secur
         val result = ex.bindingResult
         val fieldErrors = result.fieldErrors.map {
             FieldErrorVM(
-                it.objectName.replaceFirst(Regex("DTO$"), ""), it.field, if (StringUtils.isNotBlank(it.defaultMessage)) it.defaultMessage else it.code
+                it.objectName.replaceFirst(Regex("DTO$"), ""),
+                it.field,
+                if (StringUtils.isNotBlank(it.defaultMessage)) it.defaultMessage else it.code
             )
         }
 
@@ -98,19 +96,36 @@ class ExceptionTranslator(private val env: Environment) : ProblemHandling, Secur
     }
 
     @ExceptionHandler
-    fun handleEmailAlreadyUsedException(ex: org.aydm.danak.service.EmailAlreadyUsedException, request: NativeWebRequest): ResponseEntity<Problem>? {
+    fun handleEmailAlreadyUsedException(
+        ex: org.aydm.danak.service.EmailAlreadyUsedException,
+        request: NativeWebRequest
+    ): ResponseEntity<Problem>? {
         val problem = EmailAlreadyUsedException()
-        return create(problem, request, HeaderUtil.createFailureAlert(applicationName, true, problem.entityName, problem.errorKey, problem.message))
+        return create(
+            problem,
+            request,
+            HeaderUtil.createFailureAlert(applicationName, true, problem.entityName, problem.errorKey, problem.message)
+        )
     }
 
     @ExceptionHandler
-    fun handleUsernameAlreadyUsedException(ex: org.aydm.danak.service.UsernameAlreadyUsedException, request: NativeWebRequest): ResponseEntity<Problem>? {
+    fun handleUsernameAlreadyUsedException(
+        ex: org.aydm.danak.service.UsernameAlreadyUsedException,
+        request: NativeWebRequest
+    ): ResponseEntity<Problem>? {
         val problem = LoginAlreadyUsedException()
-        return create(problem, request, HeaderUtil.createFailureAlert(applicationName, true, problem.entityName, problem.errorKey, problem.message))
+        return create(
+            problem,
+            request,
+            HeaderUtil.createFailureAlert(applicationName, true, problem.entityName, problem.errorKey, problem.message)
+        )
     }
 
     @ExceptionHandler
-    fun handleInvalidPasswordException(ex: org.aydm.danak.service.InvalidPasswordException, request: NativeWebRequest): ResponseEntity<Problem>? {
+    fun handleInvalidPasswordException(
+        ex: org.aydm.danak.service.InvalidPasswordException,
+        request: NativeWebRequest
+    ): ResponseEntity<Problem>? {
         return create(InvalidPasswordException(), request)
     }
 
@@ -157,5 +172,6 @@ class ExceptionTranslator(private val env: Environment) : ProblemHandling, Secur
             .withCause(throwable.cause.takeIf { isCausalChainsEnabled }?.let { toProblem(it) })
     }
 
-    private fun containsPackageName(message: String?) = listOf("org.", "java.", "net.", "javax.", "com.", "io.", "de.", "org.aydm.danak").any { it == message }
+    private fun containsPackageName(message: String?) =
+        listOf("org.", "java.", "net.", "javax.", "com.", "io.", "de.", "org.aydm.danak").any { it == message }
 }

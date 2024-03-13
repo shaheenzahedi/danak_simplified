@@ -1,7 +1,9 @@
 package org.aydm.danak.service
 
-import org.aydm.danak.domain.* // for static metamodels
+import org.aydm.danak.domain.FileBelongings_
+import org.aydm.danak.domain.File_
 import org.aydm.danak.domain.Version
+import org.aydm.danak.domain.Version_
 import org.aydm.danak.repository.VersionRepository
 import org.aydm.danak.service.criteria.VersionCriteria
 import org.aydm.danak.service.dto.VersionDTO

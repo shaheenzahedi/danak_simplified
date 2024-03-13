@@ -119,13 +119,16 @@ class UserActivityQueryService(
                 specification = specification.and(buildRangeSpecification(criteria.id, UserActivity_.id))
             }
             if (criteria.createTimeStamp != null) {
-                specification = specification.and(buildRangeSpecification(criteria.createTimeStamp, UserActivity_.createTimeStamp))
+                specification =
+                    specification.and(buildRangeSpecification(criteria.createTimeStamp, UserActivity_.createTimeStamp))
             }
             if (criteria.updateTimeStamp != null) {
-                specification = specification.and(buildRangeSpecification(criteria.updateTimeStamp, UserActivity_.updateTimeStamp))
+                specification =
+                    specification.and(buildRangeSpecification(criteria.updateTimeStamp, UserActivity_.updateTimeStamp))
             }
             if (criteria.deviceTimeStamp != null) {
-                specification = specification.and(buildRangeSpecification(criteria.deviceTimeStamp, UserActivity_.deviceTimeStamp))
+                specification =
+                    specification.and(buildRangeSpecification(criteria.deviceTimeStamp, UserActivity_.deviceTimeStamp))
             }
             if (criteria.listName != null) {
                 specification = specification.and(buildStringSpecification(criteria.listName, UserActivity_.listName))
@@ -137,7 +140,15 @@ class UserActivityQueryService(
                 specification = specification.and(buildRangeSpecification(criteria.completed, UserActivity_.completed))
             }
             if (criteria.uniqueName != null) {
-                specification = specification.and(buildStringSpecification(criteria.uniqueName, UserActivity_.uniqueName))
+                specification =
+                    specification.and(buildStringSpecification(criteria.uniqueName, UserActivity_.uniqueName))
+            }
+            if (criteria.version != null) {
+                specification = specification.and(buildStringSpecification(criteria.version, UserActivity_.version))
+            }
+            if (criteria.description != null) {
+                specification =
+                    specification.and(buildStringSpecification(criteria.description, UserActivity_.description))
             }
             if (criteria.activityId != null) {
                 specification = specification.and(

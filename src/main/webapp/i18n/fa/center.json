@@ -23,7 +23,17 @@
       "name": "Name",
       "city": "City",
       "country": "Country",
-      "tablet": "Tablet"
+      "archived": "Archived",
+      "centerType": "Center Type",
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      "centerDonor": "Center Donor",
+      "centerImage": "Center Image",
+      "centerWatchList": "Center Watch List",
+      "tablet": "Tablet",
+      "archivedBy": "Archived By",
+      "createdBy": "Created By",
+      "modifiedBy": "Modified By"
     }
   }
 }

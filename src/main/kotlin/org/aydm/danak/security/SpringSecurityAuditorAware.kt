@@ -3,7 +3,7 @@ package org.aydm.danak.security
 import org.aydm.danak.config.SYSTEM_ACCOUNT
 import org.springframework.data.domain.AuditorAware
 import org.springframework.stereotype.Component
-import java.util.Optional
+import java.util.*
 
 /**
  * Implementation of [AuditorAware] based on Spring Security.

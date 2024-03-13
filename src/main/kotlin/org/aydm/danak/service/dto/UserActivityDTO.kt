@@ -2,11 +2,12 @@ package org.aydm.danak.service.dto
 
 import java.io.Serializable
 import java.time.Instant
-import java.util.Objects
+import java.util.*
 
 /**
  * A DTO for the [org.aydm.danak.domain.UserActivity] entity.
  */
+@SuppressWarnings("common-java:DuplicatedBlocks")
 data class UserActivityDTO(
 
     var id: Long? = null,
@@ -24,9 +25,15 @@ data class UserActivityDTO(
     var completed: Long? = null,
 
     var uniqueName: String? = null,
+
+    var version: String? = null,
+
+    var description: String? = null,
+
+    var activity: TabletUserDTO? = null,
+
     var lastChange: Long? = null,
 
-    var activity: TabletUserDTO? = null
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {

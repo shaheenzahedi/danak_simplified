@@ -10,6 +10,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "version")
+@SuppressWarnings("common-java:DuplicatedBlocks")
 data class Version(
 
     @Id
@@ -23,6 +24,9 @@ data class Version(
     @Column(name = "tag")
     var tag: String? = null,
 
+    // jhipster-needle-entity-add-field - JHipster will add fields here
+) : Serializable {
+
     @OneToMany(mappedBy = "version")
     @JsonIgnoreProperties(
         value = [
@@ -31,7 +35,7 @@ data class Version(
         ],
         allowSetters = true
     )
-    var fileBelongings: MutableSet<FileBelongings>? = mutableSetOf(),
+    var fileBelongings: MutableSet<FileBelongings>? = mutableSetOf()
 
     @OneToMany(mappedBy = "placement")
     @JsonIgnoreProperties(
@@ -41,25 +45,26 @@ data class Version(
         ],
         allowSetters = true
     )
-    var files: MutableSet<File>? = mutableSetOf(),
-    // jhipster-needle-entity-add-field - JHipster will add fields here
-) : Serializable {
+    var files: MutableSet<File>? = mutableSetOf()
 
     fun addFileBelongings(fileBelongings: FileBelongings): Version {
         this.fileBelongings?.add(fileBelongings)
         fileBelongings.version = this
         return this
     }
+
     fun removeFileBelongings(fileBelongings: FileBelongings): Version {
         this.fileBelongings?.remove(fileBelongings)
         fileBelongings.version = null
         return this
     }
+
     fun addFile(file: File): Version {
         this.files?.add(file)
         file.placement = this
         return this
     }
+
     fun removeFile(file: File): Version {
         this.files?.remove(file)
         file.placement = null
@@ -78,7 +83,6 @@ data class Version(
         return id != null && other.id != null && id == other.id
     }
 
-    @Override
     override fun toString(): String {
         return "Version{" +
             "id=" + id +

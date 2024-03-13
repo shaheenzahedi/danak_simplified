@@ -1,0 +1,11 @@
+{
+  "danakApp": {
+    "PanelLogType": {
+      "null": "",
+      "DELETE": "DELETE",
+      "MODIFY": "MODIFY",
+      "CREATE": "CREATE",
+      "ENTER": "ENTER"
+    }
+  }
+}

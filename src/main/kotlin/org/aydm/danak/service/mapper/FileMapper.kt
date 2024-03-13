@@ -16,7 +16,9 @@ interface FileMapper :
     @Mappings(
         Mapping(target = "placement", source = "placement", qualifiedByName = ["versionId"])
     )
-    override fun toDto(s: File): FileDTO @Named("versionId")
+    override fun toDto(s: File): FileDTO
+
+    @Named("versionId")
     @BeanMapping(ignoreByDefault = true)
 
     @Mappings(

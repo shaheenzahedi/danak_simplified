@@ -12,6 +12,7 @@ import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URI
 import java.net.URL
+
 data class Update(val checksum: String, var path: String)
 data class Delete(val checksum: String, var path: String)
 
@@ -19,7 +20,8 @@ fun main() {
     // Define the URLs and bearer token
     val url1 = "https://api.danakapp.org/api/update-assets?fromVersion=80&toVersion=81"
     val url2 = "https://ftp.danakapp.org/"
-    val bearerToken = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImF1dGgiOiJST0xFX0FETUlOLFJPTEVfVVNFUiIsImV4cCI6MTY5NTczMjU0NX0.9I6dMIt3Ir3FKS2mwOJlU6_HRIjMQbgRYCH8VUVr9B2SgVpUg6EMvZ2aGQU5DTkipsP7ZcslSduPSTSxCjn4qw"
+    val bearerToken =
+        "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImF1dGgiOiJST0xFX0FETUlOLFJPTEVfVVNFUiIsImV4cCI6MTY5NTczMjU0NX0.9I6dMIt3Ir3FKS2mwOJlU6_HRIjMQbgRYCH8VUVr9B2SgVpUg6EMvZ2aGQU5DTkipsP7ZcslSduPSTSxCjn4qw"
 
     // Create a RestTemplate instance
     val restTemplate = RestTemplateBuilder().build()

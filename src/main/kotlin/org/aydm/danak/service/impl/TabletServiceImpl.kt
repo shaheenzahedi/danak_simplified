@@ -33,7 +33,7 @@ class TabletServiceImpl(
     }
 
     override fun update(tabletDTO: TabletDTO): TabletDTO {
-        log.debug("Request to save Tablet : {}", tabletDTO)
+        log.debug("Request to update Tablet : {}", tabletDTO)
         var tablet = tabletMapper.toEntity(tabletDTO)
         tablet = tabletRepository.save(tablet)
         return tabletMapper.toDto(tablet)
@@ -49,13 +49,6 @@ class TabletServiceImpl(
             }
             .map { tabletRepository.save(it) }
             .map { tabletMapper.toDto(it) }
-    }
-
-    @Transactional(readOnly = true)
-    override fun findAll(): MutableList<TabletDTO> {
-        log.debug("Request to get all Tablets")
-        return tabletRepository.findAll()
-            .mapTo(mutableListOf(), tabletMapper::toDto)
     }
 
     @Transactional(readOnly = true)
@@ -83,6 +76,7 @@ class TabletServiceImpl(
 
     override fun delete(id: Long) {
         log.debug("Request to delete Tablet : $id")
+
         tabletRepository.deleteById(id)
     }
 

@@ -1,6 +1,7 @@
 package org.aydm.danak.domain
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import org.aydm.danak.domain.enumeration.EducationType
 import java.io.Serializable
 import java.time.Instant
 import javax.persistence.*
@@ -34,42 +35,105 @@ data class Donor(
     @Column(name = "country")
     var country: String? = null,
 
-    @OneToOne
-    @JoinColumn(unique = true)
-    var user: User? = null,
+    @Column(name = "national_code")
+    var nationalCode: String? = null,
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "education_type")
+    var educationType: EducationType? = null,
+
+    @Column(name = "education")
+    var education: String? = null,
+
+    @Column(name = "occupation")
+    var occupation: String? = null,
+
+    @Column(name = "work_place")
+    var workPlace: String? = null,
+
+    @Column(name = "work_place_phone")
+    var workPlacePhone: String? = null,
+
+    @Column(name = "archived")
+    var archived: Boolean? = null,
+
+    @Column(name = "otp_phone_code")
+    var otpPhoneCode: Long? = null,
+
+    @Column(name = "otp_phone_enable")
+    var otpPhoneEnable: Boolean? = null,
+
+    @Column(name = "otp_phone_sent_time_stamp")
+    var otpPhoneSentTimeStamp: Instant? = null,
+
+    @Column(name = "latitude")
+    var latitude: Long? = null,
+
+    @Column(name = "longitude")
+    var longitude: Long? = null,
+
+    @Column(name = "uid")
+    var uid: String? = null,
+
+    // jhipster-needle-entity-add-field - JHipster will add fields here
+) : Serializable {
+
     @OneToMany(mappedBy = "donor")
     @JsonIgnoreProperties(
         value = [
-            "tabletUsers",
-            "center",
-            "donor",
-        ],
-        allowSetters = true
-    )
-    var tablets: MutableSet<Tablet>? = mutableSetOf(),
-    @OneToMany(mappedBy = "donor")
-    @JsonIgnoreProperties(
-        value = [
-            "tabletUsers",
             "center",
             "donor",
         ],
         allowSetters = true
     )
     var centerDonors: MutableSet<CenterDonor>? = mutableSetOf()
-    // jhipster-needle-entity-add-field - JHipster will add fields here
-) : Serializable {
 
-    fun user(user: User?): Donor {
-        this.user = user
-        return this
-    }
+    @OneToMany(mappedBy = "donor")
+    @JsonIgnoreProperties(
+        value = [
+            "file",
+            "donor",
+        ],
+        allowSetters = true
+    )
+    var donorImages: MutableSet<DonorImage>? = mutableSetOf()
 
-    fun addTablet(tablet: Tablet): Donor {
-        this.tablets?.add(tablet)
-        tablet.donor = this
-        return this
-    }
+    @OneToMany(mappedBy = "donor")
+    @JsonIgnoreProperties(
+        value = [
+            "donor",
+            "user",
+        ],
+        allowSetters = true
+    )
+    var donorWatchLists: MutableSet<DonorWatchList>? = mutableSetOf()
+
+    @OneToMany(mappedBy = "donor")
+    @JsonIgnoreProperties(
+        value = [
+            "tabletLogs",
+            "tabletUsers",
+            "tabletWatchLists",
+            "center",
+            "donor",
+            "archivedBy",
+            "modifiedBy",
+        ],
+        allowSetters = true
+    )
+    var tablets: MutableSet<Tablet>? = mutableSetOf()
+
+    @ManyToOne
+    var user: User? = null
+
+    @ManyToOne
+    var archivedBy: User? = null
+
+    @ManyToOne
+    var createdBy: User? = null
+
+    @ManyToOne
+    var modifiedBy: User? = null
 
     fun addCenterDonor(centerDonor: CenterDonor): Donor {
         this.centerDonors?.add(centerDonor)
@@ -80,6 +144,62 @@ data class Donor(
     fun removeCenterDonor(centerDonor: CenterDonor): Donor {
         this.centerDonors?.remove(centerDonor)
         centerDonor.donor = null
+        return this
+    }
+
+    fun addDonorImage(donorImage: DonorImage): Donor {
+        this.donorImages?.add(donorImage)
+        donorImage.donor = this
+        return this
+    }
+
+    fun removeDonorImage(donorImage: DonorImage): Donor {
+        this.donorImages?.remove(donorImage)
+        donorImage.donor = null
+        return this
+    }
+
+    fun addDonorWatchList(donorWatchList: DonorWatchList): Donor {
+        this.donorWatchLists?.add(donorWatchList)
+        donorWatchList.donor = this
+        return this
+    }
+
+    fun removeDonorWatchList(donorWatchList: DonorWatchList): Donor {
+        this.donorWatchLists?.remove(donorWatchList)
+        donorWatchList.donor = null
+        return this
+    }
+
+    fun addTablet(tablet: Tablet): Donor {
+        this.tablets?.add(tablet)
+        tablet.donor = this
+        return this
+    }
+
+    fun removeTablet(tablet: Tablet): Donor {
+        this.tablets?.remove(tablet)
+        tablet.donor = null
+        return this
+    }
+
+    fun user(user: User?): Donor {
+        this.user = user
+        return this
+    }
+
+    fun archivedBy(user: User?): Donor {
+        this.archivedBy = user
+        return this
+    }
+
+    fun createdBy(user: User?): Donor {
+        this.createdBy = user
+        return this
+    }
+
+    fun modifiedBy(user: User?): Donor {
+        this.modifiedBy = user
         return this
     }
 
@@ -95,7 +215,6 @@ data class Donor(
         return id != null && other.id != null && id == other.id
     }
 
-    @Override
     override fun toString(): String {
         return "Donor{" +
             "id=" + id +
@@ -104,6 +223,19 @@ data class Donor(
             ", name='" + name + "'" +
             ", city='" + city + "'" +
             ", country='" + country + "'" +
+            ", nationalCode='" + nationalCode + "'" +
+            ", educationType='" + educationType + "'" +
+            ", education='" + education + "'" +
+            ", occupation='" + occupation + "'" +
+            ", workPlace='" + workPlace + "'" +
+            ", workPlacePhone='" + workPlacePhone + "'" +
+            ", archived='" + archived + "'" +
+            ", otpPhoneCode=" + otpPhoneCode +
+            ", otpPhoneEnable='" + otpPhoneEnable + "'" +
+            ", otpPhoneSentTimeStamp='" + otpPhoneSentTimeStamp + "'" +
+            ", latitude=" + latitude +
+            ", longitude=" + longitude +
+            ", uid='" + uid + "'" +
             "}"
     }
 

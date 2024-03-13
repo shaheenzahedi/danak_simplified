@@ -9,9 +9,11 @@ import org.aydm.danak.service.mapper.CenterDonorMapper
 import org.aydm.danak.service.mapper.CenterMapper
 import org.aydm.danak.service.mapper.DonorMapper
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.Optional
+import java.util.*
 
 /**
  * Service Implementation for managing [CenterDonor].
@@ -54,10 +56,10 @@ class CenterDonorServiceImpl(
     }
 
     @Transactional(readOnly = true)
-    override fun findAll(): MutableList<CenterDonorDTO> {
+    override fun findAll(pageable: Pageable): Page<CenterDonorDTO> {
         log.debug("Request to get all CenterDonors")
-        return centerDonorRepository.findAll()
-            .mapTo(mutableListOf(), centerDonorMapper::toDto)
+        return centerDonorRepository.findAll(pageable)
+            .map(centerDonorMapper::toDto)
     }
 
     @Transactional(readOnly = true)

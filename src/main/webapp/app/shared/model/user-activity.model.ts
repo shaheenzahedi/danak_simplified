@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import { ITabletUser } from 'app/shared/model/tablet-user.model';
 
 export interface IUserActivity {
@@ -10,6 +9,8 @@ export interface IUserActivity {
   total?: number | null;
   completed?: number | null;
   uniqueName?: string | null;
+  version?: string | null;
+  description?: string | null;
   activity?: ITabletUser | null;
 }
 

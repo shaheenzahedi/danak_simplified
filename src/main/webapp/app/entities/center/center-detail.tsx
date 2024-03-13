@@ -1,19 +1,21 @@
 import React, { useEffect } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Row, Col } from 'reactstrap';
-import { Translate, TextFormat } from 'react-jhipster';
+import { Link, useParams } from 'react-router-dom';
+import { Button, Col, Row } from 'reactstrap';
+import { TextFormat, Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { APP_DATE_FORMAT } from 'app/config/constants';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
 import { getEntity } from './center.reducer';
 
-export const CenterDetail = (props: RouteComponentProps<{ id: string }>) => {
+export const CenterDetail = () => {
   const dispatch = useAppDispatch();
 
+  const { id } = useParams<'id'>();
+
   useEffect(() => {
-    dispatch(getEntity(props.match.params.id));
+    dispatch(getEntity(id));
   }, []);
 
   const centerEntity = useAppSelector(state => state.center.entity);
@@ -64,6 +66,42 @@ export const CenterDetail = (props: RouteComponentProps<{ id: string }>) => {
             </span>
           </dt>
           <dd>{centerEntity.country}</dd>
+          <dt>
+            <span id="archived">
+              <Translate contentKey="danakApp.center.archived">Archived</Translate>
+            </span>
+          </dt>
+          <dd>{centerEntity.archived ? 'true' : 'false'}</dd>
+          <dt>
+            <span id="centerType">
+              <Translate contentKey="danakApp.center.centerType">Center Type</Translate>
+            </span>
+          </dt>
+          <dd>{centerEntity.centerType}</dd>
+          <dt>
+            <span id="latitude">
+              <Translate contentKey="danakApp.center.latitude">Latitude</Translate>
+            </span>
+          </dt>
+          <dd>{centerEntity.latitude}</dd>
+          <dt>
+            <span id="longitude">
+              <Translate contentKey="danakApp.center.longitude">Longitude</Translate>
+            </span>
+          </dt>
+          <dd>{centerEntity.longitude}</dd>
+          <dt>
+            <Translate contentKey="danakApp.center.archivedBy">Archived By</Translate>
+          </dt>
+          <dd>{centerEntity.archivedBy ? centerEntity.archivedBy.id : ''}</dd>
+          <dt>
+            <Translate contentKey="danakApp.center.createdBy">Created By</Translate>
+          </dt>
+          <dd>{centerEntity.createdBy ? centerEntity.createdBy.id : ''}</dd>
+          <dt>
+            <Translate contentKey="danakApp.center.modifiedBy">Modified By</Translate>
+          </dt>
+          <dd>{centerEntity.modifiedBy ? centerEntity.modifiedBy.id : ''}</dd>
         </dl>
         <Button tag={Link} to="/center" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" />{' '}

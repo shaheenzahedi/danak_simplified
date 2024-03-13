@@ -1,0 +1,10 @@
+{
+  "danakApp": {
+    "TabletUserImageType": {
+      "null": "",
+      "TABLET": "TABLET",
+      "GALLERY": "GALLERY",
+      "PROFILE": "PROFILE"
+    }
+  }
+}

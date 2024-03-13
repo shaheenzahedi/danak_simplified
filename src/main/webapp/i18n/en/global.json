@@ -9,12 +9,23 @@
         "main": "Entities",
         "tablet": "Tablet",
         "tabletUser": "Tablet User",
+        "panelLog": "Panel Log",
+        "tabletLog": "Tablet Log",
+        "tabletUserImage": "Tablet User Image",
+        "donorImage": "Donor Image",
+        "centerImage": "Center Image",
+        "tabletUserWatchList": "Tablet User Watch List",
+        "tabletWatchList": "Tablet Watch List",
+        "centerWatchList": "Center Watch List",
+        "donorWatchList": "Donor Watch List",
         "userActivity": "User Activity",
+        "uploadedFile": "Uploaded File",
+        "fileShare": "File Share",
         "file": "File",
         "fileBelongings": "File Belongings",
         "version": "Version",
-        "donor": "Donor",
         "center": "Center",
+        "donor": "Donor",
         "centerDonor": "Center Donor",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
@@ -106,7 +117,8 @@
       "edit": "Edit",
       "open": "Open",
       "save": "Save",
-      "view": "View"
+      "view": "View",
+      "show": "Show {{otherEntity}}"
     },
     "detail": {
       "field": "Field",
@@ -127,6 +139,11 @@
       "number": "This field should be a number.",
       "datetimelocal": "This field should be a date and time.",
       "patternLogin": "This field can only contain letters, digits and e-mail addresses."
+    },
+    "filters": {
+      "set": "Following filters are set",
+      "clear": "Clear filter",
+      "clearAll": "Clear all filters"
     }
   },
   "error": {

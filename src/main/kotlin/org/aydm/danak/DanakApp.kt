@@ -1,6 +1,7 @@
 package org.aydm.danak
 
 import org.aydm.danak.config.ApplicationProperties
+import org.aydm.danak.config.CRLFLogConverter
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseProperties
@@ -75,6 +76,7 @@ class DanakApp(private val env: Environment) {
                 log.warn("The host name could not be determined, using `localhost` as fallback")
             }
             log.info(
+                CRLFLogConverter.CRLF_SAFE_MARKER,
                 """
 
                 ----------------------------------------------------------

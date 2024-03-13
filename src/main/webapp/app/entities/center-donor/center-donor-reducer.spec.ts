@@ -9,12 +9,12 @@ import reducer, {
   deleteEntity,
   getEntities,
   getEntity,
-  updateEntity,
   partialUpdateEntity,
   reset,
+  updateEntity,
 } from './center-donor.reducer';
 import { EntityState } from 'app/shared/reducers/reducer.utils';
-import { ICenterDonor, defaultValue } from 'app/shared/model/center-donor.model';
+import { defaultValue, ICenterDonor } from 'app/shared/model/center-donor.model';
 
 describe('Entities reducer tests', () => {
   function isEmpty(element): boolean {
@@ -30,6 +30,7 @@ describe('Entities reducer tests', () => {
     errorMessage: null,
     entities: [],
     entity: defaultValue,
+    totalItems: 0,
     updating: false,
     updateSuccess: false,
   };
@@ -117,7 +118,7 @@ describe('Entities reducer tests', () => {
 
   describe('Successes', () => {
     it('should fetch all entities', () => {
-      const payload = { data: [{ 1: 'fake1' }, { 2: 'fake2' }] };
+      const payload = { data: [{ 1: 'fake1' }, { 2: 'fake2' }], headers: { 'x-total-count': 123 } };
       expect(
         reducer(undefined, {
           type: getEntities.fulfilled.type,
@@ -126,6 +127,7 @@ describe('Entities reducer tests', () => {
       ).toEqual({
         ...initialState,
         loading: false,
+        totalItems: payload.headers['x-total-count'],
         entities: payload.data,
       });
     });

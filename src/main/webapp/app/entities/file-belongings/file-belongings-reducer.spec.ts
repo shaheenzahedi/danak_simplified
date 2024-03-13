@@ -9,12 +9,12 @@ import reducer, {
   deleteEntity,
   getEntities,
   getEntity,
-  updateEntity,
   partialUpdateEntity,
   reset,
+  updateEntity,
 } from './file-belongings.reducer';
 import { EntityState } from 'app/shared/reducers/reducer.utils';
-import { IFileBelongings, defaultValue } from 'app/shared/model/file-belongings.model';
+import { defaultValue, IFileBelongings } from 'app/shared/model/file-belongings.model';
 
 describe('Entities reducer tests', () => {
   function isEmpty(element): boolean {

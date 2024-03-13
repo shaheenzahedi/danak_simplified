@@ -1,23 +1,32 @@
 # danak
 
-This application was generated using JHipster 7.8.1, you can find documentation and help at [https://www.jhipster.tech](https://www.jhipster.tech).
+This application was generated using JHipster 7.8.1, you can find documentation and help
+at [https://www.jhipster.tech](https://www.jhipster.tech).
 
 ## Project Structure
 
-Node is required for generation and recommended for development. `package.json` is always generated for a better development experience with prettier, commit hooks, scripts and so on.
+Node is required for generation and recommended for development. `package.json` is always generated for a better
+development experience with prettier, commit hooks, scripts and so on.
 
-In the project root, JHipster generates configuration files for tools like git, prettier, eslint, husk, and others that are well known and you can find references in the web.
+In the project root, JHipster generates configuration files for tools like git, prettier, eslint, husk, and others that
+are well known and you can find references in the web.
 
 `/src/*` structure follows default Java structure.
 
 - `.yo-rc.json` - Yeoman configuration file
-  JHipster configuration is stored in this file at `generator-jhipster` key. You may find `generator-jhipster-*` for specific blueprints configuration.
+  JHipster configuration is stored in this file at `generator-jhipster` key. You may find `generator-jhipster-*` for
+  specific blueprints configuration.
 - `.yo-resolve` (optional) - Yeoman conflict resolver
-  Allows to use a specific action when conflicts are found skipping prompts for files that matches a pattern. Each line should match `[pattern] [action]` with pattern been a [Minimatch](https://github.com/isaacs/minimatch#minimatch) pattern and action been one of skip (default if ommited) or force. Lines starting with `#` are considered comments and are ignored.
+  Allows to use a specific action when conflicts are found skipping prompts for files that matches a pattern. Each line
+  should match `[pattern] [action]` with pattern been a [Minimatch](https://github.com/isaacs/minimatch#minimatch)
+  pattern and action been one of skip (default if ommited) or force. Lines starting with `#` are considered comments and
+  are ignored.
 - `.jhipster/*.json` - JHipster entity configuration files
 
 - `npmw` - wrapper to use locally installed npm.
-  JHipster installs Node and npm locally using the build tool by default. This wrapper makes sure npm is installed locally and uses it avoiding some differences different versions can cause. By using `./npmw` instead of the traditional `npm` you can configure a Node-less environment to develop or test your application.
+  JHipster installs Node and npm locally using the build tool by default. This wrapper makes sure npm is installed
+  locally and uses it avoiding some differences different versions can cause. By using `./npmw` instead of the
+  traditional `npm` you can configure a Node-less environment to develop or test your application.
 - `/src/main/docker` - Docker configurations for the application and services that the application depends on
 
 ## Development
@@ -45,16 +54,19 @@ npm start
 ```
 
 Npm is also used to manage CSS and JavaScript dependencies used in this application. You can upgrade dependencies by
-specifying a newer version in [package.json](package.json). You can also run `npm update` and `npm install` to manage dependencies.
+specifying a newer version in [package.json](package.json). You can also run `npm update` and `npm install` to manage
+dependencies.
 Add the `help` flag on any command to see how you can use it. For example, `npm help update`.
 
 The `npm run` command will list all of the scripts available to run for this project.
 
 ### PWA Support
 
-JHipster ships with PWA (Progressive Web App) support, and it's turned off by default. One of the main components of a PWA is a service worker.
+JHipster ships with PWA (Progressive Web App) support, and it's turned off by default. One of the main components of a
+PWA is a service worker.
 
-The service worker initialization code is commented out by default. To enable it, uncomment the following code in `src/main/webapp/index.html`:
+The service worker initialization code is commented out by default. To enable it, uncomment the following code
+in `src/main/webapp/index.html`:
 
 ```html
 <script>
@@ -66,7 +78,8 @@ The service worker initialization code is commented out by default. To enable it
 </script>
 ```
 
-Note: [Workbox](https://developers.google.com/web/tools/workbox/) powers JHipster's service worker. It dynamically generates the `service-worker.js` file.
+Note: [Workbox](https://developers.google.com/web/tools/workbox/) powers JHipster's service worker. It dynamically
+generates the `service-worker.js` file.
 
 ### Managing dependencies
 
@@ -76,20 +89,23 @@ For example, to add [Leaflet][] library as a runtime dependency of your applicat
 npm install --save --save-exact leaflet
 ```
 
-To benefit from TypeScript type definitions from [DefinitelyTyped][] repository in development, you would run following command:
+To benefit from TypeScript type definitions from [DefinitelyTyped][] repository in development, you would run following
+command:
 
 ```
 npm install --save-dev --save-exact @types/leaflet
 ```
 
-Then you would import the JS and CSS files specified in library's installation instructions so that [Webpack][] knows about them:
+Then you would import the JS and CSS files specified in library's installation instructions so that [Webpack][] knows
+about them:
 Note: There are still a few other things remaining to do for Leaflet that we won't detail here.
 
 For further instructions on how to develop with JHipster, have a look at [Using JHipster in development][].
 
 ### JHipster Control Center
 
-JHipster Control Center can help you manage and control your application(s). You can start a local control center server (accessible on http://localhost:7419) with:
+JHipster Control Center can help you manage and control your application(s). You can start a local control center
+server (accessible on http://localhost:7419) with:
 
 ```
 docker-compose -f src/main/docker/jhipster-control-center.yml up
@@ -105,7 +121,8 @@ To build the final jar and optimize the danak application for production, run:
 ./mvnw -Pprod clean verify
 ```
 
-This will concatenate and minify the client CSS and JavaScript files. It will also modify `index.html` so it references these new files.
+This will concatenate and minify the client CSS and JavaScript files. It will also modify `index.html` so it references
+these new files.
 To ensure everything worked, run:
 
 ```
@@ -150,9 +167,12 @@ Sonar is used to analyse code quality. You can start a local Sonar server (acces
 docker-compose -f src/main/docker/sonar.yml up -d
 ```
 
-Note: we have turned off authentication in [src/main/docker/sonar.yml](src/main/docker/sonar.yml) for out of the box experience while trying out SonarQube, for real use cases turn it back on.
+Note: we have turned off authentication in [src/main/docker/sonar.yml](src/main/docker/sonar.yml) for out of the box
+experience while trying out SonarQube, for real use cases turn it back on.
 
-You can run a Sonar analysis with using the [sonar-scanner](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner) or by using the maven plugin.
+You can run a Sonar analysis with using
+the [sonar-scanner](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner) or by using the maven
+plugin.
 
 Then, run a Sonar analysis:
 
@@ -160,7 +180,8 @@ Then, run a Sonar analysis:
 ./mvnw -Pprod clean verify sonar:sonar
 ```
 
-If you need to re-run the Sonar phase, please be sure to specify at least the `initialize` phase since Sonar properties are loaded from the sonar-project.properties file.
+If you need to re-run the Sonar phase, please be sure to specify at least the `initialize` phase since Sonar properties
+are loaded from the sonar-project.properties file.
 
 ```
 ./mvnw initialize sonar:sonar
@@ -170,7 +191,8 @@ For more information, refer to the [Code quality page][].
 
 ## Using Docker to simplify development (optional)
 
-You can use Docker to improve your JHipster development experience. A number of docker-compose configuration are available in the [src/main/docker](src/main/docker) folder to launch required third party services.
+You can use Docker to improve your JHipster development experience. A number of docker-compose configuration are
+available in the [src/main/docker](src/main/docker) folder to launch required third party services.
 
 For example, to start a mysql database in a docker container, run:
 
@@ -197,11 +219,15 @@ Then run:
 docker-compose -f src/main/docker/app.yml up -d
 ```
 
-For more information refer to [Using Docker and Docker-Compose][], this page also contains information on the docker-compose sub-generator (`jhipster docker-compose`), which is able to generate docker configurations for one or several JHipster applications.
+For more information refer to [Using Docker and Docker-Compose][], this page also contains information on the
+docker-compose sub-generator (`jhipster docker-compose`), which is able to generate docker configurations for one or
+several JHipster applications.
 
 ## Continuous Integration (optional)
 
-To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`), this will let you generate configuration files for a number of Continuous Integration systems. Consult the [Setting up Continuous Integration][] page for more information.
+To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`), this will let you generate
+configuration files for a number of Continuous Integration systems. Consult the [Setting up Continuous Integration][]
+page for more information.
 
 [jhipster homepage and latest documentation]: https://www.jhipster.tech
 [jhipster 7.8.1 archive]: https://www.jhipster.tech

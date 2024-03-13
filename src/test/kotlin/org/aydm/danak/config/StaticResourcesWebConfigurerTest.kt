@@ -61,7 +61,8 @@ class StaticResourcesWebConfigurerTest {
 
     @Test
     fun shouldCreateCacheControlBasedOnJhipsterDefaultProperties() {
-        val cacheExpected = CacheControl.maxAge(JHipsterDefaults.Http.Cache.timeToLiveInDays.toLong(), TimeUnit.DAYS).cachePublic()
+        val cacheExpected =
+            CacheControl.maxAge(JHipsterDefaults.Http.Cache.timeToLiveInDays.toLong(), TimeUnit.DAYS).cachePublic()
         assertThat(staticResourcesWebConfiguration.getCacheControl())
             .extracting { it.headerValue }
             .isEqualTo(cacheExpected.headerValue)

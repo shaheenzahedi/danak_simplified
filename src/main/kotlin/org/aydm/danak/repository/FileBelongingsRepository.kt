@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.stereotype.Repository
 
 /**
- * Spring Data SQL repository for the [FileBelongings] entity.
+ * Spring Data JPA repository for the FileBelongings entity.
  */
 @Suppress("unused")
 @Repository

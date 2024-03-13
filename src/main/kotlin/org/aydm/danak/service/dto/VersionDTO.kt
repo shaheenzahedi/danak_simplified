@@ -1,11 +1,12 @@
 package org.aydm.danak.service.dto
 
 import java.io.Serializable
-import java.util.Objects
+import java.util.*
 
 /**
  * A DTO for the [org.aydm.danak.domain.Version] entity.
  */
+@SuppressWarnings("common-java:DuplicatedBlocks")
 data class VersionDTO(
 
     var id: Long? = null,

@@ -1,31 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Row, Col, FormText } from 'reactstrap';
-import { Translate, translate, ValidatedField, ValidatedForm, isEmail } from 'react-jhipster';
+import React, { useEffect } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Button, Col, FormText, Row } from 'reactstrap';
+import { isEmail, translate, Translate, ValidatedField, ValidatedForm } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { locales, languages } from 'app/config/translation';
-import { getUser, getRoles, updateUser, createUser, reset } from './user-management.reducer';
+import { languages, locales } from 'app/config/translation';
+import { createUser, getRoles, getUser, reset, updateUser } from './user-management.reducer';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-export const UserManagementUpdate = (props: RouteComponentProps<{ login: string }>) => {
-  const [isNew] = useState(!props.match.params || !props.match.params.login);
+export const UserManagementUpdate = () => {
   const dispatch = useAppDispatch();
+
+  const navigate = useNavigate();
+
+  const { login } = useParams<'login'>();
+  const isNew = login === undefined;
 
   useEffect(() => {
     if (isNew) {
       dispatch(reset());
     } else {
-      dispatch(getUser(props.match.params.login));
+      dispatch(getUser(login));
     }
     dispatch(getRoles());
     return () => {
       dispatch(reset());
     };
-  }, [props.match.params.login]);
+  }, [login]);
 
   const handleClose = () => {
-    props.history.push('/admin/user-management');
+    navigate('/admin/user-management');
   };
 
   const saveUser = values => {

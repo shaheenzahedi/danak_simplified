@@ -1,0 +1,26 @@
+{
+  "danakApp": {
+    "panelLog": {
+      "home": {
+        "title": "Panel Logs",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Panel Log",
+        "createOrEditLabel": "Create or edit a Panel Log",
+        "notFound": "No Panel Logs found"
+      },
+      "created": "A new Panel Log is created with identifier {{ param }}",
+      "updated": "A Panel Log is updated with identifier {{ param }}",
+      "deleted": "A Panel Log is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Panel Log {{ id }}?"
+      },
+      "detail": {
+        "title": "Panel Log"
+      },
+      "id": "ID",
+      "createTimeStamp": "Create Time Stamp",
+      "panelLogType": "Panel Log Type",
+      "user": "User"
+    }
+  }
+}

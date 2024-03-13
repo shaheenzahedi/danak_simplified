@@ -27,7 +27,7 @@ data class OverallUserActivities(
     @JsonIgnore
     fun getActivitiesTimeStamp(): String {
         if (userActivities.isNullOrEmpty()) return ""
-        return (userActivities.first().createTimeStamp ?:"").toString()
+        return (userActivities.first().createTimeStamp ?: "").toString()
     }
 }
 

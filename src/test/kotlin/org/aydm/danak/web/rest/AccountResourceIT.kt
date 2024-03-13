@@ -590,7 +590,8 @@ class AccountResourceIT {
     @Test
     @Transactional
     @WithMockUser("save-existing-email-and-login")
-    @Throws(Exception::class) fun testSaveExistingEmailAndLogin() {
+    @Throws(Exception::class)
+    fun testSaveExistingEmailAndLogin() {
         val user = User(
             login = "save-existing-email-and-login",
             email = "save-existing-email-and-login@example.com",
@@ -625,7 +626,8 @@ class AccountResourceIT {
     @Test
     @Transactional
     @WithMockUser("change-password-wrong-existing-password")
-    @Throws(Exception::class) fun testChangePasswordWrongExistingPassword() {
+    @Throws(Exception::class)
+    fun testChangePasswordWrongExistingPassword() {
         val currentPassword = RandomStringUtils.random(60)
         val user = User(
             password = passwordEncoder.encode(currentPassword),
@@ -650,7 +652,8 @@ class AccountResourceIT {
     @Test
     @Transactional
     @WithMockUser("change-password")
-    @Throws(Exception::class) fun testChangePassword() {
+    @Throws(Exception::class)
+    fun testChangePassword() {
         val currentPassword = RandomStringUtils.random(60)
         val user = User(
             password = passwordEncoder.encode(currentPassword),
@@ -674,7 +677,8 @@ class AccountResourceIT {
     @Test
     @Transactional
     @WithMockUser("change-password-too-small")
-    @Throws(Exception::class) fun testChangePasswordTooSmall() {
+    @Throws(Exception::class)
+    fun testChangePasswordTooSmall() {
         val currentPassword = RandomStringUtils.random(60)
         val user = User(
             password = passwordEncoder.encode(currentPassword),
@@ -700,7 +704,8 @@ class AccountResourceIT {
     @Test
     @Transactional
     @WithMockUser("change-password-too-long")
-    @Throws(Exception::class) fun testChangePasswordTooLong() {
+    @Throws(Exception::class)
+    fun testChangePasswordTooLong() {
         val currentPassword = RandomStringUtils.random(60)
         val user = User(
             password = passwordEncoder.encode(currentPassword),
@@ -726,7 +731,8 @@ class AccountResourceIT {
     @Test
     @Transactional
     @WithMockUser("change-password-empty")
-    @Throws(Exception::class) fun testChangePasswordEmpty() {
+    @Throws(Exception::class)
+    fun testChangePasswordEmpty() {
         val currentPassword = RandomStringUtils.random(60)
         val user = User(
             password = passwordEncoder.encode(currentPassword),

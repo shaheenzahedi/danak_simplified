@@ -9,7 +9,6 @@ import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
@@ -33,24 +32,11 @@ class SecurityConfiguration(
     fun passwordEncoder() = BCryptPasswordEncoder()
 
     @Bean
-    fun webSecurityCustomizer(): WebSecurityCustomizer {
-        return WebSecurityCustomizer { web ->
-            web.ignoring()
-                .antMatchers(HttpMethod.OPTIONS, "/**")
-                .antMatchers("/app/**/*.{js,html}")
-                .antMatchers("/i18n/**")
-                .antMatchers("/content/**")
-                .antMatchers("/h2-console/**")
-                .antMatchers("/swagger-ui/**")
-                .antMatchers("/test/**")
-        }
-    }
-
-    @Bean
     @Throws(Exception::class)
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .csrf()
+            .ignoringAntMatchers("/h2-console/**")
             .disable()
             .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter::class.java)
             .exceptionHandling()
@@ -62,15 +48,22 @@ class SecurityConfiguration(
             .and()
             .referrerPolicy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
             .and()
-            .permissionsPolicy().policy("camera=(), fullscreen=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), sync-xhr=()")
+            .permissionsPolicy()
+            .policy("camera=(), fullscreen=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), sync-xhr=()")
             .and()
-            .frameOptions()
-            .deny()
+            .frameOptions().sameOrigin()
             .and()
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeRequests()
+            .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+            .antMatchers("/app/**/*.{js,html}").permitAll()
+            .antMatchers("/i18n/**").permitAll()
+            .antMatchers("/content/**").permitAll()
+            .antMatchers("/swagger-ui/**").permitAll()
+            .antMatchers("/test/**").permitAll()
+            .antMatchers("/h2-console/**").permitAll()
             .antMatchers("/api/authenticate").permitAll()
             .antMatchers("/api/submit-activity").permitAll()
             .antMatchers("/api/versions/last").permitAll()
