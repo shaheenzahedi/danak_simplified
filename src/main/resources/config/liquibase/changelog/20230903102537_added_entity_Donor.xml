@@ -9,7 +9,7 @@
     <!--
         Added the entity Donor.
     -->
-    <changeSet id="20240312202335-1" author="jhipster">
+    <changeSet id="20230903102537-1" author="jhipster">
         <createTable tableName="donor">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>

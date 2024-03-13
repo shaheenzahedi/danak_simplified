@@ -9,7 +9,7 @@
     <!--
         Added the entity Center.
     -->
-    <changeSet id="20240312202334-1" author="jhipster">
+    <changeSet id="20230903102538-1" author="jhipster">
         <createTable tableName="center">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
