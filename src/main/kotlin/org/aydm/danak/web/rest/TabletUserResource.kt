@@ -173,6 +173,22 @@ class TabletUserResource(
         val tabletUserDTO = tabletUserService.findOne(id)
         return ResponseUtil.wrapOrNotFound(tabletUserDTO)
     }
+    @DeleteMapping("/tablet-user-archive/{id}")
+    fun archiveTabletUser(@PathVariable id: Long): ResponseEntity<Void> {
+        log.debug("REST request to delete TabletUser : $id")
+
+        userFacade.archiveTabletUser(id)
+        return ResponseEntity.noContent()
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build()
+    }
+    @PutMapping("/tablet-user-restore/{id}")
+    fun restoreTabletUser(@PathVariable id: Long): ResponseEntity<Void> {
+        log.debug("REST request to restore TabletUser : $id")
+
+        userFacade.restoreTabletUser(id)
+        return ResponseEntity.noContent()
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build()
+    }
 
     /**
      *  `DELETE  /tablet-users/:id` : delete the "id" tabletUser.

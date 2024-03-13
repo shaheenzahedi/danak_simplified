@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import tech.jhipster.service.QueryService
 import tech.jhipster.service.filter.Filter
+import java.util.*
 import javax.persistence.criteria.JoinType
 
 /**
@@ -176,4 +177,12 @@ class TabletUserQueryService(
                 tablet = tabletMapper.toDto(it.tablet!!)
             }
         }
+
+    fun findOne(id: Long): Optional<TabletUser> {
+        return tabletUserRepository.findById(id)
+    }
+
+    fun update(tabletUser: TabletUser) {
+        tabletUserRepository.save(tabletUser)
+    }
 }

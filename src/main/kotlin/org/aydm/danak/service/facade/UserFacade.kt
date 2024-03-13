@@ -32,6 +32,8 @@ interface UserFacade {
     fun tabletsGetDuplicates(): MutableList<TabletDTO>
     fun fixTabletNames()
     fun getDashboard(centerId: Long?, days: Int?): DashboardDTO
+    fun archiveTabletUser(id: Long)
+    fun restoreTabletUser(id: Long)
 }
 
 @Transactional
@@ -195,6 +197,27 @@ class UserFacadeImpl(
             centers = centers,
             reports = reports
         )
+    }
+
+    override fun archiveTabletUser(id: Long) {
+        val tabletUser = tabletUserQueryService.findOne(id)
+            .orElseThrow { Exception("there is no tablet user with this id") }
+        val currentUser = getCurrentUser().orElseThrow()
+        tabletUser.updateTimeStamp = Instant.now()
+        tabletUser.archived = true
+        tabletUser.archivedBy = currentUser
+        tabletUserQueryService.update(tabletUser)
+    }
+
+    override fun restoreTabletUser(id: Long) {
+        val tabletUser = tabletUserQueryService.findOne(id)
+            .orElseThrow { Exception("there is no tablet user with this id") }
+        val currentUser = getCurrentUser().orElseThrow()
+        tabletUser.updateTimeStamp = Instant.now()
+        tabletUser.archived = false
+        tabletUser.archivedBy = null
+        tabletUser.modifiedBy = currentUser
+        tabletUserQueryService.update(tabletUser)
     }
 
     private fun extractTabletName(tabletUsers: MutableSet<TabletUser>): String? {
