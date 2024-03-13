@@ -5,7 +5,6 @@ entity Tablet {
     tag String
     name String
     androidId String
-    macId String
     model String
     description String
     archived Boolean
