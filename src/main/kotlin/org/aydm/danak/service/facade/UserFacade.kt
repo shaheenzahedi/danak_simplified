@@ -15,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import tech.jhipster.service.filter.BooleanFilter
 import tech.jhipster.service.filter.LongFilter
 import java.time.Instant
 import java.time.LocalDateTime
@@ -99,10 +100,11 @@ class UserFacadeImpl(
     }
 
     override fun findAllTabletUsers(criteria: TabletUserCriteria?, pageable: Pageable): Page<TabletUserDTO> {
-        val donorId = getDonorId() ?: return tabletUserQueryService.findAll(criteria, pageable)
+        val cr = criteria ?: TabletUserCriteria()
+        cr.archived = BooleanFilter().apply { notEquals = true }
+        val donorId = getDonorId() ?: return tabletUserQueryService.findAll(cr, pageable)
         val tabletIds = tabletService.findAllTabletIdsByDonorId(donorId)
         if (tabletIds.isEmpty()) return Page.empty()
-        val cr = criteria ?: TabletUserCriteria()
         cr.tabletId = cr.tabletId?.apply { `in` = tabletIds } ?: LongFilter().apply { `in` = tabletIds }
         return tabletUserQueryService.findAll(cr, pageable)
     }
