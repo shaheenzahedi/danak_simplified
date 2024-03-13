@@ -21,8 +21,17 @@
                                  constraintName="fk_tablet__donor_id"
                                  referencedColumnNames="id"
                                  referencedTableName="donor"/>
-<!--        <addUniqueConstraint-->
-<!--            columnNames="name"-->
-<!--            constraintName="uc_tablet_name" tableName="tablet"/>-->
+
+        <addForeignKeyConstraint baseColumnNames="archived_by_id"
+                                 baseTableName="tablet"
+                                 constraintName="fk_tablet__archived_by_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="jhi_user"/>
+
+        <addForeignKeyConstraint baseColumnNames="modified_by_id"
+                                 baseTableName="tablet"
+                                 constraintName="fk_tablet__modified_by_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="jhi_user"/>
     </changeSet>
 </databaseChangeLog>

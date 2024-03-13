@@ -161,11 +161,11 @@ class TabletResource(
      * @return the [ResponseEntity] with status `200 (OK)` and the list of tablets in body.
      */
     @GetMapping("/tablets")
-    fun getAllTablets(): MutableList<TabletDTO> {
+    fun getAllTablets(): Page<TabletDTO> {
 
         log.debug("REST request to get all Tablets")
 
-        return tabletService.findAll()
+        return tabletService.findAll(Pageable.unpaged())
     }
 
     @GetMapping("/tablets-panel")

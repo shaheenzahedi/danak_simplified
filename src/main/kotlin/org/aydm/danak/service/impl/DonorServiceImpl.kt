@@ -10,7 +10,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.Optional
+import java.util.*
 
 /**
  * Service Implementation for managing [Donor].
@@ -32,7 +32,7 @@ class DonorServiceImpl(
     }
 
     override fun update(donorDTO: DonorDTO): DonorDTO {
-        log.debug("Request to save Donor : {}", donorDTO)
+        log.debug("Request to update Donor : {}", donorDTO)
         var donor = donorMapper.toEntity(donorDTO)
         donor = donorRepository.save(donor)
         return donorMapper.toDto(donor)

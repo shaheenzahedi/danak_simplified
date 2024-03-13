@@ -1,0 +1,26 @@
+{
+  "danakApp": {
+    "donorImage": {
+      "home": {
+        "title": "Donor Images",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Donor Image",
+        "createOrEditLabel": "Create or edit a Donor Image",
+        "notFound": "No Donor Images found"
+      },
+      "created": "A new Donor Image is created with identifier {{ param }}",
+      "updated": "A Donor Image is updated with identifier {{ param }}",
+      "deleted": "A Donor Image is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Donor Image {{ id }}?"
+      },
+      "detail": {
+        "title": "Donor Image"
+      },
+      "id": "ID",
+      "donorImageType": "Donor Image Type",
+      "file": "File",
+      "donor": "Donor"
+    }
+  }
+}

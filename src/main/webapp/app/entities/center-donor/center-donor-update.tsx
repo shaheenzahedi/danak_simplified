@@ -1,18 +1,23 @@
-import React, {useEffect} from 'react';
-import {Link, RouteComponentProps} from 'react-router-dom';
-import {Button, Col, Row} from 'reactstrap';
-import {Translate, translate, ValidatedField, ValidatedForm} from 'react-jhipster';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {useAppDispatch, useAppSelector} from 'app/config/store';
-import {getEntities as getCenters} from 'app/entities/center/center.reducer';
-import {getEntities as getDonors} from 'app/entities/donor/donor.reducer';
-import {createEntity, getEntity, reset, updateEntity} from './center-donor.reducer';
+import React, { useEffect } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Button, Col, Row } from 'reactstrap';
+import { Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-export const CenterDonorUpdate = (props: RouteComponentProps<{ id: string }>) => {
+import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
+import { useAppDispatch, useAppSelector } from 'app/config/store';
+import { getEntities as getCenters } from 'app/entities/center/center.reducer';
+import { getEntities as getDonors } from 'app/entities/donor/donor.reducer';
+import { DonorType } from 'app/shared/model/enumerations/donor-type.model';
+import { createEntity, getEntity, reset, updateEntity } from './center-donor.reducer';
+
+export const CenterDonorUpdate = () => {
   const dispatch = useAppDispatch();
 
+  const navigate = useNavigate();
 
-  const isNew = props.match.params.id === undefined;
+  const { id } = useParams<'id'>();
+  const isNew = id === undefined;
 
   const centers = useAppSelector(state => state.center.entities);
   const donors = useAppSelector(state => state.donor.entities);
@@ -20,17 +25,17 @@ export const CenterDonorUpdate = (props: RouteComponentProps<{ id: string }>) =>
   const loading = useAppSelector(state => state.centerDonor.loading);
   const updating = useAppSelector(state => state.centerDonor.updating);
   const updateSuccess = useAppSelector(state => state.centerDonor.updateSuccess);
+  const donorTypeValues = Object.keys(DonorType);
 
   const handleClose = () => {
-    props.history.push('/center-donor' + props.location.search);
-
+    navigate('/center-donor' + location.search);
   };
 
   useEffect(() => {
     if (isNew) {
       dispatch(reset());
     } else {
-      dispatch(getEntity(props.match.params.id));
+      dispatch(getEntity(id));
     }
 
     dispatch(getCenters({}));
@@ -44,6 +49,8 @@ export const CenterDonorUpdate = (props: RouteComponentProps<{ id: string }>) =>
   }, [updateSuccess]);
 
   const saveEntity = values => {
+    values.joinedTimeStamp = convertDateTimeToServer(values.joinedTimeStamp);
+
     const entity = {
       ...centerDonorEntity,
       ...values,
@@ -60,9 +67,13 @@ export const CenterDonorUpdate = (props: RouteComponentProps<{ id: string }>) =>
 
   const defaultValues = () =>
     isNew
-      ? {}
+      ? {
+          joinedTimeStamp: displayDefaultDateTime(),
+        }
       : {
+          donorType: 'MANAGER',
           ...centerDonorEntity,
+          joinedTimeStamp: convertDateTimeFromServer(centerDonorEntity.joinedTimeStamp),
           center: centerDonorEntity?.center?.id,
           donor: centerDonorEntity?.donor?.id,
         };
@@ -92,6 +103,27 @@ export const CenterDonorUpdate = (props: RouteComponentProps<{ id: string }>) =>
                   validate={{ required: true }}
                 />
               ) : null}
+              <ValidatedField
+                label={translate('danakApp.centerDonor.joinedTimeStamp')}
+                id="center-donor-joinedTimeStamp"
+                name="joinedTimeStamp"
+                data-cy="joinedTimeStamp"
+                type="datetime-local"
+                placeholder="YYYY-MM-DD HH:mm"
+              />
+              <ValidatedField
+                label={translate('danakApp.centerDonor.donorType')}
+                id="center-donor-donorType"
+                name="donorType"
+                data-cy="donorType"
+                type="select"
+              >
+                {donorTypeValues.map(donorType => (
+                  <option value={donorType} key={donorType}>
+                    {translate('danakApp.DonorType.' + donorType)}
+                  </option>
+                ))}
+              </ValidatedField>
               <ValidatedField
                 id="center-donor-center"
                 name="center"

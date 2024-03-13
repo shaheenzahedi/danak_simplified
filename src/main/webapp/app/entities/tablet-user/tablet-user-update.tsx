@@ -1,40 +1,43 @@
-import React, { useState, useEffect } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Row, Col, FormText } from 'reactstrap';
-import { isNumber, Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
+import React, { useEffect } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Button, Col, Row } from 'reactstrap';
+import { Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
-import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-
-import { ITablet } from 'app/shared/model/tablet.model';
 import { getEntities as getTablets } from 'app/entities/tablet/tablet.reducer';
-import { ITabletUser } from 'app/shared/model/tablet-user.model';
-import { getEntity, updateEntity, createEntity, reset } from './tablet-user.reducer';
+import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
+import { createEntity, getEntity, reset, updateEntity } from './tablet-user.reducer';
 
-export const TabletUserUpdate = (props: RouteComponentProps<{ id: string }>) => {
+export const TabletUserUpdate = () => {
   const dispatch = useAppDispatch();
 
-  const [isNew] = useState(!props.match.params || !props.match.params.id);
+  const navigate = useNavigate();
+
+  const { id } = useParams<'id'>();
+  const isNew = id === undefined;
 
   const tablets = useAppSelector(state => state.tablet.entities);
+  const users = useAppSelector(state => state.userManagement.users);
   const tabletUserEntity = useAppSelector(state => state.tabletUser.entity);
   const loading = useAppSelector(state => state.tabletUser.loading);
   const updating = useAppSelector(state => state.tabletUser.updating);
   const updateSuccess = useAppSelector(state => state.tabletUser.updateSuccess);
+
   const handleClose = () => {
-    props.history.push('/tablet-user' + props.location.search);
+    navigate('/tablet-user' + location.search);
   };
 
   useEffect(() => {
     if (isNew) {
       dispatch(reset());
     } else {
-      dispatch(getEntity(props.match.params.id));
+      dispatch(getEntity(id));
     }
 
     dispatch(getTablets({}));
+    dispatch(getUsers({}));
   }, []);
 
   useEffect(() => {
@@ -51,6 +54,8 @@ export const TabletUserUpdate = (props: RouteComponentProps<{ id: string }>) => 
       ...tabletUserEntity,
       ...values,
       tablet: tablets.find(it => it.id.toString() === values.tablet.toString()),
+      archivedBy: users.find(it => it.id.toString() === values.archivedBy.toString()),
+      modifiedBy: users.find(it => it.id.toString() === values.modifiedBy.toString()),
     };
 
     if (isNew) {
@@ -71,6 +76,8 @@ export const TabletUserUpdate = (props: RouteComponentProps<{ id: string }>) => 
           createTimeStamp: convertDateTimeFromServer(tabletUserEntity.createTimeStamp),
           updateTimeStamp: convertDateTimeFromServer(tabletUserEntity.updateTimeStamp),
           tablet: tabletUserEntity?.tablet?.id,
+          archivedBy: tabletUserEntity?.archivedBy?.id,
+          modifiedBy: tabletUserEntity?.modifiedBy?.id,
         };
 
   return (
@@ -136,6 +143,28 @@ export const TabletUserUpdate = (props: RouteComponentProps<{ id: string }>) => 
                 type="text"
               />
               <ValidatedField
+                label={translate('danakApp.tabletUser.description')}
+                id="tablet-user-description"
+                name="description"
+                data-cy="description"
+                type="text"
+              />
+              <ValidatedField
+                label={translate('danakApp.tabletUser.recoveryPhrase')}
+                id="tablet-user-recoveryPhrase"
+                name="recoveryPhrase"
+                data-cy="recoveryPhrase"
+                type="text"
+              />
+              <ValidatedField
+                label={translate('danakApp.tabletUser.archived')}
+                id="tablet-user-archived"
+                name="archived"
+                data-cy="archived"
+                check
+                type="checkbox"
+              />
+              <ValidatedField
                 id="tablet-user-tablet"
                 name="tablet"
                 data-cy="tablet"
@@ -145,6 +174,38 @@ export const TabletUserUpdate = (props: RouteComponentProps<{ id: string }>) => 
                 <option value="" key="0" />
                 {tablets
                   ? tablets.map(otherEntity => (
+                      <option value={otherEntity.id} key={otherEntity.id}>
+                        {otherEntity.id}
+                      </option>
+                    ))
+                  : null}
+              </ValidatedField>
+              <ValidatedField
+                id="tablet-user-archivedBy"
+                name="archivedBy"
+                data-cy="archivedBy"
+                label={translate('danakApp.tabletUser.archivedBy')}
+                type="select"
+              >
+                <option value="" key="0" />
+                {users
+                  ? users.map(otherEntity => (
+                      <option value={otherEntity.id} key={otherEntity.id}>
+                        {otherEntity.id}
+                      </option>
+                    ))
+                  : null}
+              </ValidatedField>
+              <ValidatedField
+                id="tablet-user-modifiedBy"
+                name="modifiedBy"
+                data-cy="modifiedBy"
+                label={translate('danakApp.tabletUser.modifiedBy')}
+                type="select"
+              >
+                <option value="" key="0" />
+                {users
+                  ? users.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
                         {otherEntity.id}
                       </option>

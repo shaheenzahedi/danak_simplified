@@ -1,0 +1,12 @@
+{
+  "danakApp": {
+    "EducationType": {
+      "null": "",
+      "SCHOOL": "SCHOOL",
+      "HIGH_SCHOOL": "HIGH_SCHOOL",
+      "DIPLOMA": "DIPLOMA",
+      "MASTERS": "MASTERS",
+      "PHD": "PHD"
+    }
+  }
+}

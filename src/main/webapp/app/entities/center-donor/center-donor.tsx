@@ -1,29 +1,82 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
-import { Translate } from 'react-jhipster';
+import { getSortState, JhiItemCount, JhiPagination, TextFormat, Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { APP_DATE_FORMAT } from 'app/config/constants';
+import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
+import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-
-import { ICenterDonor } from 'app/shared/model/center-donor.model';
 import { getEntities } from './center-donor.reducer';
 
 export const CenterDonor = () => {
   const dispatch = useAppDispatch();
 
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const [paginationState, setPaginationState] = useState(
+    overridePaginationStateWithQueryParams(getSortState(location, ITEMS_PER_PAGE, 'id'), location.search)
+  );
 
   const centerDonorList = useAppSelector(state => state.centerDonor.entities);
   const loading = useAppSelector(state => state.centerDonor.loading);
+  const totalItems = useAppSelector(state => state.centerDonor.totalItems);
+
+  const getAllEntities = () => {
+    dispatch(
+      getEntities({
+        page: paginationState.activePage - 1,
+        size: paginationState.itemsPerPage,
+        sort: `${paginationState.sort},${paginationState.order}`,
+      })
+    );
+  };
+
+  const sortEntities = () => {
+    getAllEntities();
+    const endURL = `?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`;
+    if (location.search !== endURL) {
+      navigate(`${location.pathname}${endURL}`);
+    }
+  };
 
   useEffect(() => {
-    dispatch(getEntities({}));
-  }, []);
+    sortEntities();
+  }, [paginationState.activePage, paginationState.order, paginationState.sort]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const page = params.get('page');
+    const sort = params.get(SORT);
+    if (page && sort) {
+      const sortSplit = sort.split(',');
+      setPaginationState({
+        ...paginationState,
+        activePage: +page,
+        sort: sortSplit[0],
+        order: sortSplit[1],
+      });
+    }
+  }, [location.search]);
+
+  const sort = p => () => {
+    setPaginationState({
+      ...paginationState,
+      order: paginationState.order === ASC ? DESC : ASC,
+      sort: p,
+    });
+  };
+
+  const handlePagination = currentPage =>
+    setPaginationState({
+      ...paginationState,
+      activePage: currentPage,
+    });
 
   const handleSyncList = () => {
-    dispatch(getEntities({}));
+    sortEntities();
   };
 
   return (
@@ -47,14 +100,21 @@ export const CenterDonor = () => {
           <Table responsive>
             <thead>
               <tr>
-                <th>
-                  <Translate contentKey="danakApp.centerDonor.id">ID</Translate>
+                <th className="hand" onClick={sort('id')}>
+                  <Translate contentKey="danakApp.centerDonor.id">ID</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={sort('joinedTimeStamp')}>
+                  <Translate contentKey="danakApp.centerDonor.joinedTimeStamp">Joined Time Stamp</Translate>
+                  <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={sort('donorType')}>
+                  <Translate contentKey="danakApp.centerDonor.donorType">Donor Type</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
                 <th>
-                  <Translate contentKey="danakApp.centerDonor.center">Center</Translate>
+                  <Translate contentKey="danakApp.centerDonor.center">Center</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
                 <th>
-                  <Translate contentKey="danakApp.centerDonor.donor">Donor</Translate>
+                  <Translate contentKey="danakApp.centerDonor.donor">Donor</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
                 <th />
               </tr>
@@ -67,6 +127,14 @@ export const CenterDonor = () => {
                       {centerDonor.id}
                     </Button>
                   </td>
+                  <td>
+                    {centerDonor.joinedTimeStamp ? (
+                      <TextFormat type="date" value={centerDonor.joinedTimeStamp} format={APP_DATE_FORMAT} />
+                    ) : null}
+                  </td>
+                  <td>
+                    <Translate contentKey={`danakApp.DonorType.${centerDonor.donorType}`} />
+                  </td>
                   <td>{centerDonor.center ? <Link to={`/center/${centerDonor.center.id}`}>{centerDonor.center.id}</Link> : ''}</td>
                   <td>{centerDonor.donor ? <Link to={`/donor/${centerDonor.donor.id}`}>{centerDonor.donor.id}</Link> : ''}</td>
                   <td className="text-end">
@@ -77,7 +145,13 @@ export const CenterDonor = () => {
                           <Translate contentKey="entity.action.view">View</Translate>
                         </span>
                       </Button>
-                      <Button tag={Link} to={`/center-donor/${centerDonor.id}/edit`} color="primary" size="sm" data-cy="entityEditButton">
+                      <Button
+                        tag={Link}
+                        to={`/center-donor/${centerDonor.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                        color="primary"
+                        size="sm"
+                        data-cy="entityEditButton"
+                      >
                         <FontAwesomeIcon icon="pencil-alt" />{' '}
                         <span className="d-none d-md-inline">
                           <Translate contentKey="entity.action.edit">Edit</Translate>
@@ -85,7 +159,7 @@ export const CenterDonor = () => {
                       </Button>
                       <Button
                         tag={Link}
-                        to={`/center-donor/${centerDonor.id}/delete`}
+                        to={`/center-donor/${centerDonor.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
                         color="danger"
                         size="sm"
                         data-cy="entityDeleteButton"
@@ -109,6 +183,24 @@ export const CenterDonor = () => {
           )
         )}
       </div>
+      {totalItems ? (
+        <div className={centerDonorList && centerDonorList.length > 0 ? '' : 'd-none'}>
+          <div className="justify-content-center d-flex">
+            <JhiItemCount page={paginationState.activePage} total={totalItems} itemsPerPage={paginationState.itemsPerPage} i18nEnabled />
+          </div>
+          <div className="justify-content-center d-flex">
+            <JhiPagination
+              activePage={paginationState.activePage}
+              onSelect={handlePagination}
+              maxButtons={5}
+              itemsPerPage={paginationState.itemsPerPage}
+              totalItems={totalItems}
+            />
+          </div>
+        </div>
+      ) : (
+        ''
+      )}
     </div>
   );
 };

@@ -1,0 +1,25 @@
+{
+  "danakApp": {
+    "centerWatchList": {
+      "home": {
+        "title": "Center Watch Lists",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Center Watch List",
+        "createOrEditLabel": "Create or edit a Center Watch List",
+        "notFound": "No Center Watch Lists found"
+      },
+      "created": "A new Center Watch List is created with identifier {{ param }}",
+      "updated": "A Center Watch List is updated with identifier {{ param }}",
+      "deleted": "A Center Watch List is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Center Watch List {{ id }}?"
+      },
+      "detail": {
+        "title": "Center Watch List"
+      },
+      "id": "ID",
+      "center": "Center",
+      "user": "User"
+    }
+  }
+}

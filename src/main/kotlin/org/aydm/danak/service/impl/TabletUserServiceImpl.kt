@@ -6,6 +6,8 @@ import org.aydm.danak.service.TabletUserService
 import org.aydm.danak.service.dto.TabletUserDTO
 import org.aydm.danak.service.mapper.TabletUserMapper
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
@@ -31,7 +33,7 @@ class TabletUserServiceImpl(
     }
 
     override fun update(tabletUserDTO: TabletUserDTO): TabletUserDTO {
-        log.debug("Request to save TabletUser : {}", tabletUserDTO)
+        log.debug("Request to update TabletUser : {}", tabletUserDTO)
         var tabletUser = tabletUserMapper.toEntity(tabletUserDTO)
         tabletUser = tabletUserRepository.save(tabletUser)
         return tabletUserMapper.toDto(tabletUser)
@@ -50,10 +52,10 @@ class TabletUserServiceImpl(
     }
 
     @Transactional(readOnly = true)
-    override fun findAll(): MutableList<TabletUserDTO> {
+    override fun findAll(pageable: Pageable): Page<TabletUserDTO> {
         log.debug("Request to get all TabletUsers")
-        return tabletUserRepository.findAll()
-            .mapTo(mutableListOf(), tabletUserMapper::toDto)
+        return tabletUserRepository.findAll(pageable)
+            .map(tabletUserMapper::toDto)
     }
 
     @Transactional(readOnly = true)
@@ -61,6 +63,12 @@ class TabletUserServiceImpl(
         log.debug("Request to get TabletUser : $id")
         return tabletUserRepository.findById(id)
             .map(tabletUserMapper::toDto)
+    }
+
+    override fun delete(id: Long) {
+        log.debug("Request to delete TabletUser : $id")
+
+        tabletUserRepository.deleteById(id)
     }
 
     override fun findAllByFirstLastNameImplicit(): MutableList<TabletUserDTO> {
@@ -89,11 +97,5 @@ class TabletUserServiceImpl(
             return save(existedTabletUser)
         }
         return save(userToUpdate.apply { createTimeStamp = Instant.now() })
-    }
-
-    override fun delete(id: Long) {
-        log.debug("Request to delete TabletUser : $id")
-
-        tabletUserRepository.deleteById(id)
     }
 }

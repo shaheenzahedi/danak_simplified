@@ -9,13 +9,14 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 /**
- * Spring Data SQL repository for the [Tablet] entity.
+ * Spring Data JPA repository for the Tablet entity.
  */
 @Suppress("unused")
 @Repository
 interface TabletRepository : JpaRepository<Tablet, Long>, JpaSpecificationExecutor<Tablet> {
+
     fun findByName(tabletName: String): Optional<Tablet>
-//    @Query("select t.id from Tablet t where t.androidId is not null")
+    //    @Query("select t.id from Tablet t where t.androidId is not null")
     @Query("select t.id from Tablet t")
     fun findAllRegistered(): List<Long>?
     @Query("SELECT t FROM Tablet t WHERE t.name IN (SELECT name FROM Tablet GROUP BY name HAVING COUNT(name) > 1)")
@@ -27,4 +28,9 @@ interface TabletRepository : JpaRepository<Tablet, Long>, JpaSpecificationExecut
     fun findAllTabletIdsByDonorId(@Param("donorId") donorId: Long): MutableList<Long>
     @Query("SELECT t.id FROM Tablet t JOIN t.center c JOIN c.centerDonors cd WHERE cd.donor.id = :donorId")
     fun findAllTabletsByDonorId(@Param("donorId") donorId: Long): List<Tablet>
+    @Query("select tablet from Tablet tablet where tablet.archivedBy.login = ?#{principal.username}")
+    fun findByArchivedByIsCurrentUser(): MutableList<Tablet>
+
+    @Query("select tablet from Tablet tablet where tablet.modifiedBy.login = ?#{principal.username}")
+    fun findByModifiedByIsCurrentUser(): MutableList<Tablet>
 }

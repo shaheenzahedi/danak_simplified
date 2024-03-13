@@ -6,9 +6,11 @@ import org.aydm.danak.service.FileBelongingsService
 import org.aydm.danak.service.dto.FileBelongingsDTO
 import org.aydm.danak.service.mapper.FileBelongingsMapper
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.Optional
+import java.util.*
 
 /**
  * Service Implementation for managing [FileBelongings].
@@ -30,7 +32,7 @@ class FileBelongingsServiceImpl(
     }
 
     override fun update(fileBelongingsDTO: FileBelongingsDTO): FileBelongingsDTO {
-        log.debug("Request to save FileBelongings : {}", fileBelongingsDTO)
+        log.debug("Request to update FileBelongings : {}", fileBelongingsDTO)
         var fileBelongings = fileBelongingsMapper.toEntity(fileBelongingsDTO)
         fileBelongings = fileBelongingsRepository.save(fileBelongings)
         return fileBelongingsMapper.toDto(fileBelongings)
@@ -49,10 +51,10 @@ class FileBelongingsServiceImpl(
     }
 
     @Transactional(readOnly = true)
-    override fun findAll(): MutableList<FileBelongingsDTO> {
+    override fun findAll(pageable: Pageable): Page<FileBelongingsDTO> {
         log.debug("Request to get all FileBelongings")
-        return fileBelongingsRepository.findAll()
-            .mapTo(mutableListOf(), fileBelongingsMapper::toDto)
+        return fileBelongingsRepository.findAll(pageable)
+            .map(fileBelongingsMapper::toDto)
     }
 
     @Transactional(readOnly = true)

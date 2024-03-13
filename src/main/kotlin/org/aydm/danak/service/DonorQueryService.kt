@@ -100,10 +100,12 @@ class DonorQueryService(
                 specification = specification.and(buildRangeSpecification(criteria.id, Donor_.id))
             }
             if (criteria.createTimeStamp != null) {
-                specification = specification.and(buildRangeSpecification(criteria.createTimeStamp, Donor_.createTimeStamp))
+                specification =
+                    specification.and(buildRangeSpecification(criteria.createTimeStamp, Donor_.createTimeStamp))
             }
             if (criteria.updateTimeStamp != null) {
-                specification = specification.and(buildRangeSpecification(criteria.updateTimeStamp, Donor_.updateTimeStamp))
+                specification =
+                    specification.and(buildRangeSpecification(criteria.updateTimeStamp, Donor_.updateTimeStamp))
             }
             if (criteria.name != null) {
                 specification = specification.and(buildStringSpecification(criteria.name, Donor_.name))
@@ -114,10 +116,69 @@ class DonorQueryService(
             if (criteria.country != null) {
                 specification = specification.and(buildStringSpecification(criteria.country, Donor_.country))
             }
-            if (criteria.userId != null) {
+            if (criteria.nationalCode != null) {
+                specification = specification.and(buildStringSpecification(criteria.nationalCode, Donor_.nationalCode))
+            }
+            if (criteria.educationType != null) {
+                specification = specification.and(buildSpecification(criteria.educationType, Donor_.educationType))
+            }
+            if (criteria.education != null) {
+                specification = specification.and(buildStringSpecification(criteria.education, Donor_.education))
+            }
+            if (criteria.occupation != null) {
+                specification = specification.and(buildStringSpecification(criteria.occupation, Donor_.occupation))
+            }
+            if (criteria.workPlace != null) {
+                specification = specification.and(buildStringSpecification(criteria.workPlace, Donor_.workPlace))
+            }
+            if (criteria.workPlacePhone != null) {
+                specification =
+                    specification.and(buildStringSpecification(criteria.workPlacePhone, Donor_.workPlacePhone))
+            }
+            if (criteria.archived != null) {
+                specification = specification.and(buildSpecification(criteria.archived, Donor_.archived))
+            }
+            if (criteria.otpPhoneCode != null) {
+                specification = specification.and(buildRangeSpecification(criteria.otpPhoneCode, Donor_.otpPhoneCode))
+            }
+            if (criteria.otpPhoneEnable != null) {
+                specification = specification.and(buildSpecification(criteria.otpPhoneEnable, Donor_.otpPhoneEnable))
+            }
+            if (criteria.otpPhoneSentTimeStamp != null) {
                 specification = specification.and(
-                    buildSpecification(criteria.userId as Filter<Long>) {
-                        it.join(Donor_.user, JoinType.LEFT).get(User_.id)
+                    buildRangeSpecification(
+                        criteria.otpPhoneSentTimeStamp,
+                        Donor_.otpPhoneSentTimeStamp
+                    )
+                )
+            }
+            if (criteria.latitude != null) {
+                specification = specification.and(buildRangeSpecification(criteria.latitude, Donor_.latitude))
+            }
+            if (criteria.longitude != null) {
+                specification = specification.and(buildRangeSpecification(criteria.longitude, Donor_.longitude))
+            }
+            if (criteria.uid != null) {
+                specification = specification.and(buildStringSpecification(criteria.uid, Donor_.uid))
+            }
+            if (criteria.centerDonorId != null) {
+                specification = specification.and(
+                    buildSpecification(criteria.centerDonorId as Filter<Long>) {
+                        it.join(Donor_.centerDonors, JoinType.LEFT).get(CenterDonor_.id)
+                    }
+                )
+            }
+            if (criteria.donorImageId != null) {
+                specification = specification.and(
+                    buildSpecification(criteria.donorImageId as Filter<Long>) {
+                        it.join(Donor_.donorImages, JoinType.LEFT).get(DonorImage_.id)
+                    }
+                )
+            }
+            if (criteria.donorWatchListId != null) {
+                specification = specification.and(
+                    buildSpecification(criteria.donorWatchListId as Filter<Long>) {
+                        it.join(Donor_.donorWatchLists, JoinType.LEFT).get(DonorWatchList_.id)
                     }
                 )
             }
@@ -125,6 +186,34 @@ class DonorQueryService(
                 specification = specification.and(
                     buildSpecification(criteria.tabletId as Filter<Long>) {
                         it.join(Donor_.tablets, JoinType.LEFT).get(Tablet_.id)
+                    }
+                )
+            }
+            if (criteria.userId != null) {
+                specification = specification.and(
+                    buildSpecification(criteria.userId as Filter<Long>) {
+                        it.join(Donor_.user, JoinType.LEFT).get(User_.id)
+                    }
+                )
+            }
+            if (criteria.archivedById != null) {
+                specification = specification.and(
+                    buildSpecification(criteria.archivedById as Filter<Long>) {
+                        it.join(Donor_.archivedBy, JoinType.LEFT).get(User_.id)
+                    }
+                )
+            }
+            if (criteria.createdById != null) {
+                specification = specification.and(
+                    buildSpecification(criteria.createdById as Filter<Long>) {
+                        it.join(Donor_.createdBy, JoinType.LEFT).get(User_.id)
+                    }
+                )
+            }
+            if (criteria.modifiedById != null) {
+                specification = specification.and(
+                    buildSpecification(criteria.modifiedById as Filter<Long>) {
+                        it.join(Donor_.modifiedBy, JoinType.LEFT).get(User_.id)
                     }
                 )
             }

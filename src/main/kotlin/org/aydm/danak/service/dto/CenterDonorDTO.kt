@@ -1,15 +1,21 @@
 package org.aydm.danak.service.dto
 
+import org.aydm.danak.domain.enumeration.DonorType
 import java.io.Serializable
-import java.util.Objects
+import java.time.Instant
+import java.util.*
 
 /**
- * A DTO for the [org.aydm.domain.CenterDonor] entity.
+ * A DTO for the [org.aydm.danak.domain.CenterDonor] entity.
  */
 @SuppressWarnings("common-java:DuplicatedBlocks")
 data class CenterDonorDTO(
 
     var id: Long? = null,
+
+    var joinedTimeStamp: Instant? = null,
+
+    var donorType: DonorType? = null,
 
     var center: CenterDTO? = null,
 

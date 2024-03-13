@@ -16,7 +16,9 @@ interface UserActivityMapper :
     @Mappings(
         Mapping(target = "activity", source = "activity", qualifiedByName = ["tabletUserId"])
     )
-    override fun toDto(s: UserActivity): UserActivityDTO @Named("tabletUserId")
+    override fun toDto(s: UserActivity): UserActivityDTO
+
+    @Named("tabletUserId")
     @BeanMapping(ignoreByDefault = true)
 
     @Mappings(

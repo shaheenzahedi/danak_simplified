@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.Validator
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import java.util.Random
+import java.util.*
 import java.util.concurrent.atomic.AtomicLong
 import javax.persistence.EntityManager
 import kotlin.test.assertNotNull
@@ -334,6 +334,7 @@ class CenterResourceIT {
         // Get all the centerList where name is null
         defaultCenterShouldNotBeFound("name.specified=false")
     }
+
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -417,6 +418,7 @@ class CenterResourceIT {
         // Get all the centerList where city is null
         defaultCenterShouldNotBeFound("city.specified=false")
     }
+
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -500,6 +502,7 @@ class CenterResourceIT {
         // Get all the centerList where country is null
         defaultCenterShouldNotBeFound("country.specified=false")
     }
+
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -595,6 +598,7 @@ class CenterResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().string("0"))
     }
+
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -603,6 +607,7 @@ class CenterResourceIT {
         restCenterMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE))
             .andExpect(status().isNotFound)
     }
+
     @Test
     @Transactional
     fun putNewCenter() {

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository
 import java.util.Optional
 
 /**
- * Spring Data SQL repository for the [Version] entity.
+ * Spring Data JPA repository for the Version entity.
  */
 @Suppress("unused")
 @Repository

@@ -1,0 +1,25 @@
+{
+  "danakApp": {
+    "fileShare": {
+      "home": {
+        "title": "File Shares",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new File Share",
+        "createOrEditLabel": "Create or edit a File Share",
+        "notFound": "No File Shares found"
+      },
+      "created": "A new File Share is created with identifier {{ param }}",
+      "updated": "A File Share is updated with identifier {{ param }}",
+      "deleted": "A File Share is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete File Share {{ id }}?"
+      },
+      "detail": {
+        "title": "File Share"
+      },
+      "id": "ID",
+      "file": "File",
+      "user": "User"
+    }
+  }
+}

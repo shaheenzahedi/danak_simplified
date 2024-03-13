@@ -1,0 +1,13 @@
+{
+  "danakApp": {
+    "CenterType": {
+      "null": "",
+      "SCHOOL": "SCHOOL",
+      "HOME": "HOME",
+      "LIBRARY": "LIBRARY",
+      "MOSQUE": "MOSQUE",
+      "CHARITY": "CHARITY",
+      "OTHER": "OTHER"
+    }
+  }
+}

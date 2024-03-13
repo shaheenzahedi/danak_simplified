@@ -1,22 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
-import { Translate, TextFormat, getSortState, JhiPagination, JhiItemCount } from 'react-jhipster';
+import { getSortState, JhiItemCount, JhiPagination, TextFormat, Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { APP_DATE_FORMAT } from 'app/config/constants';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-
-import { ITabletUser } from 'app/shared/model/tablet-user.model';
 import { getEntities } from './tablet-user.reducer';
 
-export const TabletUser = (props: RouteComponentProps<{ url: string }>) => {
+export const TabletUser = () => {
   const dispatch = useAppDispatch();
 
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const [paginationState, setPaginationState] = useState(
-    overridePaginationStateWithQueryParams(getSortState(props.location, ITEMS_PER_PAGE, 'id'), props.location.search)
+    overridePaginationStateWithQueryParams(getSortState(location, ITEMS_PER_PAGE, 'id'), location.search)
   );
 
   const tabletUserList = useAppSelector(state => state.tabletUser.entities);
@@ -36,8 +37,8 @@ export const TabletUser = (props: RouteComponentProps<{ url: string }>) => {
   const sortEntities = () => {
     getAllEntities();
     const endURL = `?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`;
-    if (props.location.search !== endURL) {
-      props.history.push(`${props.location.pathname}${endURL}`);
+    if (location.search !== endURL) {
+      navigate(`${location.pathname}${endURL}`);
     }
   };
 
@@ -46,7 +47,7 @@ export const TabletUser = (props: RouteComponentProps<{ url: string }>) => {
   }, [paginationState.activePage, paginationState.order, paginationState.sort]);
 
   useEffect(() => {
-    const params = new URLSearchParams(props.location.search);
+    const params = new URLSearchParams(location.search);
     const page = params.get('page');
     const sort = params.get(SORT);
     if (page && sort) {
@@ -58,7 +59,7 @@ export const TabletUser = (props: RouteComponentProps<{ url: string }>) => {
         order: sortSplit[1],
       });
     }
-  }, [props.location.search]);
+  }, [location.search]);
 
   const sort = p => () => {
     setPaginationState({
@@ -77,8 +78,6 @@ export const TabletUser = (props: RouteComponentProps<{ url: string }>) => {
   const handleSyncList = () => {
     sortEntities();
   };
-
-  const { match } = props;
 
   return (
     <div>
@@ -105,10 +104,12 @@ export const TabletUser = (props: RouteComponentProps<{ url: string }>) => {
                   <Translate contentKey="danakApp.tabletUser.id">ID</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
                 <th className="hand" onClick={sort('createTimeStamp')}>
-                  <Translate contentKey="danakApp.tabletUser.createTimeStamp">Create Time Stamp</Translate> <FontAwesomeIcon icon="sort" />
+                  <Translate contentKey="danakApp.tabletUser.createTimeStamp">Create Time Stamp</Translate>
+                  <FontAwesomeIcon icon="sort" />
                 </th>
                 <th className="hand" onClick={sort('updateTimeStamp')}>
-                  <Translate contentKey="danakApp.tabletUser.updateTimeStamp">Update Time Stamp</Translate> <FontAwesomeIcon icon="sort" />
+                  <Translate contentKey="danakApp.tabletUser.updateTimeStamp">Update Time Stamp</Translate>
+                  <FontAwesomeIcon icon="sort" />
                 </th>
                 <th className="hand" onClick={sort('firstName')}>
                   <Translate contentKey="danakApp.tabletUser.firstName">First Name</Translate> <FontAwesomeIcon icon="sort" />
@@ -119,8 +120,23 @@ export const TabletUser = (props: RouteComponentProps<{ url: string }>) => {
                 <th className="hand" onClick={sort('email')}>
                   <Translate contentKey="danakApp.tabletUser.email">Email</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
+                <th className="hand" onClick={sort('description')}>
+                  <Translate contentKey="danakApp.tabletUser.description">Description</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={sort('recoveryPhrase')}>
+                  <Translate contentKey="danakApp.tabletUser.recoveryPhrase">Recovery Phrase</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={sort('archived')}>
+                  <Translate contentKey="danakApp.tabletUser.archived">Archived</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
                 <th>
                   <Translate contentKey="danakApp.tabletUser.tablet">Tablet</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
+                <th>
+                  <Translate contentKey="danakApp.tabletUser.archivedBy">Archived By</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
+                <th>
+                  <Translate contentKey="danakApp.tabletUser.modifiedBy">Modified By</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
                 <th />
               </tr>
@@ -146,7 +162,12 @@ export const TabletUser = (props: RouteComponentProps<{ url: string }>) => {
                   <td>{tabletUser.firstName}</td>
                   <td>{tabletUser.lastName}</td>
                   <td>{tabletUser.email}</td>
+                  <td>{tabletUser.description}</td>
+                  <td>{tabletUser.recoveryPhrase}</td>
+                  <td>{tabletUser.archived ? 'true' : 'false'}</td>
                   <td>{tabletUser.tablet ? <Link to={`/tablet/${tabletUser.tablet.id}`}>{tabletUser.tablet.id}</Link> : ''}</td>
+                  <td>{tabletUser.archivedBy ? tabletUser.archivedBy.id : ''}</td>
+                  <td>{tabletUser.modifiedBy ? tabletUser.modifiedBy.id : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`/tablet-user/${tabletUser.id}`} color="info" size="sm" data-cy="entityDetailsButton">

@@ -1,23 +1,23 @@
 import React from 'react';
-import { Switch } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 
-import ErrorBoundaryRoute from 'app/shared/error/error-boundary-route';
+import ErrorBoundaryRoutes from 'app/shared/error/error-boundary-routes';
 
 import Center from './center';
 import CenterDetail from './center-detail';
 import CenterUpdate from './center-update';
 import CenterDeleteDialog from './center-delete-dialog';
 
-const Routes = ({ match }) => (
-  <>
-    <Switch>
-      <ErrorBoundaryRoute exact path={`${match.url}/new`} component={CenterUpdate} />
-      <ErrorBoundaryRoute exact path={`${match.url}/:id/edit`} component={CenterUpdate} />
-      <ErrorBoundaryRoute exact path={`${match.url}/:id`} component={CenterDetail} />
-      <ErrorBoundaryRoute path={match.url} component={Center} />
-    </Switch>
-    <ErrorBoundaryRoute exact path={`${match.url}/:id/delete`} component={CenterDeleteDialog} />
-  </>
+const CenterRoutes = () => (
+  <ErrorBoundaryRoutes>
+    <Route index element={<Center />} />
+    <Route path="new" element={<CenterUpdate />} />
+    <Route path=":id">
+      <Route index element={<CenterDetail />} />
+      <Route path="edit" element={<CenterUpdate />} />
+      <Route path="delete" element={<CenterDeleteDialog />} />
+    </Route>
+  </ErrorBoundaryRoutes>
 );
 
-export default Routes;
+export default CenterRoutes;

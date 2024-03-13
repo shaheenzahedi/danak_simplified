@@ -79,11 +79,11 @@ class UserActivityResource(
     }
 
     @GetMapping("trigger-cleanup")
-    fun cleanUpTrigger() : ResponseEntity<Boolean>{
+    fun cleanUpTrigger(): ResponseEntity<Boolean> {
         return ResponseEntity.ok(userActivityService.cleanUpUserActivity())
     }
     @GetMapping("trigger-excel-export")
-    fun excelExportTrigger() : ResponseEntity<Boolean>{
+    fun excelExportTrigger(): ResponseEntity<Boolean> {
         userActivityService.doExcelExport()
         return ResponseEntity.ok().build()
     }
@@ -212,11 +212,11 @@ class UserActivityResource(
      * @return the [ResponseEntity] with status `200 (OK)` and the list of userActivities in body.
      */
     @GetMapping("/user-activities")
-    fun getAllUserActivities(): MutableList<UserActivityDTO> {
+    fun getAllUserActivities(): Page<UserActivityDTO> {
 
         log.debug("REST request to get all UserActivities")
 
-        return userActivityService.findAll()
+        return userActivityService.findAll(Pageable.unpaged())
     }
 
     /**

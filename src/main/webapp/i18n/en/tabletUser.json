@@ -23,8 +23,15 @@
       "firstName": "First Name",
       "lastName": "Last Name",
       "email": "Email",
+      "description": "Description",
+      "recoveryPhrase": "Recovery Phrase",
+      "archived": "Archived",
+      "tabletUserImage": "Tablet User Image",
+      "tabletUserWatchList": "Tablet User Watch List",
       "userActivity": "User Activity",
-      "tablet": "Tablet"
+      "tablet": "Tablet",
+      "archivedBy": "Archived By",
+      "modifiedBy": "Modified By"
     }
   }
 }

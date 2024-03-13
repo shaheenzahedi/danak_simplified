@@ -80,8 +80,8 @@ class ZonedDateTimeMatcher(private val date: ZonedDateTime) : TypeSafeDiagnosing
 fun sameInstant(date: ZonedDateTime) = ZonedDateTimeMatcher(date)
 
 /**
-* A matcher that tests that the examined number represents the same value - it can be Long, Double, etc - as the reference BigDecimal.
-*/
+ * A matcher that tests that the examined number represents the same value - it can be Long, Double, etc - as the reference BigDecimal.
+ */
 class NumberMatcher(private val value: BigDecimal) : TypeSafeMatcher<Number>() {
     override fun describeTo(description: Description) {
         description.appendText("a numeric value is ").appendValue(value)
@@ -109,10 +109,10 @@ class NumberMatcher(private val value: BigDecimal) : TypeSafeMatcher<Number>() {
 }
 
 /**
-* Creates a matcher that matches when the examined number represents the same value as the reference BigDecimal.
-*
-* @param number the reference BigDecimal against which the examined number is checked.
-*/
+ * Creates a matcher that matches when the examined number represents the same value as the reference BigDecimal.
+ *
+ * @param number the reference BigDecimal against which the examined number is checked.
+ */
 fun sameNumber(number: BigDecimal): NumberMatcher = NumberMatcher(number)
 
 /**
@@ -145,6 +145,7 @@ fun createFormattingConversionService(): FormattingConversionService {
     registrar.registerFormatters(dfcs)
     return dfcs
 }
+
 /**
  * Finds stored objects of the specified type.
  * @param clazz the class type to be searched.

@@ -1,22 +1,25 @@
 import React, { useEffect } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { getUser, deleteUser } from './user-management.reducer';
+import { deleteUser, getUser } from './user-management.reducer';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-export const UserManagementDeleteDialog = (props: RouteComponentProps<{ login: string }>) => {
+export const UserManagementDeleteDialog = () => {
   const dispatch = useAppDispatch();
 
+  const navigate = useNavigate();
+  const { login } = useParams<'login'>();
+
   useEffect(() => {
-    dispatch(getUser(props.match.params.login));
+    dispatch(getUser(login));
   }, []);
 
   const handleClose = event => {
     event.stopPropagation();
-    props.history.push('/admin/user-management');
+    navigate('/admin/user-management');
   };
 
   const user = useAppSelector(state => state.userManagement.user);

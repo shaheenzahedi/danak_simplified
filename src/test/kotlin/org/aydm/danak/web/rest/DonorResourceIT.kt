@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.Validator
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import java.util.Random
+import java.util.*
 import java.util.concurrent.atomic.AtomicLong
 import javax.persistence.EntityManager
 import kotlin.test.assertNotNull
@@ -335,6 +335,7 @@ class DonorResourceIT {
         // Get all the donorList where name is null
         defaultDonorShouldNotBeFound("name.specified=false")
     }
+
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -418,6 +419,7 @@ class DonorResourceIT {
         // Get all the donorList where city is null
         defaultDonorShouldNotBeFound("city.specified=false")
     }
+
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -501,6 +503,7 @@ class DonorResourceIT {
         // Get all the donorList where country is null
         defaultDonorShouldNotBeFound("country.specified=false")
     }
+
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -623,6 +626,7 @@ class DonorResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().string("0"))
     }
+
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -631,6 +635,7 @@ class DonorResourceIT {
         restDonorMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE))
             .andExpect(status().isNotFound)
     }
+
     @Test
     @Transactional
     fun putNewDonor() {

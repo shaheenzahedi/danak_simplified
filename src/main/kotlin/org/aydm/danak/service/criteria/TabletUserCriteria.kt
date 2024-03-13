@@ -2,9 +2,7 @@ package org.aydm.danak.service.criteria
 
 import org.springdoc.api.annotations.ParameterObject
 import tech.jhipster.service.Criteria
-import tech.jhipster.service.filter.InstantFilter
-import tech.jhipster.service.filter.LongFilter
-import tech.jhipster.service.filter.StringFilter
+import tech.jhipster.service.filter.*
 import java.io.Serializable
 
 /**
@@ -17,6 +15,7 @@ import java.io.Serializable
  * fix type specific filters.
  */
 @ParameterObject
+@SuppressWarnings("common-java:DuplicatedBlocks")
 data class TabletUserCriteria(
     var id: LongFilter? = null,
     var createTimeStamp: InstantFilter? = null,
@@ -24,9 +23,16 @@ data class TabletUserCriteria(
     var firstName: StringFilter? = null,
     var lastName: StringFilter? = null,
     var email: StringFilter? = null,
-    var searchField: StringFilter? = null,
+    var description: StringFilter? = null,
+    var recoveryPhrase: StringFilter? = null,
+    var archived: BooleanFilter? = null,
+    var tabletUserImageId: LongFilter? = null,
+    var tabletUserWatchListId: LongFilter? = null,
     var userActivityId: LongFilter? = null,
     var tabletId: LongFilter? = null,
+    var archivedById: LongFilter? = null,
+    var modifiedById: LongFilter? = null,
+    var searchField: StringFilter? = null,
     var distinct: Boolean? = null
 ) : Serializable, Criteria {
 
@@ -38,9 +44,16 @@ data class TabletUserCriteria(
             other.firstName?.copy(),
             other.lastName?.copy(),
             other.email?.copy(),
-            other.searchField?.copy(),
+            other.description?.copy(),
+            other.recoveryPhrase?.copy(),
+            other.archived?.copy(),
+            other.tabletUserImageId?.copy(),
+            other.tabletUserWatchListId?.copy(),
             other.userActivityId?.copy(),
             other.tabletId?.copy(),
+            other.archivedById?.copy(),
+            other.modifiedById?.copy(),
+            other.searchField?.copy(),
             other.distinct
         )
 

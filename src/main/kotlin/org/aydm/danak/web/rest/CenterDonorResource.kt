@@ -6,6 +6,8 @@ import org.aydm.danak.service.dto.CenterDonorDTO
 import org.aydm.danak.web.rest.errors.BadRequestAlertException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import tech.jhipster.web.util.HeaderUtil
@@ -139,11 +141,11 @@ class CenterDonorResource(
      * @return the [ResponseEntity] with status `200 (OK)` and the list of centerDonors in body.
      */
     @GetMapping("/center-donors")
-    fun getAllCenterDonors(): MutableList<CenterDonorDTO> {
+    fun getAllCenterDonors(): Page<CenterDonorDTO> {
 
         log.debug("REST request to get all CenterDonors")
 
-        return centerDonorService.findAll()
+        return centerDonorService.findAll(Pageable.unpaged())
     }
 
     @GetMapping("/center-donors-table")

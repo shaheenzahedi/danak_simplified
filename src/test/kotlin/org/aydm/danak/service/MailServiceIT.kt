@@ -10,10 +10,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Captor
-import org.mockito.Mockito.atLeastOnce
-import org.mockito.Mockito.doNothing
-import org.mockito.Mockito.doThrow
-import org.mockito.Mockito.verify
+import org.mockito.Mockito.*
 import org.mockito.MockitoAnnotations
 import org.mockito.Spy
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,7 +25,7 @@ import java.io.FileInputStream
 import java.io.InputStreamReader
 import java.net.URI
 import java.nio.charset.Charset
-import java.util.Properties
+import java.util.*
 import java.util.regex.Pattern
 import javax.mail.Multipart
 import javax.mail.internet.MimeBodyPart
@@ -203,7 +200,13 @@ class MailServiceIT {
             .`when`(javaMailSender)
             .send(any(MimeMessage::class.java))
         try {
-            mailService.sendEmail("john.doe@example.com", "testSubject", "testContent", isMultipart = false, isHtml = false)
+            mailService.sendEmail(
+                "john.doe@example.com",
+                "testSubject",
+                "testContent",
+                isMultipart = false,
+                isHtml = false
+            )
         } catch (e: Exception) {
             fail<String>("Exception shouldn't have been thrown")
         }

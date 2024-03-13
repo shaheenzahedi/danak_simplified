@@ -1,0 +1,9 @@
+{
+  "danakApp": {
+    "CenterImageType": {
+      "null": "",
+      "GALLERY": "GALLERY",
+      "PROFILE": "PROFILE"
+    }
+  }
+}

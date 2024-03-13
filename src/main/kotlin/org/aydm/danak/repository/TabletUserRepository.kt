@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 /**
- * Spring Data SQL repository for the [TabletUser] entity.
+ * Spring Data JPA repository for the TabletUser entity.
  */
 @Suppress("unused")
 @Repository
@@ -20,4 +20,9 @@ interface TabletUserRepository : JpaRepository<TabletUser, Long>, JpaSpecificati
 
     @Query("select tu from TabletUser tu group by tu.firstName, tu.lastName")
     fun findAllByFirstLastNameImplicit(): List<TabletUser>
+    @Query("select tabletUser from TabletUser tabletUser where tabletUser.archivedBy.login = ?#{principal.username}")
+    fun findByArchivedByIsCurrentUser(): MutableList<TabletUser>
+
+    @Query("select tabletUser from TabletUser tabletUser where tabletUser.modifiedBy.login = ?#{principal.username}")
+    fun findByModifiedByIsCurrentUser(): MutableList<TabletUser>
 }

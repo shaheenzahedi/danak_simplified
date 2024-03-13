@@ -11,6 +11,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "user_activity")
+@SuppressWarnings("common-java:DuplicatedBlocks")
 data class UserActivity(
 
     @Id
@@ -39,17 +40,28 @@ data class UserActivity(
     @Column(name = "unique_name")
     var uniqueName: String? = null,
 
+    @Column(name = "version")
+    var version: String? = null,
+
+    @Column(name = "description")
+    var description: String? = null,
+
+    // jhipster-needle-entity-add-field - JHipster will add fields here
+) : Serializable {
+
     @ManyToOne
     @JsonIgnoreProperties(
         value = [
+            "tabletUserImages",
+            "tabletUserWatchLists",
             "userActivities",
             "tablet",
+            "archivedBy",
+            "modifiedBy",
         ],
         allowSetters = true
     )
-    var activity: TabletUser? = null,
-    // jhipster-needle-entity-add-field - JHipster will add fields here
-) : Serializable {
+    var activity: TabletUser? = null
 
     fun activity(tabletUser: TabletUser?): UserActivity {
         this.activity = tabletUser
@@ -68,7 +80,6 @@ data class UserActivity(
         return id != null && other.id != null && id == other.id
     }
 
-    @Override
     override fun toString(): String {
         return "UserActivity{" +
             "id=" + id +
@@ -79,6 +90,8 @@ data class UserActivity(
             ", total=" + total +
             ", completed=" + completed +
             ", uniqueName='" + uniqueName + "'" +
+            ", version='" + version + "'" +
+            ", description='" + description + "'" +
             "}"
     }
 

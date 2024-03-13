@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Translate, translate, ValidatedField, ValidatedForm, isEmail } from 'react-jhipster';
-import { Row, Col, Alert, Button } from 'reactstrap';
+import React, { useEffect, useState } from 'react';
+import { isEmail, translate, Translate, ValidatedField, ValidatedForm } from 'react-jhipster';
+import { Alert, Button, Col, Row } from 'reactstrap';
 import { toast } from 'react-toastify';
 
 import PasswordStrengthBar from 'app/shared/layout/password/password-strength-bar';

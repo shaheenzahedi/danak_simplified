@@ -14,14 +14,21 @@
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
+            <column name="joined_time_stamp" type="${datetimeType}">
+                <constraints nullable="true"/>
+            </column>
+            <column name="donor_type" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
             <column name="center_id" type="bigint">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
             </column>
             <column name="donor_id" type="bigint">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
+        <dropDefaultValue tableName="center_donor" columnName="joined_time_stamp" columnDataType="${datetimeType}"/>
     </changeSet>
 
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here -->
@@ -36,11 +43,13 @@
     -->
     <changeSet id="20231229073015-1-data" author="jhipster" context="faker">
         <loadData
-                  file="config/liquibase/fake-data/center_donor.csv"
-                  separator=";"
-                  tableName="center_donor"
-                  usePreparedStatements="true">
+            file="config/liquibase/fake-data/center_donor.csv"
+            separator=";"
+            tableName="center_donor"
+            usePreparedStatements="true">
             <column name="id" type="numeric"/>
+            <column name="joined_time_stamp" type="date"/>
+            <column name="donor_type" type="string"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>
     </changeSet>

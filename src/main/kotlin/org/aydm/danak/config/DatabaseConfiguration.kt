@@ -1,4 +1,3 @@
-
 package org.aydm.danak.config
 
 import org.slf4j.LoggerFactory

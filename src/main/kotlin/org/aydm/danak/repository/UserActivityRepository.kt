@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository
 import java.time.Instant
 
 /**
- * Spring Data SQL repository for the [UserActivity] entity.
+ * Spring Data JPA repository for the UserActivity entity.
  */
 @Suppress("unused")
 @Repository

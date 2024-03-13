@@ -6,9 +6,11 @@ import org.aydm.danak.service.FileService
 import org.aydm.danak.service.dto.FileDTO
 import org.aydm.danak.service.mapper.FileMapper
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.Optional
+import java.util.*
 
 /**
  * Service Implementation for managing [File].
@@ -30,7 +32,7 @@ class FileServiceImpl(
     }
 
     override fun update(fileDTO: FileDTO): FileDTO {
-        log.debug("Request to save File : {}", fileDTO)
+        log.debug("Request to update File : {}", fileDTO)
         var file = fileMapper.toEntity(fileDTO)
         file = fileRepository.save(file)
         return fileMapper.toDto(file)
@@ -49,10 +51,10 @@ class FileServiceImpl(
     }
 
     @Transactional(readOnly = true)
-    override fun findAll(): MutableList<FileDTO> {
+    override fun findAll(pageable: Pageable): Page<FileDTO> {
         log.debug("Request to get all Files")
-        return fileRepository.findAll()
-            .mapTo(mutableListOf(), fileMapper::toDto)
+        return fileRepository.findAll(pageable)
+            .map(fileMapper::toDto)
     }
 
     @Transactional(readOnly = true)

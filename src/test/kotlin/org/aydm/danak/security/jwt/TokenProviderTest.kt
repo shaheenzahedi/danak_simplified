@@ -16,7 +16,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.test.util.ReflectionTestUtils
 import tech.jhipster.config.JHipsterProperties
 import java.security.Key
-import java.util.Date
+import java.util.*
 
 private const val ONE_MINUTE: Long = 60000
 
@@ -28,7 +28,8 @@ class TokenProviderTest {
     @BeforeEach
     fun setup() {
         val jHipsterProperties = JHipsterProperties()
-        val base64Secret = "fd54a45s65fds737b9aafcb3412e07ed99b267f33413274720ddbb7f6c5e64e9f14075f2d7ed041592f0b7657baf8"
+        val base64Secret =
+            "fd54a45s65fds737b9aafcb3412e07ed99b267f33413274720ddbb7f6c5e64e9f14075f2d7ed041592f0b7657baf8"
         jHipsterProperties.security.authentication.jwt.base64Secret = base64Secret
 
         val securityMetersService = SecurityMetersService(SimpleMeterRegistry())
@@ -101,7 +102,8 @@ class TokenProviderTest {
 
     @Test
     fun testKeyIsSetFromBase64SecretWhenSecretIsEmpty() {
-        val base64Secret = "fd54a45s65fds737b9aafcb3412e07ed99b267f33413274720ddbb7f6c5e64e9f14075f2d7ed041592f0b7657baf8"
+        val base64Secret =
+            "fd54a45s65fds737b9aafcb3412e07ed99b267f33413274720ddbb7f6c5e64e9f14075f2d7ed041592f0b7657baf8"
         val jHipsterProperties = JHipsterProperties()
         jHipsterProperties.security.authentication.jwt.base64Secret = base64Secret
 

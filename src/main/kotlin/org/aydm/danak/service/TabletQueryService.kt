@@ -1,7 +1,6 @@
 package org.aydm.danak.service
 
-import org.aydm.danak.domain.* // for static metamodels
-import org.aydm.danak.domain.Tablet
+import org.aydm.danak.domain.*
 import org.aydm.danak.repository.TabletRepository
 import org.aydm.danak.service.criteria.TabletCriteria
 import org.aydm.danak.service.dto.TabletDTO
@@ -103,19 +102,45 @@ class TabletQueryService(
                 specification =
                     specification.and(buildRangeSpecification(criteria.updateTimeStamp, Tablet_.updateTimeStamp))
             }
-            if (criteria.name != null) {
-                specification = specification.and(buildStringSpecification(criteria.name, Tablet_.name))
-            }
             if (criteria.identifier != null) {
                 specification = specification.and(buildStringSpecification(criteria.identifier, Tablet_.identifier))
             }
+            if (criteria.tag != null) {
+                specification = specification.and(buildStringSpecification(criteria.tag, Tablet_.tag))
+            }
+            if (criteria.name != null) {
+                specification = specification.and(buildStringSpecification(criteria.name, Tablet_.name))
+            }
+            if (criteria.androidId != null) {
+                specification = specification.and(buildStringSpecification(criteria.androidId, Tablet_.androidId))
+            }
             if (criteria.model != null) {
                 specification = specification.and(buildStringSpecification(criteria.model, Tablet_.model))
+            }
+            if (criteria.description != null) {
+                specification = specification.and(buildStringSpecification(criteria.description, Tablet_.description))
+            }
+            if (criteria.archived != null) {
+                specification = specification.and(buildSpecification(criteria.archived, Tablet_.archived))
+            }
+            if (criteria.tabletLogId != null) {
+                specification = specification.and(
+                    buildSpecification(criteria.tabletLogId as Filter<Long>) {
+                        it.join(Tablet_.tabletLogs, JoinType.LEFT).get(TabletLog_.id)
+                    }
+                )
             }
             if (criteria.tabletUserId != null) {
                 specification = specification.and(
                     buildSpecification(criteria.tabletUserId as Filter<Long>) {
                         it.join(Tablet_.tabletUsers, JoinType.LEFT).get(TabletUser_.id)
+                    }
+                )
+            }
+            if (criteria.tabletWatchListId != null) {
+                specification = specification.and(
+                    buildSpecification(criteria.tabletWatchListId as Filter<Long>) {
+                        it.join(Tablet_.tabletWatchLists, JoinType.LEFT).get(TabletWatchList_.id)
                     }
                 )
             }
@@ -130,6 +155,20 @@ class TabletQueryService(
                 specification = specification.and(
                     buildSpecification(criteria.donorId as Filter<Long>) {
                         it.join(Tablet_.donor, JoinType.LEFT).get(Donor_.id)
+                    }
+                )
+            }
+            if (criteria.archivedById != null) {
+                specification = specification.and(
+                    buildSpecification(criteria.archivedById as Filter<Long>) {
+                        it.join(Tablet_.archivedBy, JoinType.LEFT).get(User_.id)
+                    }
+                )
+            }
+            if (criteria.modifiedById != null) {
+                specification = specification.and(
+                    buildSpecification(criteria.modifiedById as Filter<Long>) {
+                        it.join(Tablet_.modifiedBy, JoinType.LEFT).get(User_.id)
                     }
                 )
             }

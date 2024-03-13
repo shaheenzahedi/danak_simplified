@@ -1,22 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
-import { Translate, TextFormat, getSortState, JhiPagination, JhiItemCount } from 'react-jhipster';
+import { getSortState, JhiItemCount, JhiPagination, TextFormat, Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { APP_DATE_FORMAT } from 'app/config/constants';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-
-import { ICenter } from 'app/shared/model/center.model';
 import { getEntities } from './center.reducer';
 
-export const Center = (props: RouteComponentProps<{ url: string }>) => {
+export const Center = () => {
   const dispatch = useAppDispatch();
 
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const [paginationState, setPaginationState] = useState(
-    overridePaginationStateWithQueryParams(getSortState(props.location, ITEMS_PER_PAGE, 'id'), props.location.search)
+    overridePaginationStateWithQueryParams(getSortState(location, ITEMS_PER_PAGE, 'id'), location.search)
   );
 
   const centerList = useAppSelector(state => state.center.entities);
@@ -36,8 +37,8 @@ export const Center = (props: RouteComponentProps<{ url: string }>) => {
   const sortEntities = () => {
     getAllEntities();
     const endURL = `?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`;
-    if (props.location.search !== endURL) {
-      props.history.push(`${props.location.pathname}${endURL}`);
+    if (location.search !== endURL) {
+      navigate(`${location.pathname}${endURL}`);
     }
   };
 
@@ -46,7 +47,7 @@ export const Center = (props: RouteComponentProps<{ url: string }>) => {
   }, [paginationState.activePage, paginationState.order, paginationState.sort]);
 
   useEffect(() => {
-    const params = new URLSearchParams(props.location.search);
+    const params = new URLSearchParams(location.search);
     const page = params.get('page');
     const sort = params.get(SORT);
     if (page && sort) {
@@ -58,7 +59,7 @@ export const Center = (props: RouteComponentProps<{ url: string }>) => {
         order: sortSplit[1],
       });
     }
-  }, [props.location.search]);
+  }, [location.search]);
 
   const sort = p => () => {
     setPaginationState({
@@ -77,8 +78,6 @@ export const Center = (props: RouteComponentProps<{ url: string }>) => {
   const handleSyncList = () => {
     sortEntities();
   };
-
-  const { match } = props;
 
   return (
     <div>
@@ -119,6 +118,27 @@ export const Center = (props: RouteComponentProps<{ url: string }>) => {
                 <th className="hand" onClick={sort('country')}>
                   <Translate contentKey="danakApp.center.country">Country</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
+                <th className="hand" onClick={sort('archived')}>
+                  <Translate contentKey="danakApp.center.archived">Archived</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={sort('centerType')}>
+                  <Translate contentKey="danakApp.center.centerType">Center Type</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={sort('latitude')}>
+                  <Translate contentKey="danakApp.center.latitude">Latitude</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={sort('longitude')}>
+                  <Translate contentKey="danakApp.center.longitude">Longitude</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
+                <th>
+                  <Translate contentKey="danakApp.center.archivedBy">Archived By</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
+                <th>
+                  <Translate contentKey="danakApp.center.createdBy">Created By</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
+                <th>
+                  <Translate contentKey="danakApp.center.modifiedBy">Modified By</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
                 <th />
               </tr>
             </thead>
@@ -139,6 +159,15 @@ export const Center = (props: RouteComponentProps<{ url: string }>) => {
                   <td>{center.name}</td>
                   <td>{center.city}</td>
                   <td>{center.country}</td>
+                  <td>{center.archived ? 'true' : 'false'}</td>
+                  <td>
+                    <Translate contentKey={`danakApp.CenterType.${center.centerType}`} />
+                  </td>
+                  <td>{center.latitude}</td>
+                  <td>{center.longitude}</td>
+                  <td>{center.archivedBy ? center.archivedBy.id : ''}</td>
+                  <td>{center.createdBy ? center.createdBy.id : ''}</td>
+                  <td>{center.modifiedBy ? center.modifiedBy.id : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`/center/${center.id}`} color="info" size="sm" data-cy="entityDetailsButton">

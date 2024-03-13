@@ -1,6 +1,7 @@
 package org.aydm.danak.domain
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import org.aydm.danak.domain.enumeration.CenterType
 import java.io.Serializable
 import java.time.Instant
 import javax.persistence.*
@@ -11,6 +12,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "center")
+@SuppressWarnings("common-java:DuplicatedBlocks")
 data class Center(
 
     @Id
@@ -33,16 +35,22 @@ data class Center(
     @Column(name = "country")
     var country: String? = null,
 
-    @OneToMany(mappedBy = "center")
-    @JsonIgnoreProperties(
-        value = [
-            "tabletUsers",
-            "center",
-            "donor",
-        ],
-        allowSetters = true
-    )
-    var tablets: MutableSet<Tablet>? = mutableSetOf(),
+    @Column(name = "archived")
+    var archived: Boolean? = null,
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "center_type")
+    var centerType: CenterType? = null,
+
+    @Column(name = "latitude")
+    var latitude: Long? = null,
+
+    @Column(name = "longitude")
+    var longitude: Long? = null,
+
+    // jhipster-needle-entity-add-field - JHipster will add fields here
+) : Serializable {
+
     @OneToMany(mappedBy = "center")
     @JsonIgnoreProperties(
         value = [
@@ -52,27 +60,111 @@ data class Center(
         allowSetters = true
     )
     var centerDonors: MutableSet<CenterDonor>? = mutableSetOf()
-    // jhipster-needle-entity-add-field - JHipster will add fields here
-) : Serializable {
+
+    @OneToMany(mappedBy = "center")
+    @JsonIgnoreProperties(
+        value = [
+            "file",
+            "center",
+        ],
+        allowSetters = true
+    )
+    var centerImages: MutableSet<CenterImage>? = mutableSetOf()
+
+    @OneToMany(mappedBy = "center")
+    @JsonIgnoreProperties(
+        value = [
+            "center",
+            "user",
+        ],
+        allowSetters = true
+    )
+    var centerWatchLists: MutableSet<CenterWatchList>? = mutableSetOf()
+
+    @OneToMany(mappedBy = "center")
+    @JsonIgnoreProperties(
+        value = [
+            "tabletLogs",
+            "tabletUsers",
+            "tabletWatchLists",
+            "center",
+            "donor",
+            "archivedBy",
+            "modifiedBy",
+        ],
+        allowSetters = true
+    )
+    var tablets: MutableSet<Tablet>? = mutableSetOf()
+
+    @ManyToOne
+    var archivedBy: User? = null
+
+    @ManyToOne
+    var createdBy: User? = null
+
+    @ManyToOne
+    var modifiedBy: User? = null
 
     fun addCenterDonor(centerDonor: CenterDonor): Center {
         this.centerDonors?.add(centerDonor)
         centerDonor.center = this
         return this
     }
+
     fun removeCenterDonor(centerDonor: CenterDonor): Center {
         this.centerDonors?.remove(centerDonor)
         centerDonor.center = null
         return this
     }
+
+    fun addCenterImage(centerImage: CenterImage): Center {
+        this.centerImages?.add(centerImage)
+        centerImage.center = this
+        return this
+    }
+
+    fun removeCenterImage(centerImage: CenterImage): Center {
+        this.centerImages?.remove(centerImage)
+        centerImage.center = null
+        return this
+    }
+
+    fun addCenterWatchList(centerWatchList: CenterWatchList): Center {
+        this.centerWatchLists?.add(centerWatchList)
+        centerWatchList.center = this
+        return this
+    }
+
+    fun removeCenterWatchList(centerWatchList: CenterWatchList): Center {
+        this.centerWatchLists?.remove(centerWatchList)
+        centerWatchList.center = null
+        return this
+    }
+
     fun addTablet(tablet: Tablet): Center {
         this.tablets?.add(tablet)
         tablet.center = this
         return this
     }
+
     fun removeTablet(tablet: Tablet): Center {
         this.tablets?.remove(tablet)
         tablet.center = null
+        return this
+    }
+
+    fun archivedBy(user: User?): Center {
+        this.archivedBy = user
+        return this
+    }
+
+    fun createdBy(user: User?): Center {
+        this.createdBy = user
+        return this
+    }
+
+    fun modifiedBy(user: User?): Center {
+        this.modifiedBy = user
         return this
     }
 
@@ -88,7 +180,6 @@ data class Center(
         return id != null && other.id != null && id == other.id
     }
 
-    @Override
     override fun toString(): String {
         return "Center{" +
             "id=" + id +
@@ -97,6 +188,10 @@ data class Center(
             ", name='" + name + "'" +
             ", city='" + city + "'" +
             ", country='" + country + "'" +
+            ", archived='" + archived + "'" +
+            ", centerType='" + centerType + "'" +
+            ", latitude=" + latitude +
+            ", longitude=" + longitude +
             "}"
     }
 

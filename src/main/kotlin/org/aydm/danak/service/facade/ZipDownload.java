@@ -1,9 +1,10 @@
 package org.aydm.danak.service.facade;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.util.List;
-
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.model.ZipParameters;
 import net.lingala.zip4j.model.enums.CompressionLevel;
@@ -11,11 +12,34 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ZipDownload {
+
     private final Logger log = LoggerFactory.getLogger(ZipDownload.class);
+
+    // Verify the checksum of a file
+    private static boolean verifyChecksum(String filepath, String checksum) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            FileInputStream fis = new FileInputStream(filepath);
+            byte[] dataBytes = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = fis.read(dataBytes)) != -1) {
+                md.update(dataBytes, 0, bytesRead);
+            }
+            byte[] mdBytes = md.digest();
+            StringBuilder sb = new StringBuilder();
+            for (byte mdByte : mdBytes) {
+                sb.append(Integer.toString((mdByte & 0xff) + 0x100, 16).substring(1));
+            }
+            fis.close();
+            return sb.toString().equals(checksum);
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
     public void start(List<FileResponse> allFiles, String prefixPath, String zipDir, int version, String jsonFilePath) {
         log.info("version{{}} - Zip file creation started", version);
-        try (ZipFile zipFile = new ZipFile(zipDir)){
+        try (ZipFile zipFile = new ZipFile(zipDir)) {
             ZipParameters zipParameters = new ZipParameters();
             zipParameters.setCompressionLevel(CompressionLevel.NO_COMPRESSION);
             // Add the JSON file to the root folder of the zip file
@@ -50,26 +74,4 @@ public class ZipDownload {
             log.error("version{{}} - Error: ", version, e);
         }
     }
-    // Verify the checksum of a file
-    private static boolean verifyChecksum(String filepath, String checksum) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            FileInputStream fis = new FileInputStream(filepath);
-            byte[] dataBytes = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = fis.read(dataBytes)) != -1) {
-                md.update(dataBytes, 0, bytesRead);
-            }
-            byte[] mdBytes = md.digest();
-            StringBuilder sb = new StringBuilder();
-            for (byte mdByte : mdBytes) {
-                sb.append(Integer.toString((mdByte & 0xff) + 0x100, 16).substring(1));
-            }
-            fis.close();
-            return sb.toString().equals(checksum);
-        } catch (Exception e) {
-            return false;
-        }
-    }
 }
-

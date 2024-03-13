@@ -21,7 +21,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.Validator
-import java.util.Random
+import java.util.*
 import java.util.concurrent.atomic.AtomicLong
 import javax.persistence.EntityManager
 import kotlin.test.assertNotNull
@@ -324,6 +324,7 @@ class VersionResourceIT {
         // Get all the versionList where tag is null
         defaultVersionShouldNotBeFound("tag.specified=false")
     }
+
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -443,6 +444,7 @@ class VersionResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().string("0"))
     }
+
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -451,6 +453,7 @@ class VersionResourceIT {
         restVersionMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE))
             .andExpect(status().isNotFound)
     }
+
     @Test
     @Transactional
     fun putNewVersion() {

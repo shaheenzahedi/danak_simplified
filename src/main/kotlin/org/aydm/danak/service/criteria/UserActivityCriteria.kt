@@ -2,9 +2,7 @@ package org.aydm.danak.service.criteria
 
 import org.springdoc.api.annotations.ParameterObject
 import tech.jhipster.service.Criteria
-import tech.jhipster.service.filter.InstantFilter
-import tech.jhipster.service.filter.LongFilter
-import tech.jhipster.service.filter.StringFilter
+import tech.jhipster.service.filter.*
 import java.io.Serializable
 
 /**
@@ -17,6 +15,7 @@ import java.io.Serializable
  * fix type specific filters.
  */
 @ParameterObject
+@SuppressWarnings("common-java:DuplicatedBlocks")
 data class UserActivityCriteria(
     var id: LongFilter? = null,
     var createTimeStamp: InstantFilter? = null,
@@ -26,6 +25,8 @@ data class UserActivityCriteria(
     var total: LongFilter? = null,
     var completed: LongFilter? = null,
     var uniqueName: StringFilter? = null,
+    var version: StringFilter? = null,
+    var description: StringFilter? = null,
     var activityId: LongFilter? = null,
     var distinct: Boolean? = null
 ) : Serializable, Criteria {
@@ -40,6 +41,8 @@ data class UserActivityCriteria(
             other.total?.copy(),
             other.completed?.copy(),
             other.uniqueName?.copy(),
+            other.version?.copy(),
+            other.description?.copy(),
             other.activityId?.copy(),
             other.distinct
         )

@@ -145,11 +145,11 @@ class TabletUserResource(
      * @return the [ResponseEntity] with status `200 (OK)` and the list of tabletUsers in body.
      */
     @GetMapping("/tablet-users")
-    fun getAllTabletUsers(): MutableList<TabletUserDTO> {
+    fun getAllTabletUsers(): Page<TabletUserDTO> {
 
         log.debug("REST request to get all TabletUsers")
 
-        return tabletUserService.findAll()
+        return tabletUserService.findAll(Pageable.unpaged())
     }
 
     @GetMapping("/tablet-users-panel")

@@ -18,7 +18,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.test.util.ReflectionTestUtils
 import tech.jhipster.config.JHipsterProperties
 import java.security.Key
-import java.util.Date
+import java.util.*
 
 private const val ONE_MINUTE = 60000
 private const val INVALID_TOKENS_METER_EXPECTED_NAME = "security.authentication.invalid-tokens"
@@ -32,7 +32,8 @@ class TokenProviderSecurityMetersTests {
     @BeforeEach
     fun setup() {
         val jHipsterProperties = JHipsterProperties()
-        val base64Secret = "fd54a45s65fds737b9aafcb3412e07ed99b267f33413274720ddbb7f6c5e64e9f14075f2d7ed041592f0b7657baf8"
+        val base64Secret =
+            "fd54a45s65fds737b9aafcb3412e07ed99b267f33413274720ddbb7f6c5e64e9f14075f2d7ed041592f0b7657baf8"
         jHipsterProperties.security.authentication.jwt.base64Secret = base64Secret
 
         meterRegistry = SimpleMeterRegistry()

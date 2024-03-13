@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { Translate, translate, ValidatedField, ValidatedForm, isEmail } from 'react-jhipster';
-import { Button, Alert, Col, Row } from 'reactstrap';
+import { isEmail, translate, Translate, ValidatedField, ValidatedForm } from 'react-jhipster';
+import { Alert, Button, Col, Row } from 'reactstrap';
 import { toast } from 'react-toastify';
 
 import { handlePasswordResetInit, reset } from '../password-reset.reducer';

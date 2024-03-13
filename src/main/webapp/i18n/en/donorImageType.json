@@ -1,0 +1,9 @@
+{
+  "danakApp": {
+    "DonorImageType": {
+      "null": "",
+      "DOCUMENT": "DOCUMENT",
+      "PROFILE": "PROFILE"
+    }
+  }
+}

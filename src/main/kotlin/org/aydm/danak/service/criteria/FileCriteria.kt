@@ -2,8 +2,7 @@ package org.aydm.danak.service.criteria
 
 import org.springdoc.api.annotations.ParameterObject
 import tech.jhipster.service.Criteria
-import tech.jhipster.service.filter.LongFilter
-import tech.jhipster.service.filter.StringFilter
+import tech.jhipster.service.filter.*
 import java.io.Serializable
 
 /**
@@ -16,6 +15,7 @@ import java.io.Serializable
  * fix type specific filters.
  */
 @ParameterObject
+@SuppressWarnings("common-java:DuplicatedBlocks")
 data class FileCriteria(
     var id: LongFilter? = null,
     var name: StringFilter? = null,

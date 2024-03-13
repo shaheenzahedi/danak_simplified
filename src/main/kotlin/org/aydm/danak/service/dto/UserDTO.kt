@@ -19,4 +19,8 @@ open class UserDTO(
     override fun toString() = "UserDTO{" +
         "login='" + login + '\'' +
         "}"
+
+    companion object {
+        private const val serialVersionUID = 1L
+    }
 }

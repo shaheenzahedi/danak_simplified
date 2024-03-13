@@ -1,13 +1,14 @@
 package org.aydm.danak.repository
 
 import org.aydm.danak.domain.User
-import org.springframework.data.domain.*
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.stereotype.Repository
 import java.time.Instant
-import java.util.Optional
+import java.util.*
 
 /**
  * Spring Data JPA repository for the {@link User} entity.

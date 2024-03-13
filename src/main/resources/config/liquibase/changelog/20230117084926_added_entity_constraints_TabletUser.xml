@@ -15,8 +15,17 @@
                                  constraintName="fk_tablet_user__tablet_id"
                                  referencedColumnNames="id"
                                  referencedTableName="tablet"/>
-<!--        <addUniqueConstraint-->
-<!--            columnNames="first_name, last_name, tablet_id"-->
-<!--            constraintName="uc_tablet_user_unique_combination" tableName="tablet_user"/>-->
+
+        <addForeignKeyConstraint baseColumnNames="archived_by_id"
+                                 baseTableName="tablet_user"
+                                 constraintName="fk_tablet_user__archived_by_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="jhi_user"/>
+
+        <addForeignKeyConstraint baseColumnNames="modified_by_id"
+                                 baseTableName="tablet_user"
+                                 constraintName="fk_tablet_user__modified_by_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="jhi_user"/>
     </changeSet>
 </databaseChangeLog>

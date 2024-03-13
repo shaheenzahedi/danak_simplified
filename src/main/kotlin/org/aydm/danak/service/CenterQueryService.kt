@@ -109,10 +109,64 @@ class CenterQueryService(
             if (criteria.country != null) {
                 specification = specification.and(buildStringSpecification(criteria.country, Center_.country))
             }
+            if (criteria.archived != null) {
+                specification = specification.and(buildSpecification(criteria.archived, Center_.archived))
+            }
+            if (criteria.centerType != null) {
+                specification = specification.and(buildSpecification(criteria.centerType, Center_.centerType))
+            }
+            if (criteria.latitude != null) {
+                specification = specification.and(buildRangeSpecification(criteria.latitude, Center_.latitude))
+            }
+            if (criteria.longitude != null) {
+                specification = specification.and(buildRangeSpecification(criteria.longitude, Center_.longitude))
+            }
+            if (criteria.centerDonorId != null) {
+                specification = specification.and(
+                    buildSpecification(criteria.centerDonorId as Filter<Long>) {
+                        it.join(Center_.centerDonors, JoinType.LEFT).get(CenterDonor_.id)
+                    }
+                )
+            }
+            if (criteria.centerImageId != null) {
+                specification = specification.and(
+                    buildSpecification(criteria.centerImageId as Filter<Long>) {
+                        it.join(Center_.centerImages, JoinType.LEFT).get(CenterImage_.id)
+                    }
+                )
+            }
+            if (criteria.centerWatchListId != null) {
+                specification = specification.and(
+                    buildSpecification(criteria.centerWatchListId as Filter<Long>) {
+                        it.join(Center_.centerWatchLists, JoinType.LEFT).get(CenterWatchList_.id)
+                    }
+                )
+            }
             if (criteria.tabletId != null) {
                 specification = specification.and(
                     buildSpecification(criteria.tabletId as Filter<Long>) {
                         it.join(Center_.tablets, JoinType.LEFT).get(Tablet_.id)
+                    }
+                )
+            }
+            if (criteria.archivedById != null) {
+                specification = specification.and(
+                    buildSpecification(criteria.archivedById as Filter<Long>) {
+                        it.join(Center_.archivedBy, JoinType.LEFT).get(User_.id)
+                    }
+                )
+            }
+            if (criteria.createdById != null) {
+                specification = specification.and(
+                    buildSpecification(criteria.createdById as Filter<Long>) {
+                        it.join(Center_.createdBy, JoinType.LEFT).get(User_.id)
+                    }
+                )
+            }
+            if (criteria.modifiedById != null) {
+                specification = specification.and(
+                    buildSpecification(criteria.modifiedById as Filter<Long>) {
+                        it.join(Center_.modifiedBy, JoinType.LEFT).get(User_.id)
                     }
                 )
             }

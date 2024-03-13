@@ -1,0 +1,25 @@
+{
+  "danakApp": {
+    "tabletLog": {
+      "home": {
+        "title": "Tablet Logs",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Tablet Log",
+        "createOrEditLabel": "Create or edit a Tablet Log",
+        "notFound": "No Tablet Logs found"
+      },
+      "created": "A new Tablet Log is created with identifier {{ param }}",
+      "updated": "A Tablet Log is updated with identifier {{ param }}",
+      "deleted": "A Tablet Log is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Tablet Log {{ id }}?"
+      },
+      "detail": {
+        "title": "Tablet Log"
+      },
+      "id": "ID",
+      "createTimeStamp": "Create Time Stamp",
+      "tablet": "Tablet"
+    }
+  }
+}

@@ -6,6 +6,8 @@ import org.aydm.danak.service.dto.VersionDTO
 import org.aydm.danak.web.rest.errors.BadRequestAlertException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import tech.jhipster.web.util.HeaderUtil
@@ -138,11 +140,11 @@ class VersionResource(
 
      * @return the [ResponseEntity] with status `200 (OK)` and the list of versions in body.
      */
-    @GetMapping("/versions") fun getAllVersions(): MutableList<VersionDTO> {
+    @GetMapping("/versions") fun getAllVersions(): Page<VersionDTO> {
 
         log.debug("REST request to get all Versions")
 
-        return versionService.findAll()
+        return versionService.findAll(Pageable.unpaged())
     }
 
     /**

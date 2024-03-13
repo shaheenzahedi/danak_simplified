@@ -15,28 +15,34 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="create_time_stamp" type="${datetimeType}">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
             </column>
             <column name="update_time_stamp" type="${datetimeType}">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
             </column>
             <column name="device_time_stamp" type="${datetimeType}">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
             </column>
             <column name="list_name" type="varchar(255)">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
             </column>
             <column name="total" type="bigint">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
             </column>
             <column name="completed" type="bigint">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
             </column>
             <column name="unique_name" type="varchar(255)">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
+            </column>
+            <column name="version" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="description" type="varchar(255)">
+                <constraints nullable="true"/>
             </column>
             <column name="activity_id" type="bigint">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
@@ -69,6 +75,8 @@
             <column name="total" type="numeric"/>
             <column name="completed" type="numeric"/>
             <column name="unique_name" type="string"/>
+            <column name="version" type="string"/>
+            <column name="description" type="string"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>
     </changeSet>

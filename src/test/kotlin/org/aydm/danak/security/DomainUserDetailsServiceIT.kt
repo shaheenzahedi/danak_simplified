@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.transaction.annotation.Transactional
-import java.util.Locale
+import java.util.*
 
 private const val USER_ONE_LOGIN = "test-user-one"
 private const val USER_ONE_EMAIL = "test-user-one@localhost"

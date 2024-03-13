@@ -3,7 +3,7 @@ import org.aydm.danak.domain.Tablet
 import org.aydm.danak.service.dto.TabletDTO
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import java.util.Optional
+import java.util.*
 
 /**
  * Service Interface for managing [org.aydm.danak.domain.Tablet].
@@ -33,13 +33,6 @@ interface TabletService {
      * @return the persisted entity.
      */
     fun partialUpdate(tabletDTO: TabletDTO): Optional<TabletDTO>
-
-    /**
-     * Get all the tablets.
-     *
-     * @return the list of entities.
-     */
-    fun findAll(): MutableList<TabletDTO>
 
     /**
      * Get the "id" tablet.

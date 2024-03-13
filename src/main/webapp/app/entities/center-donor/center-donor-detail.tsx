@@ -1,20 +1,21 @@
 import React, { useEffect } from 'react';
-import {Link, RouteComponentProps, useParams} from 'react-router-dom';
-import { Button, Row, Col } from 'reactstrap';
-import { Translate } from 'react-jhipster';
+import { Link, useParams } from 'react-router-dom';
+import { Button, Col, Row } from 'reactstrap';
+import { TextFormat, Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { APP_DATE_FORMAT } from 'app/config/constants';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
 import { getEntity } from './center-donor.reducer';
 
-export const CenterDonorDetail = (props: RouteComponentProps<{ id: string }>) => {
+export const CenterDonorDetail = () => {
   const dispatch = useAppDispatch();
 
+  const { id } = useParams<'id'>();
 
   useEffect(() => {
-    dispatch(getEntity(props.match.params.id));
+    dispatch(getEntity(id));
   }, []);
 
   const centerDonorEntity = useAppSelector(state => state.centerDonor.entity);
@@ -31,6 +32,22 @@ export const CenterDonorDetail = (props: RouteComponentProps<{ id: string }>) =>
             </span>
           </dt>
           <dd>{centerDonorEntity.id}</dd>
+          <dt>
+            <span id="joinedTimeStamp">
+              <Translate contentKey="danakApp.centerDonor.joinedTimeStamp">Joined Time Stamp</Translate>
+            </span>
+          </dt>
+          <dd>
+            {centerDonorEntity.joinedTimeStamp ? (
+              <TextFormat value={centerDonorEntity.joinedTimeStamp} type="date" format={APP_DATE_FORMAT} />
+            ) : null}
+          </dd>
+          <dt>
+            <span id="donorType">
+              <Translate contentKey="danakApp.centerDonor.donorType">Donor Type</Translate>
+            </span>
+          </dt>
+          <dd>{centerDonorEntity.donorType}</dd>
           <dt>
             <Translate contentKey="danakApp.centerDonor.center">Center</Translate>
           </dt>

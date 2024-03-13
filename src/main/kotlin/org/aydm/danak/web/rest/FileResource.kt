@@ -9,6 +9,8 @@ import org.aydm.danak.service.facade.UpdateResponse
 import org.aydm.danak.web.rest.errors.BadRequestAlertException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -182,11 +184,11 @@ class FileResource(
      * @return the [ResponseEntity] with status `200 (OK)` and the list of files in body.
      */
     @GetMapping("/files")
-    fun getAllFiles(): MutableList<FileDTO> {
+    fun getAllFiles(): Page<FileDTO> {
 
         log.debug("REST request to get all Files")
 
-        return fileService.findAll()
+        return fileService.findAll(Pageable.unpaged())
     }
 
     /**

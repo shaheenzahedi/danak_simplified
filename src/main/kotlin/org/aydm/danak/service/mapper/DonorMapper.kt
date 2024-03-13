@@ -14,9 +14,14 @@ interface DonorMapper :
     EntityMapper<DonorDTO, Donor> {
 
     @Mappings(
-        Mapping(target = "user", source = "user", qualifiedByName = ["userId"])
+        Mapping(target = "user", source = "user", qualifiedByName = ["userId"]),
+        Mapping(target = "archivedBy", source = "archivedBy", qualifiedByName = ["userId"]),
+        Mapping(target = "createdBy", source = "createdBy", qualifiedByName = ["userId"]),
+        Mapping(target = "modifiedBy", source = "modifiedBy", qualifiedByName = ["userId"])
     )
-    override fun toDto(s: Donor): DonorDTO @Named("userId")
+    override fun toDto(s: Donor): DonorDTO
+
+    @Named("userId")
     @BeanMapping(ignoreByDefault = true)
 
     @Mappings(

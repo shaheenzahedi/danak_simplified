@@ -1,34 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Row, Col, FormText } from 'reactstrap';
-import { isNumber, Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
+import React, { useEffect } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Button, Col, Row } from 'reactstrap';
+import { Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
-import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
+import { createEntity, getEntity, reset, updateEntity } from './version.reducer';
 
-import { IVersion } from 'app/shared/model/version.model';
-import { getEntity, updateEntity, createEntity, reset } from './version.reducer';
-
-export const VersionUpdate = (props: RouteComponentProps<{ id: string }>) => {
+export const VersionUpdate = () => {
   const dispatch = useAppDispatch();
 
-  const [isNew] = useState(!props.match.params || !props.match.params.id);
+  const navigate = useNavigate();
+
+  const { id } = useParams<'id'>();
+  const isNew = id === undefined;
 
   const versionEntity = useAppSelector(state => state.version.entity);
   const loading = useAppSelector(state => state.version.loading);
   const updating = useAppSelector(state => state.version.updating);
   const updateSuccess = useAppSelector(state => state.version.updateSuccess);
+
   const handleClose = () => {
-    props.history.push('/version' + props.location.search);
+    navigate('/version' + location.search);
   };
 
   useEffect(() => {
     if (isNew) {
       dispatch(reset());
     } else {
-      dispatch(getEntity(props.match.params.id));
+      dispatch(getEntity(id));
     }
   }, []);
 

@@ -6,9 +6,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 import tech.jhipster.config.JHipsterProperties
-import tech.jhipster.config.logging.LoggingUtils.addContextListener
-import tech.jhipster.config.logging.LoggingUtils.addJsonConsoleAppender
-import tech.jhipster.config.logging.LoggingUtils.addLogstashTcpSocketAppender
+import tech.jhipster.config.logging.LoggingUtils.*
 
 /*
  * Configures the console and Logstash log appenders from the app properties.

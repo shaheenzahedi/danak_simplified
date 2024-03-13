@@ -1,0 +1,9 @@
+{
+  "danakApp": {
+    "DonorType": {
+      "null": "",
+      "MANAGER": "MANAGER",
+      "FACILITATOR": "FACILITATOR"
+    }
+  }
+}

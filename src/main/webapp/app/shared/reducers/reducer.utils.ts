@@ -1,7 +1,7 @@
 import {
+  ActionReducerMapBuilder,
   AnyAction,
   AsyncThunk,
-  ActionReducerMapBuilder,
   createSlice,
   SerializedError,
   SliceCaseReducers,

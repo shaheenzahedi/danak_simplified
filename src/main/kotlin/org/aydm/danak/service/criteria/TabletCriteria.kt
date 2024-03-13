@@ -2,9 +2,7 @@ package org.aydm.danak.service.criteria
 
 import org.springdoc.api.annotations.ParameterObject
 import tech.jhipster.service.Criteria
-import tech.jhipster.service.filter.InstantFilter
-import tech.jhipster.service.filter.LongFilter
-import tech.jhipster.service.filter.StringFilter
+import tech.jhipster.service.filter.*
 import java.io.Serializable
 
 /**
@@ -17,17 +15,27 @@ import java.io.Serializable
  * fix type specific filters.
  */
 @ParameterObject
+@SuppressWarnings("common-java:DuplicatedBlocks")
 data class TabletCriteria(
     var id: LongFilter? = null,
     var createTimeStamp: InstantFilter? = null,
     var updateTimeStamp: InstantFilter? = null,
-    var name: StringFilter? = null,
-    var searchField: StringFilter? = null,
     var identifier: StringFilter? = null,
+    var tag: StringFilter? = null,
+    var name: StringFilter? = null,
+    var androidId: StringFilter? = null,
+    var macId: StringFilter? = null,
     var model: StringFilter? = null,
+    var description: StringFilter? = null,
+    var archived: BooleanFilter? = null,
+    var tabletLogId: LongFilter? = null,
     var tabletUserId: LongFilter? = null,
+    var tabletWatchListId: LongFilter? = null,
     var centerId: LongFilter? = null,
     var donorId: LongFilter? = null,
+    var archivedById: LongFilter? = null,
+    var modifiedById: LongFilter? = null,
+    var searchField: StringFilter? = null,
     var distinct: Boolean? = null
 ) : Serializable, Criteria {
 
@@ -36,13 +44,22 @@ data class TabletCriteria(
             other.id?.copy(),
             other.createTimeStamp?.copy(),
             other.updateTimeStamp?.copy(),
-            other.name?.copy(),
-            other.searchField?.copy(),
             other.identifier?.copy(),
+            other.tag?.copy(),
+            other.name?.copy(),
+            other.androidId?.copy(),
+            other.macId?.copy(),
             other.model?.copy(),
+            other.description?.copy(),
+            other.archived?.copy(),
+            other.tabletLogId?.copy(),
             other.tabletUserId?.copy(),
+            other.tabletWatchListId?.copy(),
             other.centerId?.copy(),
             other.donorId?.copy(),
+            other.archivedById?.copy(),
+            other.modifiedById?.copy(),
+            other.searchField?.copy(),
             other.distinct
         )
 

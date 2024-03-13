@@ -1,35 +1,42 @@
-import React, { useState, useEffect } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Row, Col, FormText } from 'reactstrap';
-import { isNumber, Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
+import React, { useEffect } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Button, Col, Row } from 'reactstrap';
+import { Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
-import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
+import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
+import { CenterType } from 'app/shared/model/enumerations/center-type.model';
+import { createEntity, getEntity, reset, updateEntity } from './center.reducer';
 
-import { ICenter } from 'app/shared/model/center.model';
-import { getEntity, updateEntity, createEntity, reset } from './center.reducer';
-
-export const CenterUpdate = (props: RouteComponentProps<{ id: string }>) => {
+export const CenterUpdate = () => {
   const dispatch = useAppDispatch();
 
-  const [isNew] = useState(!props.match.params || !props.match.params.id);
+  const navigate = useNavigate();
 
+  const { id } = useParams<'id'>();
+  const isNew = id === undefined;
+
+  const users = useAppSelector(state => state.userManagement.users);
   const centerEntity = useAppSelector(state => state.center.entity);
   const loading = useAppSelector(state => state.center.loading);
   const updating = useAppSelector(state => state.center.updating);
   const updateSuccess = useAppSelector(state => state.center.updateSuccess);
+  const centerTypeValues = Object.keys(CenterType);
+
   const handleClose = () => {
-    props.history.push('/center' + props.location.search);
+    navigate('/center' + location.search);
   };
 
   useEffect(() => {
     if (isNew) {
       dispatch(reset());
     } else {
-      dispatch(getEntity(props.match.params.id));
+      dispatch(getEntity(id));
     }
+
+    dispatch(getUsers({}));
   }, []);
 
   useEffect(() => {
@@ -45,6 +52,9 @@ export const CenterUpdate = (props: RouteComponentProps<{ id: string }>) => {
     const entity = {
       ...centerEntity,
       ...values,
+      archivedBy: users.find(it => it.id.toString() === values.archivedBy.toString()),
+      createdBy: users.find(it => it.id.toString() === values.createdBy.toString()),
+      modifiedBy: users.find(it => it.id.toString() === values.modifiedBy.toString()),
     };
 
     if (isNew) {
@@ -61,9 +71,13 @@ export const CenterUpdate = (props: RouteComponentProps<{ id: string }>) => {
           updateTimeStamp: displayDefaultDateTime(),
         }
       : {
+          centerType: 'SCHOOL',
           ...centerEntity,
           createTimeStamp: convertDateTimeFromServer(centerEntity.createTimeStamp),
           updateTimeStamp: convertDateTimeFromServer(centerEntity.updateTimeStamp),
+          archivedBy: centerEntity?.archivedBy?.id,
+          createdBy: centerEntity?.createdBy?.id,
+          modifiedBy: centerEntity?.modifiedBy?.id,
         };
 
   return (
@@ -116,6 +130,89 @@ export const CenterUpdate = (props: RouteComponentProps<{ id: string }>) => {
                 data-cy="country"
                 type="text"
               />
+              <ValidatedField
+                label={translate('danakApp.center.archived')}
+                id="center-archived"
+                name="archived"
+                data-cy="archived"
+                check
+                type="checkbox"
+              />
+              <ValidatedField
+                label={translate('danakApp.center.centerType')}
+                id="center-centerType"
+                name="centerType"
+                data-cy="centerType"
+                type="select"
+              >
+                {centerTypeValues.map(centerType => (
+                  <option value={centerType} key={centerType}>
+                    {translate('danakApp.CenterType.' + centerType)}
+                  </option>
+                ))}
+              </ValidatedField>
+              <ValidatedField
+                label={translate('danakApp.center.latitude')}
+                id="center-latitude"
+                name="latitude"
+                data-cy="latitude"
+                type="text"
+              />
+              <ValidatedField
+                label={translate('danakApp.center.longitude')}
+                id="center-longitude"
+                name="longitude"
+                data-cy="longitude"
+                type="text"
+              />
+              <ValidatedField
+                id="center-archivedBy"
+                name="archivedBy"
+                data-cy="archivedBy"
+                label={translate('danakApp.center.archivedBy')}
+                type="select"
+              >
+                <option value="" key="0" />
+                {users
+                  ? users.map(otherEntity => (
+                      <option value={otherEntity.id} key={otherEntity.id}>
+                        {otherEntity.id}
+                      </option>
+                    ))
+                  : null}
+              </ValidatedField>
+              <ValidatedField
+                id="center-createdBy"
+                name="createdBy"
+                data-cy="createdBy"
+                label={translate('danakApp.center.createdBy')}
+                type="select"
+              >
+                <option value="" key="0" />
+                {users
+                  ? users.map(otherEntity => (
+                      <option value={otherEntity.id} key={otherEntity.id}>
+                        {otherEntity.id}
+                      </option>
+                    ))
+                  : null}
+              </ValidatedField>
+              <ValidatedField
+                id="center-modifiedBy"
+                name="modifiedBy"
+                data-cy="modifiedBy"
+                label={translate('danakApp.center.modifiedBy')}
+                type="select"
+              >
+                <option value="" key="0" />
+                {users
+                  ? users.map(otherEntity => (
+                      <option value={otherEntity.id} key={otherEntity.id}>
+                        {otherEntity.id}
+                      </option>
+                    ))
+                  : null}
+              </ValidatedField>
               <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/center" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;

@@ -1,0 +1,26 @@
+{
+  "danakApp": {
+    "centerImage": {
+      "home": {
+        "title": "Center Images",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Center Image",
+        "createOrEditLabel": "Create or edit a Center Image",
+        "notFound": "No Center Images found"
+      },
+      "created": "A new Center Image is created with identifier {{ param }}",
+      "updated": "A Center Image is updated with identifier {{ param }}",
+      "deleted": "A Center Image is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Center Image {{ id }}?"
+      },
+      "detail": {
+        "title": "Center Image"
+      },
+      "id": "ID",
+      "centerImageType": "Center Image Type",
+      "file": "File",
+      "center": "Center"
+    }
+  }
+}

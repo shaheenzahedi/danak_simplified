@@ -24,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.Validator
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import java.util.Random
+import java.util.*
 import java.util.concurrent.atomic.AtomicLong
 import javax.persistence.EntityManager
 import kotlin.test.assertNotNull
@@ -336,6 +336,7 @@ class TabletResourceIT {
         // Get all the tabletList where name is null
         defaultTabletShouldNotBeFound("name.specified=false")
     }
+
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -419,6 +420,7 @@ class TabletResourceIT {
         // Get all the tabletList where identifier is null
         defaultTabletShouldNotBeFound("identifier.specified=false")
     }
+
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -502,6 +504,7 @@ class TabletResourceIT {
         // Get all the tabletList where model is null
         defaultTabletShouldNotBeFound("model.specified=false")
     }
+
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -651,6 +654,7 @@ class TabletResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().string("0"))
     }
+
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -659,6 +663,7 @@ class TabletResourceIT {
         restTabletMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE))
             .andExpect(status().isNotFound)
     }
+
     @Test
     @Transactional
     fun putNewTablet() {

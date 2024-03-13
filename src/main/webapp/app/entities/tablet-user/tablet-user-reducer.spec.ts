@@ -9,12 +9,12 @@ import reducer, {
   deleteEntity,
   getEntities,
   getEntity,
-  updateEntity,
   partialUpdateEntity,
   reset,
+  updateEntity,
 } from './tablet-user.reducer';
 import { EntityState } from 'app/shared/reducers/reducer.utils';
-import { ITabletUser, defaultValue } from 'app/shared/model/tablet-user.model';
+import { defaultValue, ITabletUser } from 'app/shared/model/tablet-user.model';
 
 describe('Entities reducer tests', () => {
   function isEmpty(element): boolean {

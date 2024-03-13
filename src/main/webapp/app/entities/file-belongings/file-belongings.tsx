@@ -1,22 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
-import { Translate, getSortState, JhiPagination, JhiItemCount } from 'react-jhipster';
+import { getSortState, JhiItemCount, JhiPagination, Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-
-import { IFileBelongings } from 'app/shared/model/file-belongings.model';
 import { getEntities } from './file-belongings.reducer';
 
-export const FileBelongings = (props: RouteComponentProps<{ url: string }>) => {
+export const FileBelongings = () => {
   const dispatch = useAppDispatch();
 
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const [paginationState, setPaginationState] = useState(
-    overridePaginationStateWithQueryParams(getSortState(props.location, ITEMS_PER_PAGE, 'id'), props.location.search)
+    overridePaginationStateWithQueryParams(getSortState(location, ITEMS_PER_PAGE, 'id'), location.search)
   );
 
   const fileBelongingsList = useAppSelector(state => state.fileBelongings.entities);
@@ -36,8 +35,8 @@ export const FileBelongings = (props: RouteComponentProps<{ url: string }>) => {
   const sortEntities = () => {
     getAllEntities();
     const endURL = `?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`;
-    if (props.location.search !== endURL) {
-      props.history.push(`${props.location.pathname}${endURL}`);
+    if (location.search !== endURL) {
+      navigate(`${location.pathname}${endURL}`);
     }
   };
 
@@ -46,7 +45,7 @@ export const FileBelongings = (props: RouteComponentProps<{ url: string }>) => {
   }, [paginationState.activePage, paginationState.order, paginationState.sort]);
 
   useEffect(() => {
-    const params = new URLSearchParams(props.location.search);
+    const params = new URLSearchParams(location.search);
     const page = params.get('page');
     const sort = params.get(SORT);
     if (page && sort) {
@@ -58,7 +57,7 @@ export const FileBelongings = (props: RouteComponentProps<{ url: string }>) => {
         order: sortSplit[1],
       });
     }
-  }, [props.location.search]);
+  }, [location.search]);
 
   const sort = p => () => {
     setPaginationState({
@@ -77,8 +76,6 @@ export const FileBelongings = (props: RouteComponentProps<{ url: string }>) => {
   const handleSyncList = () => {
     sortEntities();
   };
-
-  const { match } = props;
 
   return (
     <div>

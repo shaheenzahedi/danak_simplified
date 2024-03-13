@@ -1,0 +1,26 @@
+{
+  "danakApp": {
+    "tabletUserImage": {
+      "home": {
+        "title": "Tablet User Images",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Tablet User Image",
+        "createOrEditLabel": "Create or edit a Tablet User Image",
+        "notFound": "No Tablet User Images found"
+      },
+      "created": "A new Tablet User Image is created with identifier {{ param }}",
+      "updated": "A Tablet User Image is updated with identifier {{ param }}",
+      "deleted": "A Tablet User Image is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Tablet User Image {{ id }}?"
+      },
+      "detail": {
+        "title": "Tablet User Image"
+      },
+      "id": "ID",
+      "tabletUserImageType": "Tablet User Image Type",
+      "file": "File",
+      "tabletUser": "Tablet User"
+    }
+  }
+}

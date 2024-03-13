@@ -1,19 +1,21 @@
 import React, { useEffect } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Row, Col } from 'reactstrap';
-import { Translate, TextFormat } from 'react-jhipster';
+import { Link, useParams } from 'react-router-dom';
+import { Button, Col, Row } from 'reactstrap';
+import { TextFormat, Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { APP_DATE_FORMAT } from 'app/config/constants';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
 import { getEntity } from './user-activity.reducer';
 
-export const UserActivityDetail = (props: RouteComponentProps<{ id: string }>) => {
+export const UserActivityDetail = () => {
   const dispatch = useAppDispatch();
 
+  const { id } = useParams<'id'>();
+
   useEffect(() => {
-    dispatch(getEntity(props.match.params.id));
+    dispatch(getEntity(id));
   }, []);
 
   const userActivityEntity = useAppSelector(state => state.userActivity.entity);
@@ -84,6 +86,18 @@ export const UserActivityDetail = (props: RouteComponentProps<{ id: string }>) =
             </span>
           </dt>
           <dd>{userActivityEntity.uniqueName}</dd>
+          <dt>
+            <span id="version">
+              <Translate contentKey="danakApp.userActivity.version">Version</Translate>
+            </span>
+          </dt>
+          <dd>{userActivityEntity.version}</dd>
+          <dt>
+            <span id="description">
+              <Translate contentKey="danakApp.userActivity.description">Description</Translate>
+            </span>
+          </dt>
+          <dd>{userActivityEntity.description}</dd>
           <dt>
             <Translate contentKey="danakApp.userActivity.activity">Activity</Translate>
           </dt>

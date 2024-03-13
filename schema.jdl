@@ -1,8 +1,8 @@
 entity Tablet {
     createTimeStamp Instant
     updateTimeStamp Instant
-    identifier Instant
-    tag Instant
+    identifier String
+    tag String
     name String
     androidId String
     macId String

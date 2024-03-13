@@ -1,0 +1,25 @@
+{
+  "danakApp": {
+    "tabletWatchList": {
+      "home": {
+        "title": "Tablet Watch Lists",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Tablet Watch List",
+        "createOrEditLabel": "Create or edit a Tablet Watch List",
+        "notFound": "No Tablet Watch Lists found"
+      },
+      "created": "A new Tablet Watch List is created with identifier {{ param }}",
+      "updated": "A Tablet Watch List is updated with identifier {{ param }}",
+      "deleted": "A Tablet Watch List is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Tablet Watch List {{ id }}?"
+      },
+      "detail": {
+        "title": "Tablet Watch List"
+      },
+      "id": "ID",
+      "tablet": "Tablet",
+      "user": "User"
+    }
+  }
+}

@@ -40,9 +40,10 @@ interface UserActivityService {
     /**
      * Get all the userActivities.
      *
+     * @param pageable the pagination information.
      * @return the list of entities.
      */
-    fun findAll(): MutableList<UserActivityDTO>
+    fun findAll(pageable: Pageable): Page<UserActivityDTO>
 
     /**
      * Get the "id" userActivity.

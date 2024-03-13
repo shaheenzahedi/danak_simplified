@@ -20,12 +20,21 @@
       "id": "ID",
       "createTimeStamp": "Create Time Stamp",
       "updateTimeStamp": "Update Time Stamp",
-      "name": "Name",
       "identifier": "Identifier",
+      "tag": "Tag",
+      "name": "Name",
+      "androidId": "Android Id",
+      "macId": "Mac Id",
       "model": "Model",
+      "description": "Description",
+      "archived": "Archived",
+      "tabletLog": "Tablet Log",
       "tabletUser": "Tablet User",
+      "tabletWatchList": "Tablet Watch List",
       "center": "Center",
-      "donor": "Donor"
+      "donor": "Donor",
+      "archivedBy": "Archived By",
+      "modifiedBy": "Modified By"
     }
   }
 }

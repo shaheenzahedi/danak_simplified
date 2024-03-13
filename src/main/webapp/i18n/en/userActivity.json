@@ -25,6 +25,8 @@
       "total": "Total",
       "completed": "Completed",
       "uniqueName": "Unique Name",
+      "version": "Version",
+      "description": "Description",
       "activity": "Activity"
     }
   }

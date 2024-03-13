@@ -1,10 +1,9 @@
 package org.aydm.danak.service.criteria
 
+import org.aydm.danak.domain.enumeration.CenterType
 import org.springdoc.api.annotations.ParameterObject
 import tech.jhipster.service.Criteria
-import tech.jhipster.service.filter.InstantFilter
-import tech.jhipster.service.filter.LongFilter
-import tech.jhipster.service.filter.StringFilter
+import tech.jhipster.service.filter.*
 import java.io.Serializable
 
 /**
@@ -17,6 +16,7 @@ import java.io.Serializable
  * fix type specific filters.
  */
 @ParameterObject
+@SuppressWarnings("common-java:DuplicatedBlocks")
 data class CenterCriteria(
     var id: LongFilter? = null,
     var createTimeStamp: InstantFilter? = null,
@@ -24,7 +24,17 @@ data class CenterCriteria(
     var name: StringFilter? = null,
     var city: StringFilter? = null,
     var country: StringFilter? = null,
+    var archived: BooleanFilter? = null,
+    var centerType: CenterTypeFilter? = null,
+    var latitude: LongFilter? = null,
+    var longitude: LongFilter? = null,
+    var centerDonorId: LongFilter? = null,
+    var centerImageId: LongFilter? = null,
+    var centerWatchListId: LongFilter? = null,
     var tabletId: LongFilter? = null,
+    var archivedById: LongFilter? = null,
+    var createdById: LongFilter? = null,
+    var modifiedById: LongFilter? = null,
     var distinct: Boolean? = null
 ) : Serializable, Criteria {
 
@@ -36,9 +46,30 @@ data class CenterCriteria(
             other.name?.copy(),
             other.city?.copy(),
             other.country?.copy(),
+            other.archived?.copy(),
+            other.centerType?.copy(),
+            other.latitude?.copy(),
+            other.longitude?.copy(),
+            other.centerDonorId?.copy(),
+            other.centerImageId?.copy(),
+            other.centerWatchListId?.copy(),
             other.tabletId?.copy(),
+            other.archivedById?.copy(),
+            other.createdById?.copy(),
+            other.modifiedById?.copy(),
             other.distinct
         )
+
+    /**
+     * Class for filtering CenterType
+     */
+    class CenterTypeFilter : Filter<CenterType> {
+        constructor()
+
+        constructor(filter: CenterTypeFilter) : super(filter)
+
+        override fun copy() = CenterTypeFilter(this)
+    }
 
     override fun copy() = CenterCriteria(this)
 

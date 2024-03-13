@@ -2,6 +2,7 @@ package org.aydm.danak.repository
 
 import org.aydm.danak.domain.CenterDonor
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.stereotype.Repository
 
 /**
@@ -9,4 +10,4 @@ import org.springframework.stereotype.Repository
  */
 @Suppress("unused")
 @Repository
-interface CenterDonorRepository : JpaRepository<CenterDonor, Long>
+interface CenterDonorRepository : JpaRepository<CenterDonor, Long>, JpaSpecificationExecutor<CenterDonor>

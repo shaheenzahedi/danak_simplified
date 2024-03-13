@@ -1,11 +1,11 @@
-id;create_time_stamp;update_time_stamp;first_name;last_name;email
-1;2023-09-03T03:33:24;2023-09-03T01:53:58;Enrique;Towne;Frida.Cassin20@hotmail.com
-2;2023-09-03T04:29:45;2023-09-02T14:20:43;Freeda;Hagenes;Jose_Corwin@gmail.com
-3;2023-09-03T00:17:15;2023-09-02T10:44:10;Albertha;Shanahan;Dovie_Mills47@yahoo.com
-4;2023-09-02T19:53:19;2023-09-03T09:19:46;Viva;Hoeger;Anita_Hartmann54@yahoo.com
-5;2023-09-02T21:27:08;2023-09-02T10:43:30;Jacynthe;Reichel;Keenan_Simonis@yahoo.com
-6;2023-09-02T19:38:32;2023-09-02T21:18:28;Crystal;Jenkins;Oswaldo.Kuhic16@hotmail.com
-7;2023-09-02T12:34:39;2023-09-03T07:53:20;Meggie;Lesch;Retha.Hilll57@hotmail.com
-8;2023-09-03T04:09:33;2023-09-02T21:32:43;Bessie;VonRueden;Rosalind33@gmail.com
-9;2023-09-02T12:03:04;2023-09-03T10:01:48;Duncan;Pollich;Hellen.Kshlerin1@hotmail.com
-10;2023-09-03T02:23:20;2023-09-02T20:14:32;Trace;Prosacco;Dylan_Roberts@gmail.com
+id;create_time_stamp;update_time_stamp;first_name;last_name;email;description;recovery_phrase;archived
+1;2024-03-12T13:31:10;2024-03-12T11:51:44;Enrique;Towne;Frida.Cassin20@hotmail.com;copying;Avon;true
+2;2024-03-12T10:15:01;2024-03-11T20:41:56;Albertha;Shanahan;Dovie_Mills47@yahoo.com;Tasty productivity;Western pixel;true
+3;2024-03-12T08:50:14;2024-03-11T22:33:34;Lew;Lockman;Hallie.Predovic80@gmail.com;Salad;Reunion open-source Indiana;false
+4;2024-03-11T22:21:24;2024-03-12T19:16:09;Rosalind;Lind;Ethel27@gmail.com;Administrator back-end distributed;directional Account Ouguiya;true
+5;2024-03-12T08:57:53;2024-03-12T19:46:09;Darian;Schiller;Imelda72@gmail.com;Chips Fresh;reboot interface;true
+6;2024-03-12T05:25:05;2024-03-12T07:36:57;Mack;Dickinson;Saul.Gerlach16@yahoo.com;Tuna;Pizza;true
+7;2024-03-12T13:39:26;2024-03-12T18:14:07;Angie;Runte;Delpha2@gmail.com;Berkshire COM back-end;state;true
+8;2024-03-12T04:22:21;2024-03-11T22:15:29;Morris;Emmerich;Keyon.Lind74@hotmail.com;e-markets Centers feed;parse bleeding-edge;true
+9;2024-03-11T21:00:49;2024-03-12T04:04:41;Lemuel;Kuvalis;Irwin.Simonis56@hotmail.com;open Papua Strategist;drive;true
+10;2024-03-12T12:37:55;2024-03-12T15:37:51;Kaden;Hyatt;Rosario_Parker@hotmail.com;Hat Polarised;Fantastic Rubber invoice;false

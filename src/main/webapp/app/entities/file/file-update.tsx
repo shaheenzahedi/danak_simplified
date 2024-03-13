@@ -1,37 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Row, Col, FormText } from 'reactstrap';
-import { isNumber, Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
+import React, { useEffect } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Button, Col, Row } from 'reactstrap';
+import { Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
-import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-
-import { IVersion } from 'app/shared/model/version.model';
 import { getEntities as getVersions } from 'app/entities/version/version.reducer';
-import { IFile } from 'app/shared/model/file.model';
-import { getEntity, updateEntity, createEntity, reset } from './file.reducer';
+import { createEntity, getEntity, reset, updateEntity } from './file.reducer';
 
-export const FileUpdate = (props: RouteComponentProps<{ id: string }>) => {
+export const FileUpdate = () => {
   const dispatch = useAppDispatch();
 
-  const [isNew] = useState(!props.match.params || !props.match.params.id);
+  const navigate = useNavigate();
+
+  const { id } = useParams<'id'>();
+  const isNew = id === undefined;
 
   const versions = useAppSelector(state => state.version.entities);
   const fileEntity = useAppSelector(state => state.file.entity);
   const loading = useAppSelector(state => state.file.loading);
   const updating = useAppSelector(state => state.file.updating);
   const updateSuccess = useAppSelector(state => state.file.updateSuccess);
+
   const handleClose = () => {
-    props.history.push('/file' + props.location.search);
+    navigate('/file' + location.search);
   };
 
   useEffect(() => {
     if (isNew) {
       dispatch(reset());
     } else {
-      dispatch(getEntity(props.match.params.id));
+      dispatch(getEntity(id));
     }
 
     dispatch(getVersions({}));

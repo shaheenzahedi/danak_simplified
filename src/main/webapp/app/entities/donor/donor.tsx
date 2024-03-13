@@ -1,22 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
-import { Translate, TextFormat, getSortState, JhiPagination, JhiItemCount } from 'react-jhipster';
+import { getSortState, JhiItemCount, JhiPagination, TextFormat, Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { APP_DATE_FORMAT } from 'app/config/constants';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-
-import { IDonor } from 'app/shared/model/donor.model';
 import { getEntities } from './donor.reducer';
 
-export const Donor = (props: RouteComponentProps<{ url: string }>) => {
+export const Donor = () => {
   const dispatch = useAppDispatch();
 
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const [paginationState, setPaginationState] = useState(
-    overridePaginationStateWithQueryParams(getSortState(props.location, ITEMS_PER_PAGE, 'id'), props.location.search)
+    overridePaginationStateWithQueryParams(getSortState(location, ITEMS_PER_PAGE, 'id'), location.search)
   );
 
   const donorList = useAppSelector(state => state.donor.entities);
@@ -36,8 +37,8 @@ export const Donor = (props: RouteComponentProps<{ url: string }>) => {
   const sortEntities = () => {
     getAllEntities();
     const endURL = `?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`;
-    if (props.location.search !== endURL) {
-      props.history.push(`${props.location.pathname}${endURL}`);
+    if (location.search !== endURL) {
+      navigate(`${location.pathname}${endURL}`);
     }
   };
 
@@ -46,7 +47,7 @@ export const Donor = (props: RouteComponentProps<{ url: string }>) => {
   }, [paginationState.activePage, paginationState.order, paginationState.sort]);
 
   useEffect(() => {
-    const params = new URLSearchParams(props.location.search);
+    const params = new URLSearchParams(location.search);
     const page = params.get('page');
     const sort = params.get(SORT);
     if (page && sort) {
@@ -58,7 +59,7 @@ export const Donor = (props: RouteComponentProps<{ url: string }>) => {
         order: sortSplit[1],
       });
     }
-  }, [props.location.search]);
+  }, [location.search]);
 
   const sort = p => () => {
     setPaginationState({
@@ -77,8 +78,6 @@ export const Donor = (props: RouteComponentProps<{ url: string }>) => {
   const handleSyncList = () => {
     sortEntities();
   };
-
-  const { match } = props;
 
   return (
     <div>
@@ -119,8 +118,57 @@ export const Donor = (props: RouteComponentProps<{ url: string }>) => {
                 <th className="hand" onClick={sort('country')}>
                   <Translate contentKey="danakApp.donor.country">Country</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
+                <th className="hand" onClick={sort('nationalCode')}>
+                  <Translate contentKey="danakApp.donor.nationalCode">National Code</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={sort('educationType')}>
+                  <Translate contentKey="danakApp.donor.educationType">Education Type</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={sort('education')}>
+                  <Translate contentKey="danakApp.donor.education">Education</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={sort('occupation')}>
+                  <Translate contentKey="danakApp.donor.occupation">Occupation</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={sort('workPlace')}>
+                  <Translate contentKey="danakApp.donor.workPlace">Work Place</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={sort('workPlacePhone')}>
+                  <Translate contentKey="danakApp.donor.workPlacePhone">Work Place Phone</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={sort('archived')}>
+                  <Translate contentKey="danakApp.donor.archived">Archived</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={sort('otpPhoneCode')}>
+                  <Translate contentKey="danakApp.donor.otpPhoneCode">Otp Phone Code</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={sort('otpPhoneEnable')}>
+                  <Translate contentKey="danakApp.donor.otpPhoneEnable">Otp Phone Enable</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={sort('otpPhoneSentTimeStamp')}>
+                  <Translate contentKey="danakApp.donor.otpPhoneSentTimeStamp">Otp Phone Sent Time Stamp</Translate>{' '}
+                  <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={sort('latitude')}>
+                  <Translate contentKey="danakApp.donor.latitude">Latitude</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={sort('longitude')}>
+                  <Translate contentKey="danakApp.donor.longitude">Longitude</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={sort('uid')}>
+                  <Translate contentKey="danakApp.donor.uid">Uid</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
                 <th>
                   <Translate contentKey="danakApp.donor.user">User</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
+                <th>
+                  <Translate contentKey="danakApp.donor.archivedBy">Archived By</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
+                <th>
+                  <Translate contentKey="danakApp.donor.createdBy">Created By</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
+                <th>
+                  <Translate contentKey="danakApp.donor.modifiedBy">Modified By</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
                 <th />
               </tr>
@@ -142,7 +190,29 @@ export const Donor = (props: RouteComponentProps<{ url: string }>) => {
                   <td>{donor.name}</td>
                   <td>{donor.city}</td>
                   <td>{donor.country}</td>
+                  <td>{donor.nationalCode}</td>
+                  <td>
+                    <Translate contentKey={`danakApp.EducationType.${donor.educationType}`} />
+                  </td>
+                  <td>{donor.education}</td>
+                  <td>{donor.occupation}</td>
+                  <td>{donor.workPlace}</td>
+                  <td>{donor.workPlacePhone}</td>
+                  <td>{donor.archived ? 'true' : 'false'}</td>
+                  <td>{donor.otpPhoneCode}</td>
+                  <td>{donor.otpPhoneEnable ? 'true' : 'false'}</td>
+                  <td>
+                    {donor.otpPhoneSentTimeStamp ? (
+                      <TextFormat type="date" value={donor.otpPhoneSentTimeStamp} format={APP_DATE_FORMAT} />
+                    ) : null}
+                  </td>
+                  <td>{donor.latitude}</td>
+                  <td>{donor.longitude}</td>
+                  <td>{donor.uid}</td>
                   <td>{donor.user ? donor.user.id : ''}</td>
+                  <td>{donor.archivedBy ? donor.archivedBy.id : ''}</td>
+                  <td>{donor.createdBy ? donor.createdBy.id : ''}</td>
+                  <td>{donor.modifiedBy ? donor.modifiedBy.id : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`/donor/${donor.id}`} color="info" size="sm" data-cy="entityDetailsButton">

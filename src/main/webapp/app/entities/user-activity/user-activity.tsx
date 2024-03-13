@@ -1,22 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
-import { Translate, TextFormat, getSortState, JhiPagination, JhiItemCount } from 'react-jhipster';
+import { getSortState, JhiItemCount, JhiPagination, TextFormat, Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { APP_DATE_FORMAT } from 'app/config/constants';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-
-import { IUserActivity } from 'app/shared/model/user-activity.model';
 import { getEntities } from './user-activity.reducer';
 
-export const UserActivity = (props: RouteComponentProps<{ url: string }>) => {
+export const UserActivity = () => {
   const dispatch = useAppDispatch();
 
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const [paginationState, setPaginationState] = useState(
-    overridePaginationStateWithQueryParams(getSortState(props.location, ITEMS_PER_PAGE, 'id'), props.location.search)
+    overridePaginationStateWithQueryParams(getSortState(location, ITEMS_PER_PAGE, 'id'), location.search)
   );
 
   const userActivityList = useAppSelector(state => state.userActivity.entities);
@@ -36,8 +37,8 @@ export const UserActivity = (props: RouteComponentProps<{ url: string }>) => {
   const sortEntities = () => {
     getAllEntities();
     const endURL = `?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`;
-    if (props.location.search !== endURL) {
-      props.history.push(`${props.location.pathname}${endURL}`);
+    if (location.search !== endURL) {
+      navigate(`${location.pathname}${endURL}`);
     }
   };
 
@@ -46,7 +47,7 @@ export const UserActivity = (props: RouteComponentProps<{ url: string }>) => {
   }, [paginationState.activePage, paginationState.order, paginationState.sort]);
 
   useEffect(() => {
-    const params = new URLSearchParams(props.location.search);
+    const params = new URLSearchParams(location.search);
     const page = params.get('page');
     const sort = params.get(SORT);
     if (page && sort) {
@@ -58,7 +59,7 @@ export const UserActivity = (props: RouteComponentProps<{ url: string }>) => {
         order: sortSplit[1],
       });
     }
-  }, [props.location.search]);
+  }, [location.search]);
 
   const sort = p => () => {
     setPaginationState({
@@ -77,8 +78,6 @@ export const UserActivity = (props: RouteComponentProps<{ url: string }>) => {
   const handleSyncList = () => {
     sortEntities();
   };
-
-  const { match } = props;
 
   return (
     <div>
@@ -128,6 +127,12 @@ export const UserActivity = (props: RouteComponentProps<{ url: string }>) => {
                 <th className="hand" onClick={sort('uniqueName')}>
                   <Translate contentKey="danakApp.userActivity.uniqueName">Unique Name</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
+                <th className="hand" onClick={sort('version')}>
+                  <Translate contentKey="danakApp.userActivity.version">Version</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={sort('description')}>
+                  <Translate contentKey="danakApp.userActivity.description">Description</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
                 <th>
                   <Translate contentKey="danakApp.userActivity.activity">Activity</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
@@ -161,6 +166,8 @@ export const UserActivity = (props: RouteComponentProps<{ url: string }>) => {
                   <td>{userActivity.total}</td>
                   <td>{userActivity.completed}</td>
                   <td>{userActivity.uniqueName}</td>
+                  <td>{userActivity.version}</td>
+                  <td>{userActivity.description}</td>
                   <td>
                     {userActivity.activity ? <Link to={`/tablet-user/${userActivity.activity.id}`}>{userActivity.activity.id}</Link> : ''}
                   </td>

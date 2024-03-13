@@ -1,7 +1,18 @@
 package org.aydm.danak.service.facade;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.aydm.danak.service.FileBelongingsService;
 import org.aydm.danak.service.FileService;
 import org.aydm.danak.service.VersionService;
@@ -19,29 +30,16 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
 public interface AssetFacade {
-
     void initializeVersioning(String tag) throws IOException;
 
     UpdateResponse updateAssets(int fromVersion, int toVersion) throws IOException;
-
 
     DownloadResponse download(int version, boolean shouldIncludeSize) throws IOException;
 
@@ -55,16 +53,10 @@ public interface AssetFacade {
 @Transactional
 @Service
 class AssetFacadeImpl implements AssetFacade {
+
     private final FileService fileService;
     private final FileBelongingsService fileBelongingsService;
     private final VersionService versionService;
-
-    public AssetFacadeImpl(FileService fileService, FileBelongingsService fileBelongingsService, VersionService versionService) {
-        this.fileService = fileService;
-        this.fileBelongingsService = fileBelongingsService;
-        this.versionService = versionService;
-    }
-
     private final Logger log = LoggerFactory.getLogger(AssetFacadeImpl.class);
 
     //base
@@ -85,30 +77,29 @@ class AssetFacadeImpl implements AssetFacade {
 
     @Value("${asset.caches}")
     private String cachePath;
-    //base
 
     //repo
     @Value("${asset.repo.content}")
     private String contentPath;
 
+    //base
     @Value("${asset.repo.path}")
     private String repoPath;
 
     @Value("${asset.repo.gradle}")
     private String gradlePath;
 
-
     @Value("${asset.repo.user}")
     private String repoUser;
 
     @Value("${asset.repo.token}")
     private String repoToken;
-    //repo
 
     //scripts
     @Value("${asset.script.cleanup}")
     private String cleanupScript;
 
+    //repo
     @Value("${asset.script.copy}")
     private String copyScript;
 
@@ -121,9 +112,18 @@ class AssetFacadeImpl implements AssetFacade {
     @Value("${asset.script.remove-unnecessary}")
     private String removeUnnecessaryScript;
 
+    public AssetFacadeImpl(FileService fileService, FileBelongingsService fileBelongingsService, VersionService versionService) {
+        this.fileService = fileService;
+        this.fileBelongingsService = fileBelongingsService;
+        this.versionService = versionService;
+    }
 
     //scripts
 
+    @NotNull
+    private static String getDownloadPathByVersion(int version) {
+        return "D_" + version + ".json";
+    }
 
     @Override
     public void initializeVersioning(String tag) throws IOException {
@@ -176,9 +176,7 @@ class AssetFacadeImpl implements AssetFacade {
     }
 
     private void versionAsset(String tag, int version) throws IOException {
-        final VersionDTO versionDTO = versionService.saveOrGet(new VersionDTO(
-            null, version, tag
-        ));
+        final VersionDTO versionDTO = versionService.saveOrGet(new VersionDTO(null, version, tag));
         String newVersionPath = versionsPath + version;
         String newVersionCSVPath = listsPath + version;
         List<CommandData> commands = new ArrayList<>();
@@ -212,7 +210,8 @@ class AssetFacadeImpl implements AssetFacade {
                 commands.add(
                     new CommandData(
                         generateCSVScript + ' ' + oldVersionPath + ' ' + oldVersionCSVPath,
-                        success -> log.info("version{{}} - generate csv for old version{{}} stage success: {}", version, oldVersion, success),
+                        success ->
+                            log.info("version{{}} - generate csv for old version{{}} stage success: {}", version, oldVersion, success),
                         failed -> log.error("version{{}} - generate csv for old version{{}} stage failed: {}", version, oldVersion, failed)
                     )
                 );
@@ -233,18 +232,20 @@ class AssetFacadeImpl implements AssetFacade {
             );
         }
 
-        new CommandRunner().runCommands(commands)
+        new CommandRunner()
+            .runCommands(commands)
             .thenRun(() -> {
                 saveAllFiles(oldVersion, versionDTO, version, newVersionCSVPath);
                 try {
                     DownloadResponse download = download(version);
-                    new ZipDownload().start(
-                        download.getFiles(),
-                        versionsPath,
-                        zipPath + version + ".zip",
-                        version,
-                        cachePath + getDownloadPathByVersion(version)
-                    );
+                    new ZipDownload()
+                        .start(
+                            download.getFiles(),
+                            versionsPath,
+                            zipPath + version + ".zip",
+                            version,
+                            cachePath + getDownloadPathByVersion(version)
+                        );
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -255,18 +256,19 @@ class AssetFacadeImpl implements AssetFacade {
     private List<FileDTO> saveAllFiles(Optional<Integer> oldVersion, VersionDTO versionDTO, int version, String newVersionCSVPath) {
         if (oldVersion.isPresent()) {
             try {
-                final List<FileDTO> versionToBeUpdateFiles = fileService.findAllLastVersion(versionService.findIdByVersion(oldVersion.orElseThrow())).stream()
-                    .peek(fileDTO -> fileDTO.setPlacement(versionDTO)).collect(Collectors.toList());
+                final List<FileDTO> versionToBeUpdateFiles = fileService
+                    .findAllLastVersion(versionService.findIdByVersion(oldVersion.orElseThrow()))
+                    .stream()
+                    .peek(fileDTO -> fileDTO.setPlacement(versionDTO))
+                    .collect(Collectors.toList());
                 final String diffAddress = diffsPath + oldVersion.orElseThrow() + '_' + version + "_diff.txt";
                 File file = new File(diffAddress);
                 if (!file.exists()) {
                     log.info("version{{}} - there is no diff so we just update the database", version);
                     List<FileDTO> allFiles = fileService.saveAll(versionToBeUpdateFiles);
-                    fileBelongingsService.saveAll(allFiles.stream().map(it -> new FileBelongingsDTO(
-                        null,
-                        it,
-                        versionDTO
-                    )).collect(Collectors.toList()));
+                    fileBelongingsService.saveAll(
+                        allFiles.stream().map(it -> new FileBelongingsDTO(null, it, versionDTO)).collect(Collectors.toList())
+                    );
                     return allFiles;
                 }
                 final BufferedReader diffBR = new BufferedReader(new FileReader(file, Charset.defaultCharset()));
@@ -281,29 +283,36 @@ class AssetFacadeImpl implements AssetFacade {
                     } else if (line.startsWith(">")) {
                         //exists in new version but not in old version
                         FileAddress newAddress = FileAddress.Companion.fromDiffLine(0, line);
-                        versionToBeUpdateFiles.add(new FileDTO(
-                            null, newAddress.getName(), newAddress.getChecksum(), newAddress.getPath(), newAddress.getSize(), versionDTO
-                        ));
+                        versionToBeUpdateFiles.add(
+                            new FileDTO(
+                                null,
+                                newAddress.getName(),
+                                newAddress.getChecksum(),
+                                newAddress.getPath(),
+                                newAddress.getSize(),
+                                versionDTO
+                            )
+                        );
                     }
                 }
                 //remove files that was available in old version and not in new version
                 final List<FileDTO> notUpdatedFiles = new ArrayList<>();
                 for (FileDTO fileDTO : versionToBeUpdateFiles) {
                     for (FileAddress fileAddress : addresses) {
-                        if (Objects.equals(fileDTO.getChecksum(), fileAddress.getChecksum()) &&
+                        if (
+                            Objects.equals(fileDTO.getChecksum(), fileAddress.getChecksum()) &&
                             Objects.equals(fileDTO.getName(), fileAddress.getName()) &&
-                            Objects.equals(fileDTO.getPath(), fileAddress.getPath())) {
+                            Objects.equals(fileDTO.getPath(), fileAddress.getPath())
+                        ) {
                             notUpdatedFiles.add(fileDTO);
                         }
                     }
                 }
                 versionToBeUpdateFiles.removeAll(notUpdatedFiles);
                 List<FileDTO> allFiles = fileService.saveAll(versionToBeUpdateFiles);
-                fileBelongingsService.saveAll(allFiles.stream().map(it -> new FileBelongingsDTO(
-                    null,
-                    it,
-                    versionDTO
-                )).collect(Collectors.toList()));
+                fileBelongingsService.saveAll(
+                    allFiles.stream().map(it -> new FileBelongingsDTO(null, it, versionDTO)).collect(Collectors.toList())
+                );
                 return allFiles;
             } catch (IOException e) {
                 log.error("version{{}} - an error happened during the final stage", version, e);
@@ -317,23 +326,31 @@ class AssetFacadeImpl implements AssetFacade {
     private List<FileDTO> initializeSaveDB(VersionDTO version, String csvPath) {
         try {
             final List<FileDTO> files = new ArrayList<>();
-            final BufferedReader versionBufferedReader = new BufferedReader(new FileReader(csvPath + '/' + "files.csv", Charset.defaultCharset()));
+            final BufferedReader versionBufferedReader = new BufferedReader(
+                new FileReader(csvPath + '/' + "files.csv", Charset.defaultCharset())
+            );
             final String header = versionBufferedReader.readLine();
             String line;
             while ((line = versionBufferedReader.readLine()) != null) {
                 final FileAddress fileAddress = FileAddress.Companion.fromCSVLine(version.getVersion(), line);
-                files.add(new FileDTO(
-                    null,
-                    fileAddress.getName(),
-                    fileAddress.getChecksum(),
-                    fileAddress.getPath(),
-                    fileAddress.getSize(),
-                    version
-                ));
+                files.add(
+                    new FileDTO(
+                        null,
+                        fileAddress.getName(),
+                        fileAddress.getChecksum(),
+                        fileAddress.getPath(),
+                        fileAddress.getSize(),
+                        version
+                    )
+                );
             }
-            fileBelongingsService.saveAll(fileService.saveAll(files).stream().map(fileDTO -> new FileBelongingsDTO(
-                null, fileDTO, version
-            )).collect(Collectors.toList()));
+            fileBelongingsService.saveAll(
+                fileService
+                    .saveAll(files)
+                    .stream()
+                    .map(fileDTO -> new FileBelongingsDTO(null, fileDTO, version))
+                    .collect(Collectors.toList())
+            );
             return files;
         } catch (IOException e) {
             e.printStackTrace();
@@ -341,42 +358,43 @@ class AssetFacadeImpl implements AssetFacade {
         return null;
     }
 
-
     @Override
     public UpdateResponse updateAssets(int fromVersion, int toVersion) throws IOException {
         String pathname = "U_" + fromVersion + "_" + toVersion + ".json";
         Optional<UpdateResponse> cache = lookupCache(pathname, UpdateResponse.class);
         if (cache.isPresent()) return cache.orElseThrow();
         Optional<Integer> lastVersion = getTheLastVersion();
-        if (lastVersion.isEmpty())
-            throw new BadRequestAlertException("update is pointless when there is no asset on the server", "asset", "");
-        List<VersionDTO> allVersions = versionService.findAll();
+        if (lastVersion.isEmpty()) throw new BadRequestAlertException(
+            "update is pointless when there is no asset on the server",
+            "asset",
+            ""
+        );
+        Page<VersionDTO> allVersions = versionService.findAll(Pageable.unpaged());
         Map<Long, Integer> versionIdToVersion = new HashMap<>();
         for (VersionDTO v : allVersions) {
             versionIdToVersion.put(v.getId(), v.getVersion());
         }
-        long fromVersionId = allVersions.stream().filter(it -> it.getVersion() == fromVersion).findFirst().orElseThrow().getId();
-        long toVersionId = allVersions.stream().filter(it -> it.getVersion() == toVersion).findFirst().orElseThrow().getId();
+        long fromVersionId = allVersions.get().filter(it -> it.getVersion() == fromVersion).findFirst().orElseThrow().getId();
+        long toVersionId = allVersions.get().filter(it -> it.getVersion() == toVersion).findFirst().orElseThrow().getId();
         List<FileDTO> deletes = fileService.findAllUpdates(fromVersionId, toVersionId);
         List<FileResponse> deleteFileResult = new ArrayList<>();
         long deleteFileSize = 0L;
         for (FileDTO file : deletes) {
             deleteFileSize += Long.parseLong(file.getSize());
-            deleteFileResult.add(new FileResponse(file.getChecksum(), file.getFtpPath(versionIdToVersion.get(file.getPlacement().getId()))));
+            deleteFileResult.add(
+                new FileResponse(file.getChecksum(), file.getFtpPath(versionIdToVersion.get(file.getPlacement().getId())))
+            );
         }
         List<FileDTO> updates = fileService.findAllUpdates(toVersionId, fromVersionId);
         List<FileResponse> updateFilesResult = new ArrayList<>();
         long updateFileSize = 0L;
         for (FileDTO file : updates) {
             updateFileSize += Long.parseLong(file.getSize());
-            updateFilesResult.add(new FileResponse(file.getChecksum(), file.getFtpPath(versionIdToVersion.get(file.getPlacement().getId()))));
+            updateFilesResult.add(
+                new FileResponse(file.getChecksum(), file.getFtpPath(versionIdToVersion.get(file.getPlacement().getId())))
+            );
         }
-        UpdateResponse result = new UpdateResponse(
-            updateFileSize,
-            updateFilesResult,
-            deleteFileSize,
-            deleteFileResult
-        );
+        UpdateResponse result = new UpdateResponse(updateFileSize, updateFilesResult, deleteFileSize, deleteFileResult);
         saveCache(pathname, result);
         return result;
     }
@@ -387,11 +405,9 @@ class AssetFacadeImpl implements AssetFacade {
         objectMapper.writeValue(file, result);
     }
 
-
     private <T> Optional<T> lookupCache(String pathname, Class<T> clazz) throws IOException {
         File file = new File(cachePath + pathname);
-        if (!file.exists())
-            return Optional.empty();
+        if (!file.exists()) return Optional.empty();
         ObjectMapper objectMapper = new ObjectMapper();
         return Optional.ofNullable(objectMapper.readValue(file, clazz));
     }
@@ -407,9 +423,12 @@ class AssetFacadeImpl implements AssetFacade {
         Optional<DownloadResponse> cache = lookupCache(pathname, DownloadResponse.class);
         if (cache.isPresent()) return nullifyFileSizesIfNecessary(cache.orElseThrow(), shouldIncludeSize);
         Optional<Integer> lastVersion = getTheLastVersion();
-        if (lastVersion.isEmpty())
-            throw new BadRequestAlertException("download is pointless when there is no asset on the server", "asset", "");
-        List<VersionDTO> allVersions = versionService.findAll();
+        if (lastVersion.isEmpty()) throw new BadRequestAlertException(
+            "download is pointless when there is no asset on the server",
+            "asset",
+            ""
+        );
+        Page<VersionDTO> allVersions = versionService.findAll(Pageable.unpaged());
         Map<Long, Integer> versionIdToVersion = new HashMap<>();
         for (VersionDTO v : allVersions) {
             versionIdToVersion.put(v.getId(), v.getVersion());
@@ -421,25 +440,20 @@ class AssetFacadeImpl implements AssetFacade {
         for (FileDTO file : files) {
             long longSize = Long.parseLong(file.getSize());
             size = size + longSize;
-            fileResponses.add(new FileResponse(
-                file.getChecksum(),
-                file.getFtpPath(versionIdToVersion.get(file.getPlacement().getId())),
-                longSize
-            ));
+            fileResponses.add(
+                new FileResponse(file.getChecksum(), file.getFtpPath(versionIdToVersion.get(file.getPlacement().getId())), longSize)
+            );
         }
-        DownloadResponse result = new DownloadResponse(
-            size,
-            fileResponses
-        );
+        DownloadResponse result = new DownloadResponse(size, fileResponses);
         saveCache(pathname, result);
         return nullifyFileSizesIfNecessary(result, shouldIncludeSize);
     }
 
     private DownloadResponse nullifyFileSizesIfNecessary(DownloadResponse result, boolean shouldIncludeSize) {
-        if (!shouldIncludeSize){
+        if (!shouldIncludeSize) {
             return new DownloadResponse(
                 result.getSize(),
-                result.getFiles().stream().peek(fr-> fr.setSize(null)).collect(Collectors.toList())
+                result.getFiles().stream().peek(fr -> fr.setSize(null)).collect(Collectors.toList())
             );
         }
         return result;
@@ -462,17 +476,14 @@ class AssetFacadeImpl implements AssetFacade {
     public List<String> checkExistence(int version) throws IOException {
         DownloadResponse download = download(version);
         List<String> result = new ArrayList<>();
-        download.getFiles().forEach(fileResponse -> {
-            if (!Paths.get(versionsPath + fileResponse.getPath()).toFile().exists()) {
-                result.add(fileResponse.path);
-            }
-        });
+        download
+            .getFiles()
+            .forEach(fileResponse -> {
+                if (!Paths.get(versionsPath + fileResponse.getPath()).toFile().exists()) {
+                    result.add(fileResponse.path);
+                }
+            });
         return result;
-    }
-
-    @NotNull
-    private static String getDownloadPathByVersion(int version) {
-        return "D_" + version + ".json";
     }
 
     private Optional<Integer> getTheLastVersion() throws IOException {
@@ -482,7 +493,8 @@ class AssetFacadeImpl implements AssetFacade {
 
     @NotNull
     private List<Integer> getAllExistedVersion() throws IOException {
-        return Files.list(Paths.get(versionsPath))
+        return Files
+            .list(Paths.get(versionsPath))
             .sorted()
             .map(path -> path.toFile().getName())
             .filter(str -> str.matches("-?\\d+"))
@@ -491,8 +503,8 @@ class AssetFacadeImpl implements AssetFacade {
     }
 }
 
-
 class CommandRunner {
+
     private final Executor executor = Executors.newSingleThreadExecutor();
     private final Logger log = LoggerFactory.getLogger(CommandRunner.class);
 
@@ -504,9 +516,9 @@ class CommandRunner {
                     String command = commandModel.getCommand();
                     log.info("executing command: {}", command);
                     CommandResult commandResult = executeCommand(command);
-                    if (commandResult.getExitCode() == 0)
-                        commandModel.getOnSuccess().accept(commandResult.getStdInput());
-                    else commandModel.getOnFailure().accept(commandResult.getStdError());
+                    if (commandResult.getExitCode() == 0) commandModel.getOnSuccess().accept(commandResult.getStdInput()); else commandModel
+                        .getOnFailure()
+                        .accept(commandResult.getStdError());
                 } catch (IOException | InterruptedException e) {
                     future.completeExceptionally(e);
                     log.error("error executing command: {} exception is", commandModel.getCommand(), e);
@@ -536,6 +548,7 @@ class CommandRunner {
     }
 
     public static class CommandResult {
+
         private final int exitCode;
         private final String stdInput;
         private final String stdError;

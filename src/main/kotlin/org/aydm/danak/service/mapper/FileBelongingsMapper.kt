@@ -16,15 +16,20 @@ interface FileBelongingsMapper :
     EntityMapper<FileBelongingsDTO, FileBelongings> {
 
     @Mappings(
-        Mapping(target = "file", source = "file", qualifiedByName = ["fileId"]), Mapping(target = "version", source = "version", qualifiedByName = ["versionId"])
+        Mapping(target = "file", source = "file", qualifiedByName = ["fileId"]),
+        Mapping(target = "version", source = "version", qualifiedByName = ["versionId"])
     )
-    override fun toDto(s: FileBelongings): FileBelongingsDTO @Named("fileId")
+    override fun toDto(s: FileBelongings): FileBelongingsDTO
+
+    @Named("fileId")
     @BeanMapping(ignoreByDefault = true)
 
     @Mappings(
         Mapping(target = "id", source = "id")
     )
-    fun toDtoFileId(file: File): FileDTO @Named("versionId")
+    fun toDtoFileId(file: File): FileDTO
+
+    @Named("versionId")
     @BeanMapping(ignoreByDefault = true)
 
     @Mappings(
