@@ -31,7 +31,8 @@ interface UserActivityRepository : JpaRepository<UserActivity, Long>, JpaSpecifi
             "JOIN tu.tablet t " +
             "LEFT JOIN tu.tablet.center c " +
             "LEFT JOIN tu.userActivities ua " +
-            "WHERE tu.archived <> true  AND (:searchString IS NULL OR " +
+            "WHERE (tu.archived IS NULL OR tu.archived=false)  " +
+            "AND (:searchString IS NULL OR " +
             "LOWER(tu.firstName) LIKE CONCAT('%', LOWER(:searchString), '%') OR " +
             "LOWER(tu.lastName) LIKE CONCAT('%', LOWER(:searchString), '%') OR " +
             "LOWER(t.name) LIKE CONCAT('%', LOWER(:searchString), '%')) " +
