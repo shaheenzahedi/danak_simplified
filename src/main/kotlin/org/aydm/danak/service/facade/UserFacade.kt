@@ -101,8 +101,7 @@ class UserFacadeImpl(
 
     override fun findAllTabletUsers(criteria: TabletUserCriteria?, pageable: Pageable): Page<TabletUserDTO> {
         val cr = criteria ?: TabletUserCriteria()
-        cr.archived = BooleanFilter().apply {notEquals=true
-        specified=false}
+        cr.archived = BooleanFilter().apply {specified=false}
         val donorId = getDonorId() ?: return tabletUserQueryService.findAll(cr, pageable)
         val tabletIds = tabletService.findAllTabletIdsByDonorId(donorId)
         if (tabletIds.isEmpty()) return Page.empty()
