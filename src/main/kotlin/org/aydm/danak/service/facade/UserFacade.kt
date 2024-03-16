@@ -35,6 +35,7 @@ interface UserFacade {
     fun getDashboard(centerId: Long?, days: Int?): DashboardDTO
     fun archiveTabletUser(id: Long)
     fun restoreTabletUser(id: Long)
+    fun tabletSetDescription(tabletId: Long, description: String)
 }
 
 @Transactional
@@ -220,6 +221,10 @@ class UserFacadeImpl(
         tabletUser.archivedBy = null
         tabletUser.modifiedBy = currentUser
         tabletUserQueryService.update(tabletUser)
+    }
+
+    override fun tabletSetDescription(tabletId: Long, description: String) {
+        tabletService.setDescription(tabletId,description)
     }
 
     private fun extractTabletName(tabletUsers: MutableSet<TabletUser>): String? {

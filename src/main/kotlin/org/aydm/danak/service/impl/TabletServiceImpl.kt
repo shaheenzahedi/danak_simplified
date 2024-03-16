@@ -121,6 +121,12 @@ class TabletServiceImpl(
         return tabletRepository.findAllTabletIdsByDonorId(donorId)
     }
 
+    override fun setDescription(tabletId: Long, description: String) {
+        val tablet = findOne(tabletId).orElseThrow { Exception("tablet with this id not found") }
+        tablet.description = description
+        save(tablet)
+    }
+
     override fun findAll(pageable: Pageable): Page<TabletDTO> {
         log.debug("Request to get all Tablets")
         return tabletRepository.findAll(pageable).map { tabletMapper.toDto(it) }

@@ -7,7 +7,6 @@ import org.aydm.danak.service.dto.TabletDTO
 import org.aydm.danak.service.facade.UserFacade
 import org.aydm.danak.web.rest.errors.BadRequestAlertException
 import org.slf4j.LoggerFactory
-import org.springdoc.api.annotations.ParameterObject
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -17,7 +16,7 @@ import tech.jhipster.web.util.HeaderUtil
 import tech.jhipster.web.util.ResponseUtil
 import java.net.URI
 import java.net.URISyntaxException
-import java.util.Objects
+import java.util.*
 
 private const val ENTITY_NAME = "tablet"
 
@@ -66,6 +65,14 @@ class TabletResource(
     @PostMapping("/tablets-fix-duplicates")
     fun tabletsFixDuplicates() {
         userFacade.tabletsFixDuplicates()
+    }
+
+    @PostMapping("/tablet-set-description/{id}")
+    fun tabletSetDescription(
+        @PathVariable(value = "id", required = true) id: Long,
+        @RequestBody(required = true) description: String
+    ) {
+        userFacade.tabletSetDescription(id,description)
     }
 
     @GetMapping("/tablets-fix-tablet-names")

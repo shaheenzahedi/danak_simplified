@@ -57,4 +57,5 @@ interface TabletService {
     fun saveAll(tablets: MutableList<TabletDTO>)
     fun findAllTabletsWithoutIdentifier(): MutableList<Tablet>
     fun findAllTabletIdsByDonorId(donorId: Long?): MutableList<Long>
+    fun setDescription(tabletId: Long, description: String)
 }
