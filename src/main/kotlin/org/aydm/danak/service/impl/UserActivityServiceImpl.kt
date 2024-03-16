@@ -111,7 +111,8 @@ class UserActivityServiceImpl(
                         listName = it.listName,
                         uniqueName = it.uniqueName,
                         total = it.total,
-                        completed = it.completed
+                        completed = it.completed,
+                        versionName = it.version,
                     )
                 }
             )
@@ -147,7 +148,8 @@ class UserActivityServiceImpl(
                                         listName = userActivity.listName,
                                         uniqueName = userActivity.uniqueName,
                                         total = userActivity.total,
-                                        completed = userActivity.total
+                                        completed = userActivity.total,
+                                        versionName = userActivity.version,
                                     )
                                 }
                         )
@@ -175,7 +177,7 @@ class UserActivityServiceImpl(
                 startDay = startDate,
                 endDay = now,
                 pageable = pageable
-            )
+            ), days
         )
     }
 
@@ -215,7 +217,7 @@ class UserActivityServiceImpl(
                 continue
             }
 
-            val userData = getUserData(userDataPage)
+            val userData = getUserData(userDataPage, null)
             log.info("Saving data for page $pageNumber to file: $fileName")
             saveToCSVFile(userData, apkBasePath, fileName, pageNumber == 0)
 
@@ -347,7 +349,7 @@ class UserActivityServiceImpl(
         }
     }
 
-    fun getUserData(results: Page<Array<Any?>?>?): Page<OverallUserActivities?>? {
+    fun getUserData(results: Page<Array<Any?>?>?, days: Int?): Page<OverallUserActivities?>? {
         return results?.filterNotNull()?.map { result ->
             val tabletUser = result[0] as TabletUser
             val tablet = result[1] as Tablet
@@ -363,21 +365,19 @@ class UserActivityServiceImpl(
                 userActivities = tabletUser.userActivities
                     ?.groupBy { it.uniqueName }
                     ?.map { (_, activities) ->
-                        var maxActivity: UserActivity? = null
-                        var secondMaxActivity: UserActivity? = null
-
-                        for (activity in activities) {
-                            if (maxActivity == null || activity.id!! > maxActivity.id!!) {
-                                secondMaxActivity = maxActivity
-                                maxActivity = activity
-                            } else if (secondMaxActivity == null || activity.id!! > secondMaxActivity.id!!) {
-                                secondMaxActivity = activity
-                            }
-                        }
-
-                        userActivityMapper.toDto(maxActivity!!).apply {
-                            lastChange = completed!! - (secondMaxActivity?.completed ?: 0)
-                        }
+                        val activitiesWithTimeStamp =
+                            activities.filter { it.createTimeStamp != null && it.completed != null }
+                        val calculatedLastChange =
+                            activitiesWithTimeStamp.groupBy { it.createTimeStamp!!.truncatedTo(ChronoUnit.DAYS) }
+                                .mapValues { (_, activities) -> activities.maxByOrNull { it.completed!! } }
+                                .values
+                                .mapNotNull { it?.completed }
+                                .let { completesList ->
+                                    completesList.zipWithNext().sumOf { (first, second) -> second - first }
+                                }
+                        userActivityMapper.toDto(
+                            activitiesWithTimeStamp.maxByOrNull { it.createTimeStamp!! } ?: return Page.empty()
+                        ).apply { lastChange = calculatedLastChange }
                     }
             )
         }?.let { PageImpl(it, results.pageable, results.totalElements) }
@@ -424,6 +424,7 @@ private fun UserActivityDTO.Companion.fromSubmitActivity(
         uniqueName = inputActivity.uniqueName,
         total = inputActivity.total,
         completed = inputActivity.completed,
+        version = inputActivity.versionName,
         activity = tabletUser,
         createTimeStamp = Instant.now()
     )
