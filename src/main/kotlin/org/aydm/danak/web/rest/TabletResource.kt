@@ -77,7 +77,7 @@ class TabletResource(
     @PostMapping("/tablet-user-set-description/{id}")
     fun tabletUserSetDescription(
         @PathVariable(value = "id", required = true) id: Long,
-        @RequestBody(required = true) description: String
+        @RequestBody(required = false) description: String?
     ) {
         userFacade.tabletUserSetDescription(id,description)
     }
