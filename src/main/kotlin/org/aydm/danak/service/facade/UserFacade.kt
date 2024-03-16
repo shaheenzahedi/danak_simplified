@@ -36,6 +36,7 @@ interface UserFacade {
     fun archiveTabletUser(id: Long)
     fun restoreTabletUser(id: Long)
     fun tabletSetDescription(tabletId: Long, description: String)
+    fun tabletUserSetDescription(id: Long, description: String)
 }
 
 @Transactional
@@ -225,6 +226,10 @@ class UserFacadeImpl(
 
     override fun tabletSetDescription(tabletId: Long, description: String) {
         tabletService.setDescription(tabletId,description)
+    }
+
+    override fun tabletUserSetDescription(tabletUserId: Long, description: String) {
+        tabletUserQueryService.setDescription(tabletUserId,description)
     }
 
     private fun extractTabletName(tabletUsers: MutableSet<TabletUser>): String? {

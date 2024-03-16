@@ -185,4 +185,10 @@ class TabletUserQueryService(
     fun update(tabletUser: TabletUser) {
         tabletUserRepository.save(tabletUser)
     }
+
+    fun setDescription(tabletUserId: Long, description: String) {
+        val tabletUser = tabletUserRepository.findById(tabletUserId).orElseThrow { Exception("tablet user not found") }
+        tabletUser.description = description
+        tabletUserRepository.save(tabletUser)
+    }
 }

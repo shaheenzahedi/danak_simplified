@@ -74,6 +74,13 @@ class TabletResource(
     ) {
         userFacade.tabletSetDescription(id,description)
     }
+    @PostMapping("/tablet-user-set-description/{id}")
+    fun tabletUserSetDescription(
+        @PathVariable(value = "id", required = true) id: Long,
+        @RequestBody(required = true) description: String
+    ) {
+        userFacade.tabletUserSetDescription(id,description)
+    }
 
     @GetMapping("/tablets-fix-tablet-names")
     fun findTabletNames() {
