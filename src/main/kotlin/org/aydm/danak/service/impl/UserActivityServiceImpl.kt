@@ -361,7 +361,7 @@ class UserActivityServiceImpl(
                 tabletName = tablet.name,
                 tabletId = tablet.id,
                 tabletIdentifier = tablet.identifier,
-                tabletDescription = tablet.description,
+                tabletUserDescription = tabletUser.description,
                 center = center?.let { centerMapper.toDto(it) },
                 userActivities = tabletUser.userActivities
                     ?.groupBy { it.uniqueName }
@@ -411,7 +411,7 @@ class UserActivityServiceImpl(
                 tabletIdentifier = first.identifier,
                 center = null,
                 userActivities = null,
-                tabletDescription = null
+                tabletUserDescription = null
             )
         }
     }

@@ -9,7 +9,7 @@ data class OverallUserActivities(
     val tabletName: String?,
     val tabletId: Long?,
     val tabletIdentifier: String?,
-    val tabletDescription: String?,
+    val tabletUserDescription: String?,
     val center: CenterDTO?,
     val userActivities: List<UserActivityDTO>?
 ) {
