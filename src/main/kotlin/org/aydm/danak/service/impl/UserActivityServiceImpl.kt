@@ -366,12 +366,13 @@ class UserActivityServiceImpl(
                 userActivities = tabletUser.userActivities
                     ?.groupBy { it.uniqueName }
                     ?.mapNotNull { (_, activities) ->
-                        activities.maxByOrNull { it.id!! }?.let { activity ->
+                        if (activities.isEmpty())return@mapNotNull null
+                        (activities.filter { it.createTimeStamp !=null }.maxByOrNull { it.id!! }?.let { activity ->
                                 val minCompleted = activities.minByOrNull { it.id ?: 0 }?.completed ?: 0
                                 val maxCompleted = activities.maxByOrNull { it.id ?: 0 }?.completed ?: 0
                                 userActivityMapper.toDto(activity)
                                     .apply { lastChange = maxCompleted - minCompleted }
-                            }
+                            })?: userActivityMapper.toDto(activities.maxByOrNull { it.id!! }!!)
                     }
 
             )
