@@ -177,7 +177,7 @@ class UserActivityServiceImpl(
                 startDay = startDate,
                 endDay = now,
                 pageable = pageable
-            ), days
+            )
         )
     }
 
@@ -217,7 +217,7 @@ class UserActivityServiceImpl(
                 continue
             }
 
-            val userData = getUserData(userDataPage, null)
+            val userData = getUserData(userDataPage)
             log.info("Saving data for page $pageNumber to file: $fileName")
             saveToCSVFile(userData, apkBasePath, fileName, pageNumber == 0)
 
@@ -349,7 +349,7 @@ class UserActivityServiceImpl(
         }
     }
 
-    fun getUserData(results: Page<Array<Any?>?>?, days: Int?): Page<OverallUserActivities?>? {
+    fun getUserData(results: Page<Array<Any?>?>?): Page<OverallUserActivities?>? {
         return results?.filterNotNull()?.map { result ->
             val tabletUser = result[0] as TabletUser
             val tablet = result[1] as Tablet
@@ -365,21 +365,15 @@ class UserActivityServiceImpl(
                 center = center?.let { centerMapper.toDto(it) },
                 userActivities = tabletUser.userActivities
                     ?.groupBy { it.uniqueName }
-                    ?.map { (_, activities) ->
-                        val activitiesWithTimeStamp =
-                            activities.filter { it.createTimeStamp != null && it.completed != null }
-                        val calculatedLastChange =
-                            activitiesWithTimeStamp.groupBy { it.createTimeStamp!!.truncatedTo(ChronoUnit.DAYS) }
-                                .mapValues { (_, activities) -> activities.maxByOrNull { it.completed!! } }
-                                .values
-                                .mapNotNull { it?.completed }
-                                .let { completesList ->
-                                    completesList.zipWithNext().sumOf { (first, second) -> second - first }
-                                }
-                        userActivityMapper.toDto(
-                            activitiesWithTimeStamp.maxByOrNull { it.createTimeStamp!! } ?: return Page.empty()
-                        ).apply { lastChange = calculatedLastChange }
+                    ?.mapNotNull { (_, activities) ->
+                        activities.maxByOrNull { it.id!! }?.let { activity ->
+                                val minCompleted = activities.minByOrNull { it.id ?: 0 }?.completed ?: 0
+                                val maxCompleted = activities.maxByOrNull { it.id ?: 0 }?.completed ?: 0
+                                userActivityMapper.toDto(activity)
+                                    .apply { lastChange = maxCompleted - minCompleted }
+                            }
                     }
+
             )
         }?.let { PageImpl(it, results.pageable, results.totalElements) }
     }
