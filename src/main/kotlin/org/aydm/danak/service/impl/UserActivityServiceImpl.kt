@@ -177,7 +177,9 @@ class UserActivityServiceImpl(
                 startDay = startDate,
                 endDay = now,
                 pageable = pageable
-            )
+            ),
+            startDate,
+            now
         )
     }
 
@@ -349,7 +351,7 @@ class UserActivityServiceImpl(
         }
     }
 
-    fun getUserData(results: Page<Array<Any?>?>?): Page<OverallUserActivities?>? {
+    fun getUserData(results: Page<Array<Any?>?>?, startDate: Instant?=null, now: Instant?=null): Page<OverallUserActivities?>? {
         return results?.filterNotNull()?.map { result ->
             val tabletUser = result[0] as TabletUser
             val tablet = result[1] as Tablet
@@ -367,7 +369,8 @@ class UserActivityServiceImpl(
                     ?.groupBy { it.uniqueName }
                     ?.mapNotNull { (_, activities) ->
                         if (activities.isEmpty())return@mapNotNull null
-                        val healthyActivities = activities.filter { it.createTimeStamp != null }
+                        val healthyActivities = activities.filter { it.createTimeStamp != null}
+                            .filter { it.createTimeStamp!!.isAfter(startDate) }
                         healthyActivities.maxByOrNull { it.id!! }?.let { activity ->
                                 val minCompleted = healthyActivities.minByOrNull { it.id ?: 0 }?.completed ?: 0
                                 val maxCompleted = healthyActivities.maxByOrNull { it.id ?: 0 }?.completed ?: 0
