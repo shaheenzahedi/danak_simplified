@@ -367,12 +367,13 @@ class UserActivityServiceImpl(
                     ?.groupBy { it.uniqueName }
                     ?.mapNotNull { (_, activities) ->
                         if (activities.isEmpty())return@mapNotNull null
-                        (activities.filter { it.createTimeStamp !=null }.maxByOrNull { it.id!! }?.let { activity ->
-                                val minCompleted = activities.minByOrNull { it.id ?: 0 }?.completed ?: 0
-                                val maxCompleted = activities.maxByOrNull { it.id ?: 0 }?.completed ?: 0
+                        val healthyActivities = activities.filter { it.createTimeStamp != null }
+                        healthyActivities.maxByOrNull { it.id!! }?.let { activity ->
+                                val minCompleted = healthyActivities.minByOrNull { it.id ?: 0 }?.completed ?: 0
+                                val maxCompleted = healthyActivities.maxByOrNull { it.id ?: 0 }?.completed ?: 0
                                 userActivityMapper.toDto(activity)
                                     .apply { lastChange = maxCompleted - minCompleted }
-                            })?: userActivityMapper.toDto(activities.maxByOrNull { it.id!! }!!)
+                            }?: userActivityMapper.toDto(healthyActivities.maxByOrNull { it.id!! }!!)
                     }
 
             )
